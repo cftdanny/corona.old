@@ -23,19 +23,6 @@ public class DataSourceManager {
 	private Map<String, DataSourceProvider> providers = null;
 	
 	/**
-	 * load all data source provider by service loader
-	 */
-	private void loadDataSourceProviders() {
-		
-		Map<String, DataSourceProvider> loading = new HashMap<String, DataSourceProvider>();
-		for (DataSourceProvider provider : ServiceLoader.load(DataSourceProvider.class)) {
-			loading.put(provider.getFamily(), provider);
-		}
-		
-		this.providers = loading;
-	}
-	
-	/**
 	 * <p>Create connection manager factory by database family and JDBC connection URL. </p>
 	 * 
 	 * @param family the database family, for example, MySQL, Oracle, DB2, etc
@@ -101,5 +88,33 @@ public class DataSourceManager {
 		
 		// create data source provider by registered family
 		return provider.create(url, properties);
+	}
+
+	/**
+	 * <p>Create connection manager factory by database family and JDBC connection URL. </p>
+	 * 
+	 * @param family the database family, for example, MySQL, Oracle, DB2, etc
+	 * @param properties a list of arbitrary string tag/value pairs as connection arguments
+	 * @return the connection manager factory
+	 * @exception DataException if fail to create {@link ConnectionManagerFactory}
+	 */
+	public ConnectionManagerFactory create(final String family, final Properties properties) throws DataException {
+
+		if (this.providers == null) {
+			Map<String, DataSourceProvider> loading = new HashMap<String, DataSourceProvider>();
+			for (DataSourceProvider provider : ServiceLoader.load(DataSourceProvider.class)) {
+				loading.put(provider.getFamily(), provider);
+			}
+			this.providers = loading;
+		}
+
+		// find data source provider by database family
+		DataSourceProvider provider = this.providers.get(family);
+		if (provider == null) {
+			throw new DataException("Database family [{0}] does not exist", family);
+		}
+		
+		// create data source provider by registered family
+		return provider.create(properties);
 	}
 }

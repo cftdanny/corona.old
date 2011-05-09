@@ -19,25 +19,33 @@ public interface DataSourceProvider {
 	String JNDI = "jndi";
 	
 	/**
+	 * the a database URL of the form jdbc:subprotocol:subname
+	 */
+	String URL = "url";
+	
+	/**
+	 * the user name to log in database server
+	 */
+	String USRE = "user";
+	
+	/**
+	 * the password for user
+	 */
+	String PASSWORD = "password";
+	
+	/**
 	 * @return the database family (MySQL, SQL Server, DB2, etc)
 	 */
 	String getFamily();
 	
 	/**
-	 * @param url the a database URL of the form jdbc:subprotocol:subname
-	 * @param username the user name to log in database server
-	 * @param password the password for user
-	 * @return the new created {@link ConnectionManagerFactory}
-	 * @exception DataException if fail to create {@link ConnectionManagerFactory}
-	 */
-	ConnectionManagerFactory create(
-			final String url, final String username, final String password) throws DataException;
-	
-	/**
-	 * @param url the a database URL of the form jdbc:subprotocol:subname
+	 * <p>Create {@link ConnectManagerFactory} by database configuration. All configurations is stored in argument
+	 * properties, the key can be jndi, url, user, password, etc
+	 * </p>
+	 * 
 	 * @param properties a list of arbitrary string tag/value pairs as connection arguments
 	 * @return the new created {@link ConnectionManagerFactory}
 	 * @exception DataException if fail to create {@link ConnectionManagerFactory}
 	 */
-	ConnectionManagerFactory create(final String url, final Properties properties) throws DataException;
+	ConnectionManagerFactory create(final Properties properties) throws DataException;
 }
