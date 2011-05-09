@@ -14,6 +14,11 @@ import java.util.Properties;
 public interface DataSourceProvider {
 
 	/**
+	 * the property name for JNDI data source
+	 */
+	String JNDI = "jndi";
+	
+	/**
 	 * @return the database family (MySQL, SQL Server, DB2, etc)
 	 */
 	String getFamily();
