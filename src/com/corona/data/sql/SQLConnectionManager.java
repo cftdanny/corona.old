@@ -1,9 +1,15 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.data;
+package com.corona.data.sql;
 
 import java.sql.Connection;
+
+import com.corona.data.Command;
+import com.corona.data.ConnectionManager;
+import com.corona.data.ConnectionManagerFactory;
+import com.corona.data.Dialect;
+import com.corona.data.Query;
 
 /**
  * <p> </p>

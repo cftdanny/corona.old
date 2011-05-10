@@ -1,12 +1,15 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.data;
+package com.corona.data.sql;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import com.corona.data.Command;
+import com.corona.data.DataRuntimeException;
 
 /**
  * <p>An abstract command that is used to batch DELETE, UPDATE or INSERT data to database server by SQL. </p>
