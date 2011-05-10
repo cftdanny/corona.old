@@ -14,9 +14,13 @@ import java.sql.Timestamp;
 public interface Dialect {
 
 	/**
-	 * @return the current time from data source, for example, database server
+	 * @return the current time from data source, for example, from database server
 	 */
-	Timestamp getTime();
+	Timestamp getCurrentTime();
 	
-	Object getGeneratedId();
+	/**
+	 * @param command the command that is just executed before
+	 * @return the new generated keys
+	 */
+	Object[] getGeneratedKeys(Command command);
 }

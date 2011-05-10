@@ -26,11 +26,6 @@ import com.corona.data.Dialect;
 class MySQLConnectionManagerFactory implements ConnectionManagerFactory {
 
 	/**
-	 * the MySQL server dialect
-	 */
-	private MySQLDialect dialect = new MySQLDialect();
-	
-	/**
 	 * the data source configuration
 	 */
 	private Properties properties;
@@ -69,15 +64,6 @@ class MySQLConnectionManagerFactory implements ConnectionManagerFactory {
 		this.url = this.properties.getProperty(DataSourceProvider.URL);
 		this.user = this.properties.getProperty(DataSourceProvider.USER);
 		this.password = this.properties.getProperty(DataSourceProvider.PASSWORD);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * @see com.corona.data.ConnectionManagerFactory#getDialect()
-	 */
-	@Override
-	public Dialect getDialect() {
-		return this.dialect;
 	}
 	
 	/**

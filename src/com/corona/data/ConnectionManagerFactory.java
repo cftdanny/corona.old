@@ -14,11 +14,6 @@ package com.corona.data;
 public interface ConnectionManagerFactory {
 
 	/**
-	 * @return the dialect of data source
-	 */
-	Dialect getDialect();
-	
-	/**
 	 * @return the new {@link ConnectionManager}
 	 * @throws DataException if fail to create connection manager
 	 */
