@@ -18,30 +18,25 @@ import com.corona.data.DataSourceProvider;
 public class MySQLDataSourceProvider implements DataSourceProvider {
 
 	/**
+	 * the data source family
+	 */
+	private static final String NAME = "MySQL";
+	
+	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.DataSourceProvider#getFamily()
 	 */
 	@Override
 	public String getFamily() {
-		return null;
+		return NAME;
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.DataSourceProvider#create(java.lang.String, java.lang.String, java.lang.String)
+	 * @see com.corona.data.DataSourceProvider#create(java.util.Properties)
 	 */
 	@Override
-	public ConnectionManagerFactory create(
-			final String url, final String username, final String password) throws DataException {
-		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * @see com.corona.data.DataSourceProvider#create(java.lang.String, java.util.Properties)
-	 */
-	@Override
-	public ConnectionManagerFactory create(final String url, final Properties properties) throws DataException {
-		return null;
+	public ConnectionManagerFactory create(final Properties properties) throws DataException {
+		return new MySQLConnectionManagerFactory(properties);
 	}
 }

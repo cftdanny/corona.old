@@ -26,12 +26,18 @@ public class DataSourceManager {
 	 * <p>Create connection manager factory by database family and JDBC connection URL. </p>
 	 * 
 	 * @param family the database family, for example, MySQL, Oracle, DB2, etc
-	 * @param url a database URL of the form jdbc:subprotocol:subname
-	 * @return the connection manager factory
+	 * @param jndi the JNDI data source name
+	 * @return the new {@link ConnectionManagerFactory}
 	 * @exception DataException if fail to create {@link ConnectionManagerFactory}
 	 */
-	public ConnectionManagerFactory create(final String family, final String url) throws DataException {
-		return this.create(family, url, null, null);
+	public ConnectionManagerFactory create(final String family, final String jndi) throws DataException {
+		
+		// put the name of JNDI data source to configuration properties
+		Properties properties = new Properties();
+		properties.put(DataSourceProvider.JNDI, jndi);
+		
+		// create connection manager factory by data source configuration
+		return this.create(family, properties);
 	}
 	
 	/**
@@ -39,28 +45,24 @@ public class DataSourceManager {
 	 * 
 	 * @param family the database family, for example, MySQL, Oracle, DB2, etc
 	 * @param url a database URL of the form jdbc:subprotocol:subname
-	 * @param username the user name to log in database server
+	 * @param user the user name to log in database server
 	 * @param password the password for user
 	 * @return the connection manager factory
 	 * @exception DataException if fail to create {@link ConnectionManagerFactory}
 	 */
 	public ConnectionManagerFactory create(
-			final String family, final String url, final String username, final String password
+			final String family, final String url, final String user, final String password
 	) throws DataException {
 		
-		// load all data source providers that are registered by service loader
-		if (this.providers == null) {
-			this.loadDataSourceProviders();
-		}
+		// put JDBC connection URL, database user and password to configuration properties
+		Properties properties = new Properties();
 		
-		// find data source provider by database family
-		DataSourceProvider provider = this.providers.get(family);
-		if (provider == null) {
-			throw new DataException("Database family [{0}] does not exist", family);
-		}
-		
-		// create data source provider by registered family
-		return provider.create(url, username, password);
+		properties.put(DataSourceProvider.URL, url);
+		properties.put(DataSourceProvider.USER, user);
+		properties.put(DataSourceProvider.PASSWORD, password);
+
+		// create connection manager factory by data source configuration
+		return this.create(family, properties);
 	}
 	
 	/**
@@ -75,19 +77,11 @@ public class DataSourceManager {
 	public ConnectionManagerFactory create(
 			final String family, final String url, final Properties properties) throws DataException {
 		
-		// load all data source providers that are registered by service loader
-		if (this.providers == null) {
-			this.loadDataSourceProviders();
-		}
-		
-		// find data source provider by database family
-		DataSourceProvider provider = this.providers.get(family);
-		if (provider == null) {
-			throw new DataException("Database family [{0}] does not exist", family);
-		}
+		// store URL to data source configuration properties
+		properties.put(DataSourceProvider.URL, url);
 		
 		// create data source provider by registered family
-		return provider.create(url, properties);
+		return this.create(family, properties);
 	}
 
 	/**

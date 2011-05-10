@@ -26,7 +26,7 @@ public interface DataSourceProvider {
 	/**
 	 * the user name to log in database server
 	 */
-	String USRE = "user";
+	String USER = "user";
 	
 	/**
 	 * the password for user
@@ -39,8 +39,9 @@ public interface DataSourceProvider {
 	String getFamily();
 	
 	/**
-	 * <p>Create {@link ConnectManagerFactory} by database configuration. All configurations is stored in argument
-	 * properties, the key can be jndi, url, user, password, etc
+	 * <p>Create {@link ConnectManagerFactory} by data source configuration. Configurations is stored in 
+	 * argument properties, the key can be JNDI data source, JDBC connection URL, database log in user, 
+	 * password for user, etc
 	 * </p>
 	 * 
 	 * @param properties a list of arbitrary string tag/value pairs as connection arguments

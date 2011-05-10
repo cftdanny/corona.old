@@ -3,6 +3,8 @@
  */
 package com.corona.data.mysql;
 
+import java.sql.Timestamp;
+
 import com.corona.data.Dialect;
 
 /**
@@ -13,4 +15,21 @@ import com.corona.data.Dialect;
  */
 public class MySQLDialect implements Dialect {
 
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.Dialect#getGeneratedId()
+	 */
+	@Override
+	public Object getGeneratedId() {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.Dialect#getTime()
+	 */
+	@Override
+	public Timestamp getTime() {
+		return null;
+	}
 }

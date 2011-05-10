@@ -4,7 +4,8 @@
 package com.corona.data;
 
 /**
- * <p> </p>
+ * <p>The connection manager is used to manage data source, for example: query, update or delete data
+ * in data source. </p>
  *
  * @author $Author$
  * @version $Id$

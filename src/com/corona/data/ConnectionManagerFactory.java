@@ -4,7 +4,9 @@
 package com.corona.data;
 
 /**
- * <p> </p>
+ * <p>This factory is used to create {@link ConnectionManager}. Normally, it is created by {@DataSourceManager}
+ * with data source configuration.
+ * </p>
  *
  * @author $Author$
  * @version $Id$
@@ -12,9 +14,13 @@ package com.corona.data;
 public interface ConnectionManagerFactory {
 
 	/**
-	 * @return the database family (MySQL, SQL Server, DB2, etc)
+	 * @return the dialect of data source
 	 */
-	String getFamily();
+	Dialect getDialect();
 	
-	ConnectionManager open();
+	/**
+	 * @return the new {@link ConnectionManager}
+	 * @throws DataException if fail to create connection manager
+	 */
+	ConnectionManager open() throws DataException;
 }
