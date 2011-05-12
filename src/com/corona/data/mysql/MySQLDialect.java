@@ -49,7 +49,7 @@ class MySQLDialect implements Dialect {
 		
 		ResultSet resultSet = null;
 		try {
-			resultSet = this.connectionManager.getConnection().createStatement().executeQuery("SELECT NOW()"); 
+			resultSet = this.connectionManager.getSource().createStatement().executeQuery("SELECT NOW()"); 
 			resultSet.first();
 			
 			return resultSet.getTimestamp(1);

@@ -40,6 +40,20 @@ public class PreparedStatementWrapper implements PreparedStatement {
 	private PreparedStatement statement;
 	
 	/**
+	 * default constructor
+	 */
+	protected PreparedStatementWrapper() {
+		// do nothing
+	}
+	
+	/**
+	 * @param preparedStatement the prepared JDBC statement
+	 */
+	public PreparedStatementWrapper(final PreparedStatement preparedStatement) {
+		this.setPreparedStatement(preparedStatement);
+	}
+	
+	/**
 	 * @param preparedStatement the prepared JDBC statement
 	 */
 	protected void setPreparedStatement(final PreparedStatement preparedStatement) {

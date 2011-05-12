@@ -13,9 +13,7 @@ import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.NClob;
-import java.sql.ParameterMetaData;
 import java.sql.Ref;
-import java.sql.ResultSetMetaData;
 import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLXML;
@@ -146,351 +144,371 @@ public class NamedParameterStatement extends PreparedStatementWrapper {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setBytes(int, byte[])
+	 * @param parameterName the parameter name
+	 * @param x the parameter value
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setBytes(final int parameterIndex, final byte[] x) throws SQLException {
-		this.statement.setBytes(parameterIndex, x);
+	public void setBytes(final String parameterName, final byte[] x) throws SQLException {
+		this.setBytes(this.getParameterIndex(parameterName), x);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setDate(int, java.sql.Date)
+	 * @param parameterName the parameter name
+	 * @param x the parameter value
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setDate(final int parameterIndex, final Date x) throws SQLException {
-		this.statement.setDate(parameterIndex, x);
+	public void setDate(final String parameterName, final Date x) throws SQLException {
+		this.setDate(this.getParameterIndex(parameterName), x);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setTime(int, java.sql.Time)
+	 * @param parameterName the parameter name
+	 * @param x the parameter value
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setTime(final int parameterIndex, final Time x) throws SQLException {
-		this.statement.setTime(parameterIndex, x);
+	public void setTime(final String parameterName, final Time x) throws SQLException {
+		this.setTime(this.getParameterIndex(parameterName), x);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setTimestamp(int, java.sql.Timestamp)
+	 * @param parameterName the parameter name
+	 * @param x the parameter value
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setTimestamp(final int parameterIndex, final Timestamp x) throws SQLException {
-		this.statement.setTimestamp(parameterIndex, x);
+	public void setTimestamp(final String parameterName, final Timestamp x) throws SQLException {
+		this.setTimestamp(this.getParameterIndex(parameterName), x);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setAsciiStream(int, java.io.InputStream, int)
+	 * @param parameterName the parameter name
+	 * @param x the parameter value
+	 * @param length the data length
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setAsciiStream(final int parameterIndex, final InputStream x, final int length) throws SQLException {
-		this.statement.setAsciiStream(parameterIndex, x, length);
+	public void setAsciiStream(final String parameterName, final InputStream x, final int length) throws SQLException {
+		this.setAsciiStream(this.getParameterIndex(parameterName), x, length);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setUnicodeStream(int, java.io.InputStream, int)
+	 * @param parameterName the parameter name
+	 * @param x the parameter value
+	 * @param length the data length
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@SuppressWarnings("deprecation")
-	@Override
-	public void setUnicodeStream(final int parameterIndex, final InputStream x, final int length) throws SQLException {
-		this.statement.setUnicodeStream(parameterIndex, x, length);
+	public void setUnicodeStream(
+			final String parameterName, final InputStream x, final int length) throws SQLException {
+		this.setUnicodeStream(this.getParameterIndex(parameterName), x, length);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setBinaryStream(int, java.io.InputStream, int)
+	 * @param parameterName the parameter name
+	 * @param x the parameter value
+	 * @param length the data length
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setBinaryStream(final int parameterIndex, final InputStream x, final int length) throws SQLException {
-		this.statement.setBinaryStream(parameterIndex, x, length);
+	public void setBinaryStream(final String parameterName, final InputStream x, final int length) throws SQLException {
+		this.setBinaryStream(this.getParameterIndex(parameterName), x, length);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setObject(int, java.lang.Object, int)
+	 * @param parameterName the parameter name
+	 * @param x the parameter value
+	 * @param targetSqlType the target SQL type
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setObject(final int parameterIndex, final Object x, final int targetSqlType) throws SQLException {
-		this.statement.setObject(parameterIndex, x, targetSqlType);
+	public void setObject(final String parameterName, final Object x, final int targetSqlType) throws SQLException {
+		this.setObject(this.getParameterIndex(parameterName), x, targetSqlType);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setObject(int, java.lang.Object)
+	 * @param parameterName the parameter name
+	 * @param x the parameter value
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setObject(final int parameterIndex, final Object x) throws SQLException {
-		this.statement.setObject(parameterIndex, x);
+	public void setObject(final String parameterName, final Object x) throws SQLException {
+		this.setObject(this.getParameterIndex(parameterName), x);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setCharacterStream(int, java.io.Reader, int)
+	 * @param parameterName the parameter name
+	 * @param reader the data reader
+	 * @param length the data length
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
 	public void setCharacterStream(
-			final int parameterIndex, final Reader reader, final int length) throws SQLException {
-		this.statement.setCharacterStream(parameterIndex, reader, length);
+			final String parameterName, final Reader reader, final int length) throws SQLException {
+		this.setCharacterStream(this.getParameterIndex(parameterName), reader, length);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setRef(int, java.sql.Ref)
+	 * @param parameterName the parameter name
+	 * @param x the parameter value
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setRef(final int parameterIndex, final Ref x) throws SQLException {
-		this.statement.setRef(parameterIndex, x);
+	public void setRef(final String parameterName, final Ref x) throws SQLException {
+		this.setRef(this.getParameterIndex(parameterName), x);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setBlob(int, java.sql.Blob)
+	 * @param parameterName the parameter name
+	 * @param x the parameter value
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setBlob(final int parameterIndex, final Blob x) throws SQLException {
-		this.statement.setBlob(parameterIndex, x);
+	public void setBlob(final String parameterName, final Blob x) throws SQLException {
+		this.setBlob(this.getParameterIndex(parameterName), x);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setClob(int, java.sql.Clob)
+	 * @param parameterName the parameter name
+	 * @param x the parameter value
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setClob(final int parameterIndex, final Clob x) throws SQLException {
-		this.statement.setClob(parameterIndex, x);
+	public void setClob(final String parameterName, final Clob x) throws SQLException {
+		this.setClob(this.getParameterIndex(parameterName), x);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setArray(int, java.sql.Array)
+	 * @param parameterName the parameter name
+	 * @param x the parameter value
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setArray(final int parameterIndex, final Array x) throws SQLException {
-		this.statement.setArray(parameterIndex, x);
+	public void setArray(final String parameterName, final Array x) throws SQLException {
+		this.setArray(this.getParameterIndex(parameterName), x);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setDate(int, java.sql.Date, java.util.Calendar)
+	 * @param parameterName the parameter name
+	 * @param x the parameter value
+	 * @param cal the date calendar
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setDate(final int parameterIndex, final Date x, final Calendar cal) throws SQLException {
-		this.statement.setDate(parameterIndex, x, cal);
+	public void setDate(final String parameterName, final Date x, final Calendar cal) throws SQLException {
+		this.setDate(this.getParameterIndex(parameterName), x, cal);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setTime(int, java.sql.Time, java.util.Calendar)
+	 * @param parameterName the parameter name
+	 * @param x the parameter value
+	 * @param cal the time calendar
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setTime(final int parameterIndex, final Time x, final Calendar cal) throws SQLException {
-		this.statement.setTime(parameterIndex, x, cal);
+	public void setTime(final String parameterName, final Time x, final Calendar cal) throws SQLException {
+		this.setTime(this.getParameterIndex(parameterName), x, cal);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setTimestamp(int, java.sql.Timestamp, java.util.Calendar)
+	 * @param parameterName the parameter name
+	 * @param x the parameter value
+	 * @param cal the time calendar
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setTimestamp(final int parameterIndex, final Timestamp x, final Calendar cal) throws SQLException {
-		this.statement.setTimestamp(parameterIndex, x, cal);
+	public void setTimestamp(final String parameterName, final Timestamp x, final Calendar cal) throws SQLException {
+		this.setTimestamp(this.getParameterIndex(parameterName), x, cal);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setNull(int, int, java.lang.String)
+	 * @param parameterName the parameter name
+	 * @param sqlType the SQL type
+	 * @param typeName the data type name
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setNull(final int parameterIndex, final int sqlType, final String typeName) throws SQLException {
-		this.statement.setNull(parameterIndex, sqlType, typeName);
+	public void setNull(final String parameterName, final int sqlType, final String typeName) throws SQLException {
+		this.setNull(this.getParameterIndex(parameterName), sqlType, typeName);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setURL(int, java.net.URL)
+	 * @param parameterName the parameter name
+	 * @param x the parameter value
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setURL(final int parameterIndex, final URL x) throws SQLException {
-		this.statement.setURL(parameterIndex, x);
+	public void setURL(final String parameterName, final URL x) throws SQLException {
+		this.setURL(this.getParameterIndex(parameterName), x);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setRowId(int, java.sql.RowId)
+	 * @param parameterName the parameter name
+	 * @param x the parameter value
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setRowId(final int parameterIndex, final RowId x) throws SQLException {
-		this.statement.setRowId(parameterIndex, x);
+	public void setRowId(final String parameterName, final RowId x) throws SQLException {
+		this.setRowId(this.getParameterIndex(parameterName), x);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setNString(int, java.lang.String)
+	 * @param parameterName the parameter name
+	 * @param value the parameter value
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setNString(final int parameterIndex, final String value) throws SQLException {
-		this.statement.setNString(parameterIndex, value);
+	public void setNString(final String parameterName, final String value) throws SQLException {
+		this.setNString(this.getParameterIndex(parameterName), value);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setNCharacterStream(int, java.io.Reader, long)
+	 * @param parameterName the parameter name
+	 * @param value the parameter value
+	 * @param length the data length
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
 	public void setNCharacterStream(
-			final int parameterIndex, final Reader value, final long length) throws SQLException {
-		this.statement.setNCharacterStream(parameterIndex, value, length);
+			final String parameterName, final Reader value, final long length) throws SQLException {
+		this.setNCharacterStream(this.getParameterIndex(parameterName), value, length);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setNClob(int, java.sql.NClob)
+	 * @param parameterName the parameter name
+	 * @param value the parameter value
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setNClob(final int parameterIndex, final NClob value) throws SQLException {
-		this.statement.setNClob(parameterIndex, value);
+	public void setNClob(final String parameterName, final NClob value) throws SQLException {
+		this.setNClob(this.getParameterIndex(parameterName), value);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setClob(int, java.io.Reader, long)
+	 * @param parameterName the parameter name
+	 * @param reader the data reader
+	 * @param length the data length
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setClob(final int parameterIndex, final Reader reader, final long length) throws SQLException {
-		this.statement.setClob(parameterIndex, reader, length);
+	public void setClob(final String parameterName, final Reader reader, final long length) throws SQLException {
+		this.setClob(this.getParameterIndex(parameterName), reader, length);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setBlob(int, java.io.InputStream, long)
+	 * @param parameterName the parameter name
+	 * @param inputStream the data stream
+	 * @param length the data length
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
 	public void setBlob(
-			final int parameterIndex, final InputStream inputStream, final long length) throws SQLException {
-		this.statement.setBlob(parameterIndex, inputStream, length);
+			final String parameterName, final InputStream inputStream, final long length) throws SQLException {
+		this.setBlob(this.getParameterIndex(parameterName), inputStream, length);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setNClob(int, java.io.Reader, long)
+	 * @param parameterName the parameter name
+	 * @param reader the data reader
+	 * @param length the data length
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setNClob(final int parameterIndex, final Reader reader, final long length) throws SQLException {
-		this.statement.setNClob(parameterIndex, reader, length);
+	public void setNClob(final String parameterName, final Reader reader, final long length) throws SQLException {
+		this.setNClob(this.getParameterIndex(parameterName), reader, length);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setSQLXML(int, java.sql.SQLXML)
+	 * @param parameterName the parameter name
+	 * @param xmlObject the XML data object
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setSQLXML(final int parameterIndex, final SQLXML xmlObject) throws SQLException {
-		this.statement.setSQLXML(parameterIndex, xmlObject);
+	public void setSQLXML(final String parameterName, final SQLXML xmlObject) throws SQLException {
+		this.setSQLXML(this.getParameterIndex(parameterName), xmlObject);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setObject(int, java.lang.Object, int, int)
+	 * @param parameterName the parameter name
+	 * @param x the parameter value
+	 * @param targetSqlType the target SQL type
+	 * @param scaleOrLength the data scale or length
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
 	public void setObject(
-			final int parameterIndex, final Object x, final int targetSqlType, final int scaleOrLength
+			final String parameterName, final Object x, final int targetSqlType, final int scaleOrLength
 	) throws SQLException {
-		this.statement.setObject(parameterIndex, x, targetSqlType, scaleOrLength);
+		this.setObject(this.getParameterIndex(parameterName), x, targetSqlType, scaleOrLength);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setAsciiStream(int, java.io.InputStream, long)
+	 * @param parameterName the parameter name
+	 * @param x the data stream
+	 * @param length the data length
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setAsciiStream(final int parameterIndex, final InputStream x, final long length) throws SQLException {
-		this.statement.setAsciiStream(parameterIndex, x, length);
+	public void setAsciiStream(
+			final String parameterName, final InputStream x, final long length) throws SQLException {
+		this.setAsciiStream(this.getParameterIndex(parameterName), x, length);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setBinaryStream(int, java.io.InputStream, long)
+	 * @param parameterName the parameter name
+	 * @param x the data stream
+	 * @param length the data length
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setBinaryStream(final int parameterIndex, final InputStream x, final long length) throws SQLException {
-		this.statement.setBinaryStream(parameterIndex, x, length);
+	public void setBinaryStream(
+			final String parameterName, final InputStream x, final long length) throws SQLException {
+		this.setBinaryStream(this.getParameterIndex(parameterName), x, length);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setCharacterStream(int, java.io.Reader, long)
+	 * @param parameterName the parameter name
+	 * @param reader the data reader
+	 * @param length the data length
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
 	public void setCharacterStream(
-			final int parameterIndex, final Reader reader, final long length) throws SQLException {
-		this.statement.setCharacterStream(parameterIndex, reader, length);
+			final String parameterName, final Reader reader, final long length) throws SQLException {
+		this.setCharacterStream(this.getParameterIndex(parameterName), reader, length);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setAsciiStream(int, java.io.InputStream)
+	 * @param parameterName the parameter name
+	 * @param x the data stream
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setAsciiStream(final int parameterIndex, final InputStream x) throws SQLException {
-		this.statement.setAsciiStream(parameterIndex, x);
+	public void setAsciiStream(final String parameterName, final InputStream x) throws SQLException {
+		this.setAsciiStream(this.getParameterIndex(parameterName), x);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setBinaryStream(int, java.io.InputStream)
+	 * @param parameterName the parameter name
+	 * @param x the data stream
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setBinaryStream(final int parameterIndex, final InputStream x) throws SQLException {
-		this.statement.setBinaryStream(parameterIndex, x);
+	public void setBinaryStream(final String parameterName, final InputStream x) throws SQLException {
+		this.setBinaryStream(this.getParameterIndex(parameterName), x);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setCharacterStream(int, java.io.Reader)
+	 * @param parameterName the parameter name
+	 * @param reader the data reader
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setCharacterStream(final int parameterIndex, final Reader reader) throws SQLException {
-		this.statement.setCharacterStream(parameterIndex, reader);
+	public void setCharacterStream(final String parameterName, final Reader reader) throws SQLException {
+		this.setCharacterStream(this.getParameterIndex(parameterName), reader);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setNCharacterStream(int, java.io.Reader)
+	 * @param parameterName the parameter name
+	 * @param reader the data reader
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setNCharacterStream(final int parameterIndex, final Reader value) throws SQLException {
-		this.statement.setNCharacterStream(parameterIndex, value);
+	public void setNCharacterStream(final String parameterName, final Reader reader) throws SQLException {
+		this.setNCharacterStream(this.getParameterIndex(parameterName), reader);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setClob(int, java.io.Reader)
+	 * @param parameterName the parameter name
+	 * @param reader the data reader
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setClob(final int parameterIndex, final Reader reader) throws SQLException {
-		this.statement.setClob(parameterIndex, reader);
+	public void setClob(final String parameterName, final Reader reader) throws SQLException {
+		this.setClob(this.getParameterIndex(parameterName), reader);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setBlob(int, java.io.InputStream)
+	 * @param parameterName the parameter name
+	 * @param inputStream the data stream
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setBlob(final int parameterIndex, final InputStream inputStream) throws SQLException {
-		this.statement.setBlob(parameterIndex, inputStream);
+	public void setBlob(final String parameterName, final InputStream inputStream) throws SQLException {
+		this.setBlob(this.getParameterIndex(parameterName), inputStream);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.sql.PreparedStatement#setNClob(int, java.io.Reader)
+	 * @param parameterName the parameter name
+	 * @param reader the data reader
+	 * @throws SQLException if parameterName does not correspond to a parameter marker in the SQL statement
 	 */
-	@Override
-	public void setNClob(final int parameterIndex, final Reader reader) throws SQLException {
-		this.statement.setNClob(parameterIndex, reader);
+	public void setNClob(final String parameterName, final Reader reader) throws SQLException {
+		this.setNClob(this.getParameterIndex(parameterName), reader);
 	}
 }

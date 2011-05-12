@@ -3,8 +3,6 @@
  */
 package com.corona.data.sql;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -20,9 +18,18 @@ import com.corona.data.DataRuntimeException;
 public class SQLCommand implements Command {
 
 	/**
-	 * the prepared statement
+	 * the prepared and named parameter SQL statement
 	 */
-	private PreparedStatement statement;
+	private NamedParameterStatement statement;
+	
+	/**
+	 * @param connectionManager the connection manager for SQL database 
+	 * @param sql the SQL statement
+	 * @throws SQLException if fail to prepare SQL statement
+	 */
+	public SQLCommand(final SQLConnectionManager connectionManager, final String sql) throws SQLException {
+		this.statement = new NamedParameterStatement(connectionManager.getSource(), sql);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -61,16 +68,33 @@ public class SQLCommand implements Command {
 	 */
 	private void setPrameters(final Object[] args) {
 		
+		int i = 0;
 		try {
-			
 			this.statement.clearParameters();
-			for (int i = 0, count = args.length; i < count; i++) {
+			for (int count = args.length; i < count; i++) {
 				this.statement.setObject(i + 1, args[i]);
 			}
 			this.statement.clearWarnings();
-			
 		} catch (SQLException e) {
-			throw new DataRuntimeException("Fail to set parameter value to SQL statement", e);
+			throw new DataRuntimeException("Fail to set parameter [{i}] value to SQL statement", e, i);
+		}
+	}
+
+	/**
+	 * @param names the parameter names
+	 * @param args the parameter values
+	 */
+	private void setParameters(final String[] names, final Object[] args) {
+		
+		int i = 0;
+		try {
+			this.statement.clearParameters();
+			for (int count = names.length; i < count; i++) {
+				this.statement.setObject(names[i], args[i]);
+			}
+			this.statement.clearWarnings();
+		} catch (Exception e) {
+			throw new DataRuntimeException("Fail to set parameter [{0}] value to SQL statement", e, names[i]);
 		}
 	}
 	
@@ -95,7 +119,13 @@ public class SQLCommand implements Command {
 	 */
 	@Override
 	public int delete(final String[] names, final Object[] args) {
-		return 0;
+		
+		this.setParameters(names, args);
+		try {
+			return this.statement.executeUpdate();
+		} catch (SQLException e) {
+			throw new DataRuntimeException("Fail to execte DELETE SQL [{0}]", e, this.toString());
+		}
 	}
 
 	/**
@@ -103,8 +133,14 @@ public class SQLCommand implements Command {
 	 * @see com.corona.data.Command#update(java.lang.Object[])
 	 */
 	@Override
-	public int update(Object... args) {
-		return 0;
+	public int update(final Object... args) {
+
+		this.setPrameters(args);
+		try {
+			return this.statement.executeUpdate();
+		} catch (SQLException e) {
+			throw new DataRuntimeException("Fail to execte UPDATE SQL [{0}]", e, this.toString());
+		}
 	}
 
 	/**
@@ -112,8 +148,14 @@ public class SQLCommand implements Command {
 	 * @see com.corona.data.Command#update(java.lang.String[], java.lang.Object[])
 	 */
 	@Override
-	public int update(String[] names, Object[] args) {
-		return 0;
+	public int update(final String[] names, final Object[] args) {
+		
+		this.setParameters(names, args);
+		try {
+			return this.statement.executeUpdate();
+		} catch (SQLException e) {
+			throw new DataRuntimeException("Fail to execte UPDATE SQL [{0}]", e, this.toString());
+		}
 	}
 
 	/**
@@ -121,8 +163,14 @@ public class SQLCommand implements Command {
 	 * @see com.corona.data.Command#insert(java.lang.Object[])
 	 */
 	@Override
-	public int insert(Object... args) {
-		return 0;
+	public int insert(final Object... args) {
+
+		this.setPrameters(args);
+		try {
+			return this.statement.executeUpdate();
+		} catch (SQLException e) {
+			throw new DataRuntimeException("Fail to execte INSERT SQL [{0}]", e, this.toString());
+		}
 	}
 
 	/**
@@ -130,7 +178,13 @@ public class SQLCommand implements Command {
 	 * @see com.corona.data.Command#insert(java.lang.String[], java.lang.Object[])
 	 */
 	@Override
-	public int insert(String[] names, Object[] args) {
-		return 0;
+	public int insert(final String[] names, final Object[] args) {
+
+		this.setParameters(names, args);
+		try {
+			return this.statement.executeUpdate();
+		} catch (SQLException e) {
+			throw new DataRuntimeException("Fail to execte INSERT SQL [{0}]", e, this.toString());
+		}
 	}
 }

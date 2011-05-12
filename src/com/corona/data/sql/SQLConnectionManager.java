@@ -8,33 +8,51 @@ import java.sql.Connection;
 import com.corona.data.Command;
 import com.corona.data.ConnectionManager;
 import com.corona.data.ConnectionManagerFactory;
-import com.corona.data.Dialect;
+import com.corona.data.DataException;
+import com.corona.data.DataRuntimeException;
 import com.corona.data.Query;
+import com.corona.logging.Log;
+import com.corona.logging.LogFactory;
 
 /**
- * <p> </p>
+ * <p>The base and helper connection manager for SQL database. </p>
  *
  * @author $Author$
  * @version $Id$
  */
-public class SQLConnectionManager implements ConnectionManager {
+public abstract class SQLConnectionManager implements ConnectionManager {
 
+	/**
+	 * the logger
+	 */
+	private final Log logger = LogFactory.getLog(SQLConnectionManager.class);
+	
+	/**
+	 * the SQL connection manager factory
+	 */
+	private SQLConnectionManagerFactory connectionManagerFactory;
+	
+	/**
+	 * the opened JDBC connection
+	 */
+	private Connection connection;
+	
+	/**
+	 * @param connectionManagerFactory the SQL connection manager factory
+	 * @exception DataException if fail to create connection manager factory
+	 */
+	public SQLConnectionManager(final SQLConnectionManagerFactory connectionManagerFactory) throws DataException {
+		this.connectionManagerFactory = connectionManagerFactory;
+		this.connection = this.connectionManagerFactory.getConnection();
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.ConnectionManager#getConnectionManagerFactory()
 	 */
 	@Override
 	public ConnectionManagerFactory getConnectionManagerFactory() {
-		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * @see com.corona.data.ConnectionManager#getDialect()
-	 */
-	@Override
-	public Dialect getDialect() {
-		return null;
+		return this.connectionManagerFactory;
 	}
 
 	/**
@@ -43,7 +61,7 @@ public class SQLConnectionManager implements ConnectionManager {
 	 */
 	@Override
 	public Connection getSource() {
-		return null;
+		return this.connection;
 	}
 
 	/**
@@ -52,7 +70,13 @@ public class SQLConnectionManager implements ConnectionManager {
 	 */
 	@Override
 	public boolean isClosed() {
-		return false;
+		
+		try {
+			return this.connection.isClosed();
+		} catch (Exception e) {
+			this.logger.error("Fail to test whether JDBC connection is closed", e);
+			throw new DataRuntimeException("Fail to test whether JDBC connection is closed", e);
+		}
 	}
 
 	/**
@@ -61,6 +85,13 @@ public class SQLConnectionManager implements ConnectionManager {
 	 */
 	@Override
 	public void close() {
+		
+		try {
+			this.connection.close();
+		} catch (Exception e) {
+			this.logger.error("Fail to close opened JDBC connection", e);
+			throw new DataRuntimeException("Fail to close opened JDBC connection", e);
+		}
 	}
 
 	/**
