@@ -37,9 +37,34 @@ public interface ConnectionManager {
 	 */
 	void close();
 	
-	<T> Query<T> createQuery(Class<? extends T> entityClass, String query);
-
-	<T> Query<T> createNamedQuery(Class<? extends T> entityClass);
+	/**
+	 * <p>Create command by command string. For example, if data source is SQL, it will be DELETE, UPDATE, INSERT
+	 * statement.
+	 * </p>
+	 * 
+	 * @param command the command string
+	 * @return the created command
+	 */
+	Command createCommand(String command);
 	
-	Command createCommand();
+	/**
+	 * <p>Create command by a command annotation in class. For example, if data source is SQL, it will be DELETE, 
+	 * UPDATE, INSERT statement.
+	 * </p>
+	 *  
+	 * @param commandClass the class that is annotated with command annotation
+	 * @return the created command
+	 */
+	Command createCommand(Class<?> commandClass);
+	
+	/**
+	 * <p>Create command by a command annotation in class. For example, if data source is SQL, it will be DELETE, 
+	 * UPDATE, INSERT statement.
+	 * </p>
+	 *  
+	 * @param commandClass the class that is annotated with command annotation
+	 * @param name the command name
+	 * @return the created command
+	 */
+	Command createCommand(Class<?> commandClass, String name);
 }

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.corona.data.Command;
+import com.corona.data.sql.SQLCommand;
 import com.corona.data.DataRuntimeException;
 import com.corona.data.Dialect;
 import com.corona.logging.Log;
@@ -82,7 +83,7 @@ class MySQLDialect implements Dialect {
 		try {
 			
 			List<Object> keys = new ArrayList<Object>();
-			resultset = ((MySQLCommand) command).getSource().getGeneratedKeys();
+			resultset = ((SQLCommand) command).getSource().getGeneratedKeys();
 			if (resultset.next()) {
 				keys.add(resultset.getObject(1));
 			}

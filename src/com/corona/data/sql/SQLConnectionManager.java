@@ -4,6 +4,7 @@
 package com.corona.data.sql;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import com.corona.data.Command;
 import com.corona.data.ConnectionManager;
@@ -96,28 +97,33 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.ConnectionManager#createQuery(java.lang.Class, java.lang.String)
+	 * @see com.corona.data.ConnectionManager#createCommand(java.lang.String)
 	 */
 	@Override
-	public <T> Query<T> createQuery(Class<? extends T> entityClass, String query) {
+	public Command createCommand(final String command) {
+		
+		try {
+			return new SQLCommand(this, command);
+		} catch (SQLException e) {
+			throw new DataRuntimeException("Fail to create SQL command by [{0}]", e, command);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.ConnectionManager#createCommand(java.lang.Class)
+	 */
+	@Override
+	public Command createCommand(Class<?> commandClass) {
 		return null;
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.ConnectionManager#createNamedQuery(java.lang.Class)
+	 * @see com.corona.data.ConnectionManager#createCommand(java.lang.Class, java.lang.String)
 	 */
 	@Override
-	public <T> Query<T> createNamedQuery(Class<? extends T> entityClass) {
-		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * @see com.corona.data.ConnectionManager#createCommand()
-	 */
-	@Override
-	public Command createCommand() {
+	public Command createCommand(Class<?> commandClass, String name) {
 		return null;
 	}
 }
