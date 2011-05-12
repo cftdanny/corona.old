@@ -4,11 +4,12 @@
 package com.corona.data;
 
 /**
- * <p> </p>
+ * <p>This primary key class is used to manage entity in table with primary key </p>
  *
  * @author $Author$
  * @version $Id$
- * @param <K> the type for primary key
+ * @param <E> the type of table entity
+ * @param <K> the type of primary key
  */
 public interface PrimaryKey<K, E> {
 
@@ -24,21 +25,11 @@ public interface PrimaryKey<K, E> {
 	/**
 	 * <p>Find an entity instance (table record) from database by primary key (argument k). </p> 
 	 * 
-	 * @param pks the values of the primary key
+	 * @param value the value of the primary key
 	 * @return the entity instance or <code>null</code> if does not exists
 	 */
-	E get(Object... pks);
-	
-	/**
-	 * <p>Update a changed entity instance into database. Before update, this method will check
-	 * whether id of entity is <code>null</code>. If id is <code>null</code>, it will throw an
-	 * exception. </p>
-	 *  
-	 * @param e the entity instance
-	 * @return whether this record has been updated
-	 */
-	boolean update(E e);
-	
+	E get(K value);
+
 	/**
 	 * <p>Delete an entity instance (table record) from database by primary key (argument k). </p>
 	 * 
