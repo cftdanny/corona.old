@@ -10,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>This annotation is used to annotated a field or a property will map to a column of entity in 
+ * <p>This annotation is used to annotated a field or a property that will map to a column of entity for specified 
  * data source.
  * </p>
  *
@@ -23,12 +23,12 @@ import java.lang.annotation.Target;
 public @interface Column {
 
 	/**
-	 * the column name 
+	 * the column name. If empty, will use field or property name in class
 	 */
 	String name() default "";
 	
 	/**
-	 * whether it is temporal field. If true, do not map it to column of table
+	 * whether it is temporal field. If true, will not map to column in entity 
 	 */
 	boolean temporal() default false; 
 }

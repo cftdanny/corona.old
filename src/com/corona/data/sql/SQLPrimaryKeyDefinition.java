@@ -34,8 +34,8 @@ public class SQLPrimaryKeyDefinition<E> implements PrimaryKeyDefinition<E> {
 	 */
 	public SQLPrimaryKeyDefinition(final Entity entity, final com.corona.data.annotation.PrimaryKey key) {
 		
-		this.selectSql = "SELECT * FROM " + entity.value() + " WHERE " + key.value() + " = ?";
-		this.deleteSql = "DELETE * FROM " + entity.value() + " WHERE " + key.value() + " = ?";
+		this.selectSql = "SELECT * FROM " + entity.name() + " WHERE " + key.value() + " = ?";
+		this.deleteSql = "DELETE * FROM " + entity.name() + " WHERE " + key.value() + " = ?";
 	}
 
 	/**
