@@ -4,14 +4,20 @@
 package com.corona.data.annotation;
 
 /**
- * <p> </p>
+ * <p>This annotation is used to define an index for an entity. It will annotate an entity class. </p>
  *
  * @author $Author$
  * @version $Id$
  */
 public @interface Index {
 
+	/**
+	 * the index name 
+	 */
 	String name();
 	
-	String[] fields();
+	/**
+	 * the columns of index
+	 */
+	String[] columns();
 }

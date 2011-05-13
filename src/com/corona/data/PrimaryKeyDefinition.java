@@ -8,9 +8,16 @@ package com.corona.data;
  *
  * @author $Author$
  * @version $Id$
+ * @param <E> the type of entity
  */
-public interface PrimaryKeyDefinition {
+public interface PrimaryKeyDefinition<E> {
 
+	/**
+	 * @param connectionManager the connection manager
+	 * @return the command to query entity by primary key
+	 */
+	Query<E> getSelectQuery(ConnectionManager connectionManager);
+	
 	/**
 	 * @param connectionManager the connection manager
 	 * @return the command to delete entity by primary key

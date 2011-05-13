@@ -27,7 +27,7 @@ public class SQLCommand implements Command {
 	 * @param sql the SQL statement
 	 * @throws SQLException if fail to prepare SQL statement
 	 */
-	public SQLCommand(final SQLConnectionManager connectionManager, final String sql) throws SQLException {
+	protected SQLCommand(final SQLConnectionManager connectionManager, final String sql) throws SQLException {
 		this.statement = new NamedParameterStatement(connectionManager.getSource(), sql);
 	}
 

@@ -3,9 +3,8 @@
  */
 package com.corona.data.annotation;
 
-
 /**
- * <p> </p>
+ * <p>This annotation is used to define an unique key for entity in entity class. </p>
  *
  * @author $Author$
  * @version $Id$
@@ -13,9 +12,12 @@ package com.corona.data.annotation;
 public @interface UniqueKey {
 
 	/**
-	 * the name of unique key constraint 
+	 * the name of unique key  
 	 */
 	String name();
 	
-	String[] fields();
+	/**
+	 * all columns for unique key 
+	 */
+	String[] columns();
 }

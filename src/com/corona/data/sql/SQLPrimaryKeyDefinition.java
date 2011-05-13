@@ -6,6 +6,7 @@ package com.corona.data.sql;
 import com.corona.data.Command;
 import com.corona.data.ConnectionManager;
 import com.corona.data.PrimaryKeyDefinition;
+import com.corona.data.Query;
 import com.corona.data.annotation.Entity;
 
 /**
@@ -13,8 +14,9 @@ import com.corona.data.annotation.Entity;
  *
  * @author $Author$
  * @version $Id$
+ * @param <E> the type of entity
  */
-public class SQLPrimaryKeyDefinition implements PrimaryKeyDefinition {
+public class SQLPrimaryKeyDefinition<E> implements PrimaryKeyDefinition<E> {
 
 	/**
 	 * the SELECT SQL according this index
@@ -30,10 +32,19 @@ public class SQLPrimaryKeyDefinition implements PrimaryKeyDefinition {
 	 * @param entity the entity annotation
 	 * @param key the primary key annotation in entity class
 	 */
-	public SQLPrimaryKeyDefinition(final Entity entity, final com.corona.data.annotation.PrimaryKeyDefinition key) {
+	public SQLPrimaryKeyDefinition(final Entity entity, final com.corona.data.annotation.PrimaryKey key) {
 		
 		this.selectSql = "SELECT * FROM " + entity.value() + " WHERE " + key.value() + " = ?";
 		this.deleteSql = "DELETE * FROM " + entity.value() + " WHERE " + key.value() + " = ?";
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.PrimaryKeyDefinition#getSelectQuery(com.corona.data.ConnectionManager)
+	 */
+	@Override
+	public Query<E> getSelectQuery(final ConnectionManager connectionManager) {
+		return null;
 	}
 
 	/**

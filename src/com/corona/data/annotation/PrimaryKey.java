@@ -9,7 +9,7 @@ package com.corona.data.annotation;
  * @author $Author$
  * @version $Id$
  */
-public @interface PrimaryKeyDefinition {
+public @interface PrimaryKey {
 
 	/**
 	 * the primary key column 

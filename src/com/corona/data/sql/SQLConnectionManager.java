@@ -114,7 +114,7 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 	 * @see com.corona.data.ConnectionManager#createCommand(java.lang.Class)
 	 */
 	@Override
-	public Command createCommand(Class<?> commandClass) {
+	public Command createCommand(final Class<?> commandClass) {
 		return null;
 	}
 
