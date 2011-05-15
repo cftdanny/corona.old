@@ -10,10 +10,22 @@ package com.corona.data;
  * @version $Id$
  * @param <E> the type of entity class
  */
-public interface EntityDefinition<E> {
+public interface EntityDescriptor<E> {
 
 	/**
 	 * @return the primary key definition
 	 */
-	PrimaryKeyDefinition<E> getPrimarykey(); 
+	PrimaryKeyDescriptor<E> getPrimarykey(); 
+	
+	/**
+	 * @param id the unique key name
+	 * @return the unique key
+	 */
+	UniqueKeyDescriptor<E> getUniqueKey(int id);
+	
+	/**
+	 * @param id the index name
+	 * @return the index
+	 */
+	IndexDescriptor<E> getIndex(int id);
 }

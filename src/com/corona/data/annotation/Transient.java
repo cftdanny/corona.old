@@ -10,9 +10,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>This annotation is used to annotated a field or a property that will map to a column of entity for specified 
- * data source.
- * </p>
+ * <p>This annotation specifies that the property or field is not persistent, it will not map data between
+ * data source and field or property </p>
  *
  * @author $Author$
  * @version $Id$
@@ -20,10 +19,6 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD, ElementType.METHOD })
-public @interface Column {
+public @interface Transient {
 
-	/**
-	 * the column name. If empty, will use field or property name in class
-	 */
-	String name() default "";
 }

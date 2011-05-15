@@ -21,6 +21,27 @@ import java.lang.annotation.Target;
 public @interface Entity {
 
 	/**
+	 * <p>This enumerator is used </p>
+	 */
+	public enum MappingBy {
+		
+		/**
+		 * Do not map implicitly, use {@link Column} to map column explicitly
+		 */
+		NONE,
+		
+		/**
+		 * Map column by field in class implicitly
+		 */
+		FIELD,
+		
+		/**
+		 * Map column by property in class implicitly
+		 */
+		PROPERTY
+	}
+	
+	/**
 	 * the entity schema. For database, it is schema name
 	 */
 	String schema() default "";
@@ -32,7 +53,12 @@ public @interface Entity {
 	String name() default "";
 	
 	/**
-	 * the primary keys
+	 * how to map field or property to column default 
+	 */
+	MappingBy mappingBy() default MappingBy.FIELD;
+	
+	/**
+	 * the primary key 
 	 */
 	PrimaryKey primaryKey();
 	

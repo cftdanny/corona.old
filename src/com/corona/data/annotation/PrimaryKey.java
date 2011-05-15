@@ -4,7 +4,7 @@
 package com.corona.data.annotation;
 
 /**
- * <p> </p>
+ * <p>This annotation is used to define primary key for entity of data source. </p>
  *
  * @author $Author$
  * @version $Id$
@@ -12,7 +12,7 @@ package com.corona.data.annotation;
 public @interface PrimaryKey {
 
 	/**
-	 * the primary key column 
+	 * the columns of primary key 
 	 */
-	String value();
+	String[] value();
 }

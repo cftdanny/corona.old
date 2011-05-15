@@ -10,7 +10,7 @@ package com.corona.data;
  * @version $Id$
  * @param <E> the type of entity
  */
-public interface PrimaryKeyDefinition<E> {
+public interface PrimaryKeyDescriptor<E> {
 
 	/**
 	 * @param connectionManager the connection manager

@@ -6,7 +6,7 @@ package com.corona.data.sql;
 import com.corona.data.Command;
 import com.corona.data.ConnectionManager;
 import com.corona.data.DataRuntimeException;
-import com.corona.data.IndexDefinition;
+import com.corona.data.IndexDescriptor;
 import com.corona.data.annotation.Entity;
 
 /**
@@ -14,13 +14,14 @@ import com.corona.data.annotation.Entity;
  *
  * @author $Author$
  * @version $Id$
+ * @param <E> the type of entity
  */
-public class SQLIndexDefinition implements IndexDefinition {
+public class SQLIndexDescriptor<E> implements IndexDescriptor<E> {
 
 	/**
 	 * the index name
 	 */
-	private String name;
+	private int id;
 	
 	/**
 	 * the SELECT SQL according this index
@@ -36,35 +37,36 @@ public class SQLIndexDefinition implements IndexDefinition {
 	 * @param entity the entity annotation
 	 * @param index the index annotation in entity class
 	 */
-	public SQLIndexDefinition(final Entity entity, final com.corona.data.annotation.Index index) {
+	public SQLIndexDescriptor(final Entity entity, final com.corona.data.annotation.Index index) {
 		
-		if (index.fields().length == 0) {
-			throw new DataRuntimeException("Columns or fileds must be defined for index");
+		// check whether columns of index is empty or not
+		if (index.columns().length == 0) {
+			throw new DataRuntimeException("Columns of index is empty");
 		}
 		
 		String where = "", orderby = "";
-		for (String field : index.fields()) {
+		for (String field : index.columns()) {
 			where += ((where.length() == 0) ? field : (" AND " + field)) + " = ?";
 			orderby += ((where.length() == 0) ? field : (", " + field));
 		}
 		
-		this.name = index.name();
-		this.selectSql = "SELECT * FROM " + entity.value() + " WHERE " + where + " " + orderby;
-		this.deleteSql = "DELETE * FROM " + entity.value() + " WHERE " + where;
+		this.id = index.name();
+		this.selectSql = "SELECT * FROM " + entity.name() + " WHERE " + where + " " + orderby;
+		this.deleteSql = "DELETE * FROM " + entity.name() + " WHERE " + where;
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.IndexDefinition#getName()
+	 * @see com.corona.data.IndexDescriptor#getId()
 	 */
 	@Override
-	public String getName() {
-		return name;
+	public int getId() {
+		return this.id;
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.IndexDefinition#getSearchQuery(com.corona.data.ConnectionManager)
+	 * @see com.corona.data.IndexDescriptor#getSearchQuery(com.corona.data.ConnectionManager)
 	 */
 	@Override
 	public Command getSearchQuery(final ConnectionManager connectionManager) {
@@ -73,7 +75,7 @@ public class SQLIndexDefinition implements IndexDefinition {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.IndexDefinition#getDeleteCommand(com.corona.data.ConnectionManager)
+	 * @see com.corona.data.IndexDescriptor#getDeleteCommand(com.corona.data.ConnectionManager)
 	 */
 	@Override
 	public Command getDeleteCommand(final ConnectionManager connectionManager) {

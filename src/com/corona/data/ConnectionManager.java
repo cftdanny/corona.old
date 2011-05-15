@@ -38,6 +38,15 @@ public interface ConnectionManager {
 	void close();
 	
 	/**
+	 * 
+	 * @param <E>
+	 * @param clazz
+	 * @param query the query statement for specified data source
+	 * @return
+	 */
+	<E> Query<E> createQuery(Class<E> clazz, String query);
+	
+	/**
 	 * <p>Create command by command string. For example, if data source is SQL, it will be DELETE, UPDATE, INSERT
 	 * statement.
 	 * </p>

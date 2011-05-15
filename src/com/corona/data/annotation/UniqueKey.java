@@ -12,9 +12,9 @@ package com.corona.data.annotation;
 public @interface UniqueKey {
 
 	/**
-	 * the name of unique key  
+	 * the id of unique key  
 	 */
-	String name();
+	int id();
 	
 	/**
 	 * all columns for unique key 

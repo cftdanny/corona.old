@@ -23,4 +23,10 @@ public interface Dialect {
 	 * @return the new generated keys
 	 */
 	Object[] getGeneratedKeys(Command command);
+	
+	/**
+	 * @param result the query result that returns by query for specified data source
+	 * @return the column value extractor
+	 */
+	Extractor createExtractor(Object result);
 }

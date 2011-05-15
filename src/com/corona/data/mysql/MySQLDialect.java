@@ -11,8 +11,8 @@ import java.util.List;
 
 import com.corona.data.Command;
 import com.corona.data.sql.SQLCommand;
+import com.corona.data.sql.SQLDialect;
 import com.corona.data.DataRuntimeException;
-import com.corona.data.Dialect;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 
@@ -22,7 +22,7 @@ import com.corona.logging.LogFactory;
  * @author $Author$
  * @version $Id$
  */
-class MySQLDialect implements Dialect {
+class MySQLDialect extends SQLDialect {
 
 	/**
 	 * the logger

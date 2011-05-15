@@ -8,13 +8,14 @@ package com.corona.data;
  *
  * @author $Author$
  * @version $Id$
+ * @param <E> the type of entity
  */
-public interface IndexDefinition {
+public interface IndexDescriptor<E> {
 
 	/**
-	 * @return the index name
+	 * @return the id of index
 	 */
-	String getName();
+	int getId();
 	
 	/**
 	 * @param connectionManager the connection manager

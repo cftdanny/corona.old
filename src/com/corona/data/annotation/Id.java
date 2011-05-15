@@ -10,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p> </p>
+ * <p>This </p>
  *
  * @author $Author$
  * @version $Id$
@@ -20,8 +20,4 @@ import java.lang.annotation.Target;
 @Target({ ElementType.FIELD, ElementType.METHOD })
 public @interface Id {
 
-	/**
-	 * the column name 
-	 */
-	String name();
 }
