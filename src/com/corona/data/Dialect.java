@@ -28,5 +28,5 @@ public interface Dialect {
 	 * @param result the query result that returns by query for specified data source
 	 * @return the column value extractor
 	 */
-	Extractor createExtractor(Object result);
+	ResultHolder getResultHolder(Object result);
 }

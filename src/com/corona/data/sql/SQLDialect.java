@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 
 import com.corona.data.DataRuntimeException;
 import com.corona.data.Dialect;
-import com.corona.data.Extractor;
+import com.corona.data.ResultHolder;
 
 /**
  * <p> </p>
@@ -19,14 +19,14 @@ public abstract class SQLDialect implements Dialect {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.Dialect#createExtractor(java.lang.Object)
+	 * @see com.corona.data.Dialect#getResultHolder(java.lang.Object)
 	 */
 	@Override
-	public Extractor createExtractor(final Object result) {
+	public ResultHolder getResultHolder(final Object result) {
 		
 		if (!(result instanceof ResultSet)) {
 			throw new DataRuntimeException("SQL extractor can only extract value from ResultSet");
 		}
-		return new SQLExtractor((ResultSet) result);
+		return new SQLResultHolder((ResultSet) result);
 	}
 }

@@ -40,11 +40,15 @@ public interface ConnectionManager {
 	/**
 	 * 
 	 * @param <E>
-	 * @param clazz
+	 * @param entityClass
 	 * @param query the query statement for specified data source
 	 * @return
 	 */
-	<E> Query<E> createQuery(Class<E> clazz, String query);
+	<E> Query<E> createQuery(Class<E> entityClass, String query);
+	
+	<E> Query<E> createNamedQuery(Class<E> entityClass);
+	
+	<E> Query<E> createNamedQuery(Class<E> entityClass, String name);
 	
 	/**
 	 * <p>Create command by command string. For example, if data source is SQL, it will be DELETE, UPDATE, INSERT
@@ -64,7 +68,7 @@ public interface ConnectionManager {
 	 * @param commandClass the class that is annotated with command annotation
 	 * @return the created command
 	 */
-	Command createCommand(Class<?> commandClass);
+	Command createNamedCommand(Class<?> commandClass);
 	
 	/**
 	 * <p>Create command by a command annotation in class. For example, if data source is SQL, it will be DELETE, 
@@ -75,5 +79,5 @@ public interface ConnectionManager {
 	 * @param name the command name
 	 * @return the created command
 	 */
-	Command createCommand(Class<?> commandClass, String name);
+	Command createNamedCommand(Class<?> commandClass, String name);
 }
