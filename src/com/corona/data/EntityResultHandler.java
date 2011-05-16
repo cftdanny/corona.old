@@ -1,0 +1,138 @@
+/**
+ * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
+ */
+package com.corona.data;
+
+import java.beans.BeanInfo;
+import java.beans.IndexedPropertyDescriptor;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.corona.data.annotation.Transient;
+
+/**
+ * <p>This handler is used to transfer query result into map to entity instance. </p>
+ *
+ * @author $Author$
+ * @version $Id$
+ * @param <E> the type of entity class
+ */
+public class EntityResultHandler<E> extends AbstractResultHandler<E> {
+
+	/**
+	 * the column descriptors about an entity class
+	 */
+	private Map<String, ColumnDescriptor<E>> columns = new HashMap<String, ColumnDescriptor<E>>();
+	
+	/**
+	 * the entity class
+	 */
+	private Class<E> entityClass;
+	
+	/**
+	 * @param descriptor the entity descriptor
+	 */
+	public EntityResultHandler(final EntityDescriptor<E> descriptor) {
+		
+	}
+	
+	/**
+	 * @param entityClass the entity class that map query result to 
+	 */
+	public EntityResultHandler(final Class<E> entityClass) {
+		
+		// get bean info by entity class
+		BeanInfo beaninfo = null;
+		try {
+			beaninfo = Introspector.getBeanInfo(entityClass);
+		} catch (IntrospectionException e) {
+			throw new DataRuntimeException("Fail to get bean inforamtion with entity class [{0}]", e, entityClass);
+		}
+		
+		// find all properties (getter and setter) if it is mapped to property
+		for (PropertyDescriptor property : beaninfo.getPropertyDescriptors()) {
+			
+			if (!(property instanceof IndexedPropertyDescriptor)) {
+				MethodColumnDescriptor<E> column = new MethodColumnDescriptor<E>(property);
+				this.columns.put(column.getName(), column);
+			}
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.ResultHandler#get(com.corona.data.ResultHolder)
+	 */
+	@Override
+	public E get(final ResultHolder result) {
+		return this.get(result, this.getDescriptors(result));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.AbstractResultHandler#toList(com.corona.data.ResultHolder)
+	 */
+	@Override
+	public List<E> toList(final ResultHolder result) {
+		
+		// find all column descriptors that both exists in query result and entity class
+		List<ColumnDescriptor<E>> descriptors = this.getDescriptors(result);
+
+		// convert all rows in query result into list of entity instance
+		List<E> outcome = new ArrayList<E>();
+		while (result.next()) {
+			outcome.add(this.get(result, descriptors));
+		}
+		
+		return outcome;
+	}
+
+	/**
+	 * @param result the query result
+	 * @return all column descriptors that both exists in query result and entity class
+	 */
+	private List<ColumnDescriptor<E>> getDescriptors(final ResultHolder result) {
+		
+		List<ColumnDescriptor<E>> descriptors = new ArrayList<ColumnDescriptor<E>>();
+		for (String columnLabel : result.getColumnLabels()) {
+			
+			ColumnDescriptor<E> descriptor = this.columns.get(columnLabel);
+			if (descriptor != null) {
+				descriptors.add(descriptor);
+			}
+		}
+		return descriptors;
+	}
+	
+	/**
+	 * @param result the query result
+	 * @param descriptors the field or column descriptor
+	 * @return the new entity instance that is mapped from current row in query result
+	 */
+	private E get(final ResultHolder result, final List<ColumnDescriptor<E>> descriptors) {
+		
+		// create entity instance with default constructor
+		E entity = null;
+		try {
+			entity = this.entityClass.newInstance();
+		} catch (Throwable e) {
+			throw new DataRuntimeException(
+					"Fail to create instance for entity class [{0}], default constructor is needed", 
+					e, this.entityClass.toString()
+			);
+		}
+		
+		// transfer column value from query result to new created entity instance
+		for (ColumnDescriptor<E> descriptor : descriptors) {
+			descriptor.set(entity, result.get(descriptor.getName()));
+		}
+		
+		return entity;
+	}
+}

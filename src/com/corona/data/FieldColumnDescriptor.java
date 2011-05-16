@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
 import com.corona.data.annotation.Column;
 
 /**
- * <p>This descriptor is used to map column of data source to a field in entity class </p>
+ * <p>This descriptor is used to map column of query result to a field in entity class </p>
  *
  * @author $Author$
  * @version $Id$

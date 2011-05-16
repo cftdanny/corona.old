@@ -45,7 +45,9 @@ public interface ConnectionManager {
 	 * @return
 	 */
 	<E> Query<E> createQuery(Class<E> entityClass, String query);
-	
+
+	<E> Query<E> createQuery(Class<E> entityClass, String query, ResultHandler<E> handler);
+
 	<E> Query<E> createNamedQuery(Class<E> entityClass);
 	
 	<E> Query<E> createNamedQuery(Class<E> entityClass, String name);

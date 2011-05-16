@@ -20,11 +20,6 @@ public interface Query<E> {
 	Object getSource();
 	
 	/**
-	 * <p>Close this query. For example, in SQL, it can be used to close prepared statement. </p>
-	 */
-	void close();
-	
-	/**
 	 * <p>Set the max rows return after executes this query. If returned rows exceed this value,
 	 * the exceeded rows will be discarded. </p> 
 	 * 
@@ -32,6 +27,11 @@ public interface Query<E> {
 	 * @return this query
 	 */
 	Query<E> setMaxResult(int maxResult); 
+	
+	/**
+	 * <p>Close this query. For example, in SQL, it can be used to close prepared statement. </p>
+	 */
+	void close();
 
 	/**
 	 * <p>Execute SQL and just return one row, and map this row to a java bean. If there are more 

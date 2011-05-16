@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p> </p>
+ * <p>This handler is used to transfer query result to list by <b>get</b> method. </p>
  *
  * @author $Author$
  * @version $Id$
