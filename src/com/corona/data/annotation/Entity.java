@@ -55,7 +55,7 @@ public @interface Entity {
 	/**
 	 * how to map field or property to column default 
 	 */
-	MappingBy mappingBy() default MappingBy.FIELD;
+	MappingBy mappingBy() default MappingBy.PROPERTY;
 	
 	/**
 	 * the primary key 

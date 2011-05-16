@@ -13,6 +13,11 @@ package com.corona.data;
 public interface EntityDescriptor<E> {
 
 	/**
+	 * @return the entity class
+	 */
+	Class<E> getEntityClass();
+	
+	/**
 	 * @return the primary key definition
 	 */
 	PrimaryKeyDescriptor<E> getPrimarykey(); 

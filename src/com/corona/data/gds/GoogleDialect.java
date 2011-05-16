@@ -35,7 +35,7 @@ class GoogleDialect implements Dialect {
 	 */
 	@Override
 	public Timestamp getCurrentTime() {
-		return new Timestamp(new Date().getTime());
+		return null;
 	}
 
 	/**

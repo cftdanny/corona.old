@@ -3,18 +3,10 @@
  */
 package com.corona.data;
 
-import java.beans.BeanInfo;
-import java.beans.IndexedPropertyDescriptor;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.corona.data.annotation.Transient;
 
 /**
  * <p>This handler is used to transfer query result into map to entity instance. </p>
@@ -46,23 +38,6 @@ public class EntityResultHandler<E> extends AbstractResultHandler<E> {
 	 * @param entityClass the entity class that map query result to 
 	 */
 	public EntityResultHandler(final Class<E> entityClass) {
-		
-		// get bean info by entity class
-		BeanInfo beaninfo = null;
-		try {
-			beaninfo = Introspector.getBeanInfo(entityClass);
-		} catch (IntrospectionException e) {
-			throw new DataRuntimeException("Fail to get bean inforamtion with entity class [{0}]", e, entityClass);
-		}
-		
-		// find all properties (getter and setter) if it is mapped to property
-		for (PropertyDescriptor property : beaninfo.getPropertyDescriptors()) {
-			
-			if (!(property instanceof IndexedPropertyDescriptor)) {
-				MethodColumnDescriptor<E> column = new MethodColumnDescriptor<E>(property);
-				this.columns.put(column.getName(), column);
-			}
-		}
 	}
 	
 	/**
