@@ -4,7 +4,7 @@
 package com.corona.data.annotation;
 
 /**
- * <p> </p>
+ * <p>the query or command script. If data source is database, it can be SQL statement. </p>
  *
  * @author $Author$
  * @version $Id$
@@ -19,5 +19,5 @@ public @interface Statement {
 	/**
 	 * the query or command statement. For example, database is SQL 
 	 */
-	String value();
+	String statement();
 }

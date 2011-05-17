@@ -14,6 +14,11 @@ package com.corona.data;
 public interface ConnectionManagerFactory {
 
 	/**
+	 * @return the parent data source provider
+	 */
+	DataSourceProvider getDataSourceProvider();
+	
+	/**
 	 * @return the new {@link ConnectionManager}
 	 * @throws DataException if fail to create connection manager
 	 */

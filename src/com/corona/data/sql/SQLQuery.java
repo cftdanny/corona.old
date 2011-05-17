@@ -11,7 +11,7 @@ import com.corona.data.DataException;
 import com.corona.data.DataRuntimeException;
 import com.corona.data.Query;
 import com.corona.data.ResultHandler;
-import com.corona.data.QueryResultHandler;
+import com.corona.data.BeanResultHandler;
 
 /**
  * <p>This query is used to execute SQL query for database and transfer the query result to list of entities. </p>
@@ -41,7 +41,7 @@ public class SQLQuery<E> implements Query<E> {
 	public SQLQuery(
 			final SQLConnectionManager connectionManager, final Class<E> resultClass, final String sql
 	) throws DataException {
-		this(connectionManager, new QueryResultHandler<E>(resultClass), sql);
+		this(connectionManager, new BeanResultHandler<E>(resultClass), sql);
 	}
 
 	/**

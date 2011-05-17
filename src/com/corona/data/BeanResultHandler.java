@@ -15,7 +15,7 @@ import java.util.Map;
  * @version $Id$
  * @param <E> the type of entity class
  */
-public class QueryResultHandler<E> extends AbstractResultHandler<E> {
+public class BeanResultHandler<E> extends AbstractResultHandler<E> {
 
 	/**
 	 * the column descriptors about an entity class
@@ -30,7 +30,7 @@ public class QueryResultHandler<E> extends AbstractResultHandler<E> {
 	/**
 	 * @param resultMetaData the meta data for mapping row of query result to bean
 	 */
-	public QueryResultHandler(final ResultMetaData<E> resultMetaData) {
+	public BeanResultHandler(final ResultMetaData<E> resultMetaData) {
 		
 		this.entityClass = resultMetaData.getMappingClass();
 		for (ColumnDescriptor<E> columnDescriptor : resultMetaData.getColumnDescriptors()) {
@@ -41,8 +41,8 @@ public class QueryResultHandler<E> extends AbstractResultHandler<E> {
 	/**
 	 * @param entityClass the entity class that map query result to 
 	 */
-	public QueryResultHandler(final Class<E> entityClass) {
-		this(new QueryResultMetaData<E>(entityClass));
+	public BeanResultHandler(final Class<E> entityClass) {
+		this(new BeanResultMetaData<E>(entityClass));
 	}
 	
 	/**

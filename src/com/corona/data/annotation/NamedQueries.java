@@ -14,5 +14,5 @@ public @interface NamedQueries {
 	/**
 	 * all named queries 
 	 */
-	NamedQuery[] values();
+	NamedQuery[] value();
 }

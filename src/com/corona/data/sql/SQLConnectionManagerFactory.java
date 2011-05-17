@@ -26,6 +26,11 @@ import com.corona.data.DataSourceProvider;
 public abstract class SQLConnectionManagerFactory implements ConnectionManagerFactory {
 
 	/**
+	 * the parent data source provider
+	 */
+	private DataSourceProvider dataSourceProvider;
+	
+	/**
 	 * the data source configuration
 	 */
 	private Properties properties;
@@ -51,11 +56,13 @@ public abstract class SQLConnectionManagerFactory implements ConnectionManagerFa
 	private String password;
 	
 	/**
+	 * @param dataSourceProvider the parent data source provider
 	 * @param properties the data source configuration
 	 */
-	public SQLConnectionManagerFactory(final Properties properties) {
+	public SQLConnectionManagerFactory(final DataSourceProvider dataSourceProvider, final Properties properties) {
 		
 		// save data source configuration
+		this.dataSourceProvider = dataSourceProvider;
 		this.properties = properties;
 
 		// find defined variable from properties
@@ -66,6 +73,15 @@ public abstract class SQLConnectionManagerFactory implements ConnectionManagerFa
 		this.password = this.properties.getProperty(DataSourceProvider.PASSWORD);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.ConnectionManagerFactory#getDataSourceProvider()
+	 */
+	@Override
+	public DataSourceProvider getDataSourceProvider() {
+		return this.dataSourceProvider;
+	}
+
 	/**
 	 * @return the opened JDBC connection
 	 * @throws DataException if fail to open JDBC connection

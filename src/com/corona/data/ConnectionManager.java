@@ -37,12 +37,52 @@ public interface ConnectionManager {
 	 */
 	void close();
 	
+	/**
+	 * <p>Create query by script and map query result to bean instance of result class. For example, if data source is
+	 * SQL, query script will be SQL SELECT statement. </p>
+	 * </>
+	 * 
+	 * @param <E> the type of result class
+	 * @param resultClass the result class
+	 * @param query the query script
+	 * @return the new created query
+	 */
 	<E> Query<E> createQuery(Class<E> resultClass, String query);
 
-	<E> Query<E> createQuery(Class<E> resultClass, String query, ResultHandler<E> handler);
+	/**
+	 * <p>Create query by script and map query result to bean instance of result class. For example, if data source is
+	 * SQL, query script will be SQL SELECT statement. </p>
+	 * </>
+	 * 
+	 * @param <E> the type of result class
+	 * @param resultHandler the result handler
+	 * @param query the query script
+	 * 
+	 * @return the new query
+	 */
+	<E> Query<E> createQuery(ResultHandler<E> resultHandler, String query);
 
+	/**
+	 * <p>Create query by a NamedQuery annotation is result class. It also support multiple data source family 
+	 * query script by NamedQuery annotation.
+	 * </p>
+	 * 
+	 * @param <E> the type of result class
+	 * @param resultClass the result class
+	 * @return the new query
+	 */
 	<E> Query<E> createNamedQuery(Class<E> resultClass);
 	
+	/**
+	 * <p>Create query by a NamedQuery annotation is result class. It also support multiple data source family 
+	 * query script by NamedQuery annotation.
+	 * </p>
+	 * 
+	 * @param <E> the type of result class
+	 * @param resultClass the result class
+	 * @param name the named query name
+	 * @return the new query
+	 */
 	<E> Query<E> createNamedQuery(Class<E> resultClass, String name);
 	
 	/**
