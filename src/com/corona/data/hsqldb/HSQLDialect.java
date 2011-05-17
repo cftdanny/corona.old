@@ -4,9 +4,10 @@
 package com.corona.data.hsqldb;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.corona.data.Command;
@@ -17,7 +18,7 @@ import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 
 /**
- * <p>The dialect for MySQL Server. </p>
+ * <p>The dialect for HSQLDB. </p>
  *
  * @author $Author$
  * @version $Id$
@@ -47,7 +48,41 @@ class HSQLDialect extends SQLDialect {
 	 */
 	@Override
 	public Timestamp getCurrentTime() {
-		return new Timestamp(new Date().getTime());
+
+		Statement statement = null;
+		ResultSet resultSet = null;
+
+		// try to get current time from HSQLDB database server
+		try {
+			statement = this.connectionManager.getSource().createStatement();
+			resultSet = statement.executeQuery("VALUES (CURRENT_TIMESTAMP)"); 
+			resultSet.first();
+			
+			return resultSet.getTimestamp(1);
+		} catch (SQLException e) {
+			
+			this.logger.error("Fail to get current time from MySQL", e);
+			throw new DataRuntimeException("Fail to get current time from MySQL", e);
+		} finally {
+			
+			if (statement != null) {
+				try {
+					statement.close();
+				} catch (Exception e) {
+					this.logger.error("Fail to close MySQL statement", e);
+					throw new DataRuntimeException("Fail to close MySQL statement", e);
+				}
+			}
+			
+			if (resultSet != null) {
+				try {
+					resultSet.close();
+				} catch (SQLException e) {
+					this.logger.error("Fail to close MySQL queried result set", e);
+					throw new DataRuntimeException("Fail to close MySQL queried result set", e);
+				}
+			}
+		}
 	}
 
 	/**

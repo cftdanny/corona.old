@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import com.corona.data.ConnectionManager;
 import com.corona.data.DataException;
+import com.corona.data.DataSourceProvider;
 import com.corona.data.sql.SQLConnectionManagerFactory;
 
 /**
@@ -18,10 +19,11 @@ import com.corona.data.sql.SQLConnectionManagerFactory;
 class MySQLConnectionManagerFactory extends SQLConnectionManagerFactory {
 	
 	/**
+	 * @param dataSourceProvider the data source provider that create this connection manager factory
 	 * @param properties the data source configuration
 	 */
-	MySQLConnectionManagerFactory(final Properties properties) {
-		super(properties);
+	MySQLConnectionManagerFactory(final DataSourceProvider dataSourceProvider, final Properties properties) {
+		super(dataSourceProvider, properties);
 	}
 	
 	/**

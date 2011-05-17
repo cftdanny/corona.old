@@ -20,15 +20,20 @@ public class MySQLDataSourceProvider implements DataSourceProvider {
 	/**
 	 * the data source family
 	 */
-	private static final String NAME = "MySQL";
+	private static final String FAMILY = "MySQL";
 	
+	/**
+	 * the JDBC driver
+	 */
+	private static final String DRIVER = "com.mysql.jdbc.Driver";
+
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.DataSourceProvider#getFamily()
 	 */
 	@Override
 	public String getFamily() {
-		return NAME;
+		return FAMILY;
 	}
 
 	/**
@@ -37,6 +42,12 @@ public class MySQLDataSourceProvider implements DataSourceProvider {
 	 */
 	@Override
 	public ConnectionManagerFactory create(final Properties properties) throws DataException {
-		return new MySQLConnectionManagerFactory(properties);
+		
+		try {
+			Class.forName(DRIVER);
+		} catch (ClassNotFoundException e) {
+			throw new DataException("Fail to load HSQLDB JDBC driver [{0}]", DRIVER);
+		}
+		return new MySQLConnectionManagerFactory(this, properties);
 	}
 }

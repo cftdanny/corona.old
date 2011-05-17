@@ -20,7 +20,12 @@ public class HSQLDataSourceProvider implements DataSourceProvider {
 	/**
 	 * the data source family
 	 */
-	private static final String NAME = "HSQL";
+	private static final String FAMILY = "HSQL";
+	
+	/**
+	 * the JDBC driver
+	 */
+	private static final String DRIVER = "org.hsqldb.jdbcDriver";
 	
 	/**
 	 * {@inheritDoc}
@@ -28,7 +33,7 @@ public class HSQLDataSourceProvider implements DataSourceProvider {
 	 */
 	@Override
 	public String getFamily() {
-		return NAME;
+		return FAMILY;
 	}
 
 	/**
@@ -37,6 +42,12 @@ public class HSQLDataSourceProvider implements DataSourceProvider {
 	 */
 	@Override
 	public ConnectionManagerFactory create(final Properties properties) throws DataException {
-		return new HSQLConnectionManagerFactory(properties);
+		
+		try {
+			Class.forName(DRIVER);
+		} catch (ClassNotFoundException e) {
+			throw new DataException("Fail to load HSQLDB JDBC driver [{0}]", DRIVER);
+		}
+		return new HSQLConnectionManagerFactory(this, properties);
 	}
 }

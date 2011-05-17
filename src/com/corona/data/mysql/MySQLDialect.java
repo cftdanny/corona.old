@@ -5,6 +5,7 @@ package com.corona.data.mysql;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,9 +49,13 @@ class MySQLDialect extends SQLDialect {
 	@Override
 	public Timestamp getCurrentTime() {
 		
+		Statement statement = null;
 		ResultSet resultSet = null;
+		
+		// try to get current time from HSQLDB database server
 		try {
-			resultSet = this.connectionManager.getSource().createStatement().executeQuery("SELECT NOW()"); 
+			statement = this.connectionManager.getSource().createStatement();
+			resultSet = statement.executeQuery("SELECT NOW()"); 
 			resultSet.first();
 			
 			return resultSet.getTimestamp(1);
@@ -60,11 +65,19 @@ class MySQLDialect extends SQLDialect {
 			throw new DataRuntimeException("Fail to get current time from MySQL", e);
 		} finally {
 			
+			if (statement != null) {
+				try {
+					statement.close();
+				} catch (Exception e) {
+					this.logger.error("Fail to close MySQL statement", e);
+					throw new DataRuntimeException("Fail to close MySQL statement", e);
+				}
+			}
+
 			if (resultSet != null) {
 				try {
 					resultSet.close();
 				} catch (SQLException e) {
-					
 					this.logger.error("Fail to close MySQL queried result set", e);
 					throw new DataRuntimeException("Fail to close MySQL queried result set", e);
 				}
