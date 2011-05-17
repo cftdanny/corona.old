@@ -37,20 +37,13 @@ public interface ConnectionManager {
 	 */
 	void close();
 	
-	/**
-	 * 
-	 * @param <E>
-	 * @param entityClass
-	 * @param query the query statement for specified data source
-	 * @return
-	 */
-	<E> Query<E> createQuery(Class<E> entityClass, String query);
+	<E> Query<E> createQuery(Class<E> resultClass, String query);
 
-	<E> Query<E> createQuery(Class<E> entityClass, String query, ResultHandler<E> handler);
+	<E> Query<E> createQuery(Class<E> resultClass, String query, ResultHandler<E> handler);
 
-	<E> Query<E> createNamedQuery(Class<E> entityClass);
+	<E> Query<E> createNamedQuery(Class<E> resultClass);
 	
-	<E> Query<E> createNamedQuery(Class<E> entityClass, String name);
+	<E> Query<E> createNamedQuery(Class<E> resultClass, String name);
 	
 	/**
 	 * <p>Create command by command string. For example, if data source is SQL, it will be DELETE, UPDATE, INSERT

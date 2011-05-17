@@ -11,6 +11,7 @@ import com.corona.data.DataException;
 import com.corona.data.DataRuntimeException;
 import com.corona.data.Query;
 import com.corona.data.ResultHandler;
+import com.corona.data.QueryResultHandler;
 
 /**
  * <p>This query is used to execute SQL query for database and transfer the query result to list of entities. </p>
@@ -34,17 +35,33 @@ public class SQLQuery<E> implements Query<E> {
 	/**
 	 * @param connectionManager the connection manager
 	 * @param sql the SQL query statement
+	 * @param resultClass the class that will map row of query result to
 	 * @throws DataException if fail to create this query
 	 */
-	public SQLQuery(final SQLConnectionManager connectionManager, final String sql) throws DataException {
+	public SQLQuery(
+			final SQLConnectionManager connectionManager, final Class<E> resultClass, final String sql
+	) throws DataException {
+		this(connectionManager, new QueryResultHandler<E>(resultClass), sql);
+	}
+
+	/**
+	 * @param connectionManager the connection manager
+	 * @param sql the SQL query statement
+	 * @param resultHandler the handler that is used to map row of query result to bean instance
+	 * @throws DataException if fail to create this query
+	 */
+	public SQLQuery(
+			final SQLConnectionManager connectionManager, final ResultHandler<E> resultHandler, final String sql
+	) throws DataException {
 		
 		try {
 			this.statement = new NamedParameterStatement(connectionManager.getSource(), sql);
 		} catch (SQLException e) {
 			throw new DataException("Fail to prepare SQL query statement [{0}]", e, sql);
 		}
+		this.resultHandler = resultHandler;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * @see java.lang.Object#toString()
@@ -52,13 +69,6 @@ public class SQLQuery<E> implements Query<E> {
 	@Override
 	public String toString() {
 		return this.statement.toString();
-	}
-	
-	/**
-	 * @param resultHandler the query result handler to set
-	 */
-	public void setResultHandler(final ResultHandler<E> resultHandler) {
-		this.resultHandler = resultHandler;
 	}
 
 	/**

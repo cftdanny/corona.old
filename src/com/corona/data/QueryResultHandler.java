@@ -1,19 +1,12 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.data.sql;
+package com.corona.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.corona.data.AbstractResultHandler;
-import com.corona.data.ColumnDescriptor;
-import com.corona.data.DataRuntimeException;
-import com.corona.data.QueryResultMetaData;
-import com.corona.data.ResultHolder;
-import com.corona.data.ResultMetaData;
 
 /**
  * <p>This handler is used to transfer query result into map to entity instance. </p>
@@ -22,7 +15,7 @@ import com.corona.data.ResultMetaData;
  * @version $Id$
  * @param <E> the type of entity class
  */
-public class SQLResultHandler<E> extends AbstractResultHandler<E> {
+public class QueryResultHandler<E> extends AbstractResultHandler<E> {
 
 	/**
 	 * the column descriptors about an entity class
@@ -37,7 +30,7 @@ public class SQLResultHandler<E> extends AbstractResultHandler<E> {
 	/**
 	 * @param resultMetaData the meta data for mapping row of query result to bean
 	 */
-	public SQLResultHandler(final ResultMetaData<E> resultMetaData) {
+	public QueryResultHandler(final ResultMetaData<E> resultMetaData) {
 		
 		this.entityClass = resultMetaData.getMappingClass();
 		for (ColumnDescriptor<E> columnDescriptor : resultMetaData.getColumnDescriptors()) {
@@ -48,7 +41,7 @@ public class SQLResultHandler<E> extends AbstractResultHandler<E> {
 	/**
 	 * @param entityClass the entity class that map query result to 
 	 */
-	public SQLResultHandler(final Class<E> entityClass) {
+	public QueryResultHandler(final Class<E> entityClass) {
 		this(new QueryResultMetaData<E>(entityClass));
 	}
 	

@@ -12,6 +12,7 @@ import com.corona.data.ConnectionManagerFactory;
 import com.corona.data.DataException;
 import com.corona.data.DataRuntimeException;
 import com.corona.data.Query;
+import com.corona.data.ResultHandler;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 
@@ -93,6 +94,26 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 			this.logger.error("Fail to close opened JDBC connection", e);
 			throw new DataRuntimeException("Fail to close opened JDBC connection", e);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.ConnectionManager#createQuery(java.lang.Class, java.lang.String)
+	 */
+	@Override
+	public <E> Query<E> createQuery(final Class<E> resultClass, final String query) {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.ConnectionManager#createQuery(
+	 * 	java.lang.Class, java.lang.String, com.corona.data.ResultHandler
+	 * )
+	 */
+	@Override
+	public <E> Query<E> createQuery(final Class<E> resultClass, final String query, final ResultHandler<E> handler) {
+		return null;
 	}
 
 	/**
