@@ -16,7 +16,12 @@ public interface ResultMetaData<E> {
 	/**
 	 * @return the class that query result will map to
 	 */
-	Class<E> getResultClass();
+	Class<E> getMappingClass();
+	
+	/**
+	 * @return the column descriptor if it is annotated with Id annotation
+	 */
+	ColumnDescriptor<E> getIdColumnDescriptor();
 	
 	/**
 	 * @return the map to column descriptors that are defined in result class

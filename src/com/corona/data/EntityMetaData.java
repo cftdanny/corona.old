@@ -10,18 +10,8 @@ package com.corona.data;
  * @version $Id$
  * @param <E> the type of entity class
  */
-public interface EntityDescriptor<E> {
+public interface EntityMetaData<E> extends ResultMetaData<E> {
 
-	/**
-	 * @return the entity class
-	 */
-	Class<E> getEntityClass();
-	
-	/**
-	 * @return all columns descriptors for entity
-	 */
-	ColumnDescriptor<E>[] getColumnDescriptors(); 
-	
 	/**
 	 * @return the primary key definition
 	 */

@@ -6,7 +6,7 @@ package com.corona.data.sql;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.corona.data.AbstractEntityDescriptor;
+import com.corona.data.AbstractEntityMetaData;
 import com.corona.data.IndexDescriptor;
 import com.corona.data.PrimaryKeyDescriptor;
 import com.corona.data.UniqueKeyDescriptor;
@@ -18,7 +18,7 @@ import com.corona.data.UniqueKeyDescriptor;
  * @version $Id$
  * @param <E> the type of entity class
  */
-class SQLEntityDescriptor<E> extends AbstractEntityDescriptor<E> {
+class SQLEntityMetaData<E> extends AbstractEntityMetaData<E> {
 
 	/**
 	 * the primary key
@@ -38,13 +38,13 @@ class SQLEntityDescriptor<E> extends AbstractEntityDescriptor<E> {
 	/**
 	 * @param entityClass the entity class
 	 */
-	SQLEntityDescriptor(final Class<E> entityClass) {
+	SQLEntityMetaData(final Class<E> entityClass) {
 		super(entityClass);
 	}
 	
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.EntityDescriptor#getPrimarykey()
+	 * @see com.corona.data.EntityMetaData#getPrimarykey()
 	 */
 	@Override
 	public PrimaryKeyDescriptor<E> getPrimarykey() {
@@ -53,7 +53,7 @@ class SQLEntityDescriptor<E> extends AbstractEntityDescriptor<E> {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.EntityDescriptor#getUniqueKey(int)
+	 * @see com.corona.data.EntityMetaData#getUniqueKey(int)
 	 */
 	@Override
 	public UniqueKeyDescriptor<E> getUniqueKey(final int id) {
@@ -62,7 +62,7 @@ class SQLEntityDescriptor<E> extends AbstractEntityDescriptor<E> {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.EntityDescriptor#getIndex(int)
+	 * @see com.corona.data.EntityMetaData#getIndex(int)
 	 */
 	@Override
 	public IndexDescriptor<E> getIndex(final int id) {
