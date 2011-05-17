@@ -18,6 +18,11 @@ public interface EntityDescriptor<E> {
 	Class<E> getEntityClass();
 	
 	/**
+	 * @return all columns descriptors for entity
+	 */
+	ColumnDescriptor<E>[] getColumnDescriptors(); 
+	
+	/**
 	 * @return the primary key definition
 	 */
 	PrimaryKeyDescriptor<E> getPrimarykey(); 

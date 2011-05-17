@@ -184,10 +184,12 @@ public abstract class AbstractEntityDescriptor<E> implements EntityDescriptor<E>
 	}
 	
 	/**
-	 * @return all column descriptors
+	 * {@inheritDoc}
+	 * @see com.corona.data.EntityDescriptor#getColumnDescriptors()
 	 */
-	protected Map<String, ColumnDescriptor<E>> getColumnDescriptors() {
-		return this.columnDescriptors;
+	@SuppressWarnings("unchecked")
+	public ColumnDescriptor<E>[] getColumnDescriptors() {
+		return (ColumnDescriptor<E>[]) this.columnDescriptors.values().toArray();
 	}
 
 	/**

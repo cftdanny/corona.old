@@ -20,7 +20,7 @@ public class EntityResultHandler<E> extends AbstractResultHandler<E> {
 	/**
 	 * the column descriptors about an entity class
 	 */
-	private Map<String, ColumnDescriptor<E>> columns = new HashMap<String, ColumnDescriptor<E>>();
+	private Map<String, ColumnDescriptor<E>> columnDescriptors = new HashMap<String, ColumnDescriptor<E>>();
 	
 	/**
 	 * the entity class
@@ -28,16 +28,21 @@ public class EntityResultHandler<E> extends AbstractResultHandler<E> {
 	private Class<E> entityClass;
 	
 	/**
-	 * @param descriptor the entity descriptor
+	 * @param entityDescriptor the entity descriptor
 	 */
-	public EntityResultHandler(final EntityDescriptor<E> descriptor) {
+	public EntityResultHandler(final EntityDescriptor<E> entityDescriptor) {
 		
+		this.entityClass = entityDescriptor.getEntityClass();
+		for (ColumnDescriptor<E> columnDescriptor : entityDescriptor.getColumnDescriptors()) {
+			this.columnDescriptors.put(columnDescriptor.getName(), columnDescriptor);
+		}
 	}
 	
 	/**
 	 * @param entityClass the entity class that map query result to 
 	 */
 	public EntityResultHandler(final Class<E> entityClass) {
+		this(new SimpleEntityDescriptor<E>(entityClass));
 	}
 	
 	/**
@@ -77,7 +82,7 @@ public class EntityResultHandler<E> extends AbstractResultHandler<E> {
 		List<ColumnDescriptor<E>> descriptors = new ArrayList<ColumnDescriptor<E>>();
 		for (String columnLabel : result.getColumnLabels()) {
 			
-			ColumnDescriptor<E> descriptor = this.columns.get(columnLabel);
+			ColumnDescriptor<E> descriptor = this.columnDescriptors.get(columnLabel);
 			if (descriptor != null) {
 				descriptors.add(descriptor);
 			}
