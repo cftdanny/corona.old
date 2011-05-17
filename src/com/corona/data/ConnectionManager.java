@@ -38,6 +38,11 @@ public interface ConnectionManager {
 	void close();
 	
 	/**
+	 * @return get a new transaction from data source
+	 */
+	Transaction getTransaction();
+	
+	/**
 	 * <p>Create query by script and map query result to bean instance of result class. For example, if data source is
 	 * SQL, query script will be SQL SELECT statement. </p>
 	 * </>

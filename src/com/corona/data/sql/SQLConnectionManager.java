@@ -14,6 +14,7 @@ import com.corona.data.DataRuntimeException;
 import com.corona.data.Query;
 import com.corona.data.BeanResultHandler;
 import com.corona.data.ResultHandler;
+import com.corona.data.Transaction;
 import com.corona.data.annotation.NamedCommand;
 import com.corona.data.annotation.NamedCommands;
 import com.corona.data.annotation.NamedQueries;
@@ -101,6 +102,15 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 			this.logger.error("Fail to close opened JDBC connection", e);
 			throw new DataRuntimeException("Fail to close opened JDBC connection", e);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.ConnectionManager#getTransaction()
+	 */
+	@Override
+	public Transaction getTransaction() {
+		return new SQLLocalTransaction(this);
 	}
 
 	/**

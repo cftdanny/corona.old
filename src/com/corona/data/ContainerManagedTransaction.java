@@ -1,21 +1,17 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.data.sql;
+package com.corona.data;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import com.corona.data.DataRuntimeException;
-import com.corona.data.Transaction;
+import javax.transaction.UserTransaction;
 
 /**
- * <p>This transaction is used to control resource for a SQL connection manager </p>
+ * <p>This transaction is used to control data source by  </p>
  *
  * @author $Author$
  * @version $Id$
  */
-class SQLLocalTransaction implements Transaction {
+class ContainerManagedTransaction implements Transaction {
 
 	/**
 	 * whether transaction is active
@@ -26,19 +22,19 @@ class SQLLocalTransaction implements Transaction {
 	 * whether only allow roll back
 	 */
 	private boolean rollback = false;
-	
-	/**
-	 * the JDBC connection
-	 */
-	private Connection connection;
-	
-	/**
-	 * @param connectionManager the SQL connection manager
-	 */
-	SQLLocalTransaction(final SQLConnectionManager connectionManager) {
-		this.connection = connectionManager.getSource();
-	}
 
+	/**
+	 * current user transaction
+	 */
+	private UserTransaction transaction;
+	
+	/**
+	 * @param transaction current user transaction
+	 */
+	ContainerManagedTransaction(final UserTransaction transaction) {
+		this.transaction = transaction;
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.Transaction#begin()
@@ -52,9 +48,9 @@ class SQLLocalTransaction implements Transaction {
 		
 		this.rollback = false;
 		try {
-			this.connection.setAutoCommit(false);
-		} catch (SQLException e) {
-			throw new DataRuntimeException("Fail to start database transaction");
+			this.transaction.begin();
+		} catch (Exception e) {
+			throw new DataRuntimeException("Fail to start user transaction");
 		}
 		this.active = true;
 	}
@@ -65,7 +61,7 @@ class SQLLocalTransaction implements Transaction {
 	 */
 	@Override
 	public void commit() {
-
+		
 		if (!this.active) {
 			throw new DataRuntimeException("Transaction does not start yet, can not commit");
 		}
@@ -74,9 +70,9 @@ class SQLLocalTransaction implements Transaction {
 		}
 
 		try {
-			this.connection.commit();
-		} catch (SQLException e) {
-			throw new DataRuntimeException("Fail to commit changes to database");
+			this.transaction.commit();
+		} catch (Exception e) {
+			throw new DataRuntimeException("Fail to commit change by user transaction");
 		}
 		this.active = false;
 	}
@@ -87,23 +83,15 @@ class SQLLocalTransaction implements Transaction {
 	 */
 	@Override
 	public void rollback() {
-		
+
 		if (!this.active) {
 			throw new DataRuntimeException("Transaction does not start yet, can not roll back");
 		}
 
 		try {
-			this.connection.rollback();
-		} catch (SQLException e) {
-			
-			throw new DataRuntimeException("Fail to roll back changes from database");
-		} finally {
-			
-			try {
-				this.connection.setAutoCommit(true);
-			} catch (SQLException e) {
-				throw new DataRuntimeException("Fail to set auto commit to true to connection");
-			}
+			this.transaction.commit();
+		} catch (Exception e) {
+			throw new DataRuntimeException("Fail to roll back change by user transaction");
 		}
 		this.active = false;
 	}
@@ -123,6 +111,12 @@ class SQLLocalTransaction implements Transaction {
 	 */
 	@Override
 	public void setRollbackOnly() {
+
+		try {
+			this.transaction.setRollbackOnly();
+		} catch (Exception e) {
+			throw new DataRuntimeException("Fail to set roll back only to current transaction");
+		}
 		this.rollback = true;
 	}
 
