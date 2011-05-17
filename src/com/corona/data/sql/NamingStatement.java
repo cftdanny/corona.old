@@ -27,7 +27,7 @@ import java.util.Calendar;
  * @author $Author$
  * @version $Id$
  */
-public class NamedParameterStatement extends PreparedStatementWrapper {
+class NamingStatement extends PreparedStatementWrapper {
 
 	/**
 	 * the named parameterized SQL statement parser
@@ -39,7 +39,7 @@ public class NamedParameterStatement extends PreparedStatementWrapper {
 	 * @param sql the SQL statement
 	 * @exception SQLException if fail to prepare SQL statement
 	 */
-	public NamedParameterStatement(final Connection connection, final String sql) throws SQLException {
+	NamingStatement(final Connection connection, final String sql) throws SQLException {
 		
 		this.parser = new SQLParser(sql);
 		this.setPreparedStatement(connection.prepareStatement(this.parser.getClause()));

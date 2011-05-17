@@ -20,7 +20,7 @@ public class SQLCommand implements Command {
 	/**
 	 * the prepared and named parameter SQL statement
 	 */
-	private NamedParameterStatement statement;
+	private NamingStatement statement;
 	
 	/**
 	 * @param connectionManager the connection manager for SQL database 
@@ -28,7 +28,7 @@ public class SQLCommand implements Command {
 	 * @throws SQLException if fail to prepare SQL statement
 	 */
 	protected SQLCommand(final SQLConnectionManager connectionManager, final String sql) throws SQLException {
-		this.statement = new NamedParameterStatement(connectionManager.getSource(), sql);
+		this.statement = new NamingStatement(connectionManager.getSource(), sql);
 	}
 
 	/**
