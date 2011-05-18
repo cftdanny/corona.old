@@ -34,17 +34,12 @@ public interface Home<K, E> {
 	E get(K key);
 	
 	/**
-	 * <p>Update a changed entity instance into database. Before update, this method will check
-	 * whether id of entity is <code>null</code>. If id is <code>null</code>, it will throw an
-	 * exception. </p>
-	 *  
-	 * @param e the entity instance
-	 * @return whether this record has been updated
-	 */
-	boolean update(E e);
-	
-	/**
-	 * <p>update the changed row to data source. 
+	 * <p>update the changed row to data source. If entity is a new entity (does not commit to data
+	 * source yet, identity column is null), it will throw an exception.
+	 * </p>
+	 * 
+	 * <p>If passes the changed column names, it will only update these columns. By this, it can improve
+	 * updating performance.  
 	 * </p>
 	 * 
 	 * @param e the instance of entity
