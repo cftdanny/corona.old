@@ -69,9 +69,9 @@ public abstract class AbstractResultMetaData<E> implements ResultMetaData<E> {
 			
 			if (this.isMappingColumn(property, mapping)) {
 				MethodColumnDescriptor<E> descriptor = new MethodColumnDescriptor<E>(property);
-				this.columnDescriptors.add(descriptor);
-				
-				if (property.getReadMethod().isAnnotationPresent(Id.class)) {
+				if (!property.getReadMethod().isAnnotationPresent(Id.class)) {
+					this.columnDescriptors.add(descriptor);
+				} else {
 					this.idColumnDescriptor = descriptor;
 				}
 			}
@@ -82,9 +82,9 @@ public abstract class AbstractResultMetaData<E> implements ResultMetaData<E> {
 			
 			if (this.isMappingColumn(field, mapping)) {
 				FieldColumnDescriptor<E> descriptor = new FieldColumnDescriptor<E>(field);
-				this.columnDescriptors.add(descriptor);
-				
-				if (field.isAnnotationPresent(Id.class)) {
+				if (!field.isAnnotationPresent(Id.class)) {
+					this.columnDescriptors.add(descriptor);
+				} else {
 					this.idColumnDescriptor = descriptor;
 				}
 			}
