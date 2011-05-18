@@ -44,18 +44,20 @@ public abstract class AbstractEntityMetaData<E> extends AbstractResultMetaData<E
 			this.name = this.getMappingClass().getSimpleName();
 		}
 	}
-	
+
 	/**
-	 * @return the schema
+	 * {@inheritDoc}
+	 * @see com.corona.data.EntityMetaData#getSchema()
 	 */
-	protected String getSchema() {
+	public String getSchema() {
 		return schema;
 	}
-	
+
 	/**
-	 * @return the name
+	 * {@inheritDoc}
+	 * @see com.corona.data.EntityMetaData#getName()
 	 */
-	protected String getName() {
+	public String getName() {
 		return name;
 	}
 }

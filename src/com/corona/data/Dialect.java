@@ -29,4 +29,19 @@ public interface Dialect {
 	 * @return the column value extractor
 	 */
 	ResultHolder getResultHolder(Object result);
+	
+	/**
+	 * @return the entity query builder
+	 */
+	EntityQueryBuilder getEntityQueryBuilder();
+
+	/**
+	 * @return the entity delete builder
+	 */
+	EntityDeleteBuilder getEntityDeleteBuilder();
+
+	/**
+	 * @return the entity update builder
+	 */
+	EntityUpdateBuilder getEntityUpdateBuilder();
 }

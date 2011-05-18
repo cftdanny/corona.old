@@ -7,6 +7,7 @@ import com.corona.data.ConnectionManager;
 import com.corona.data.ConnectionManagerFactory;
 import com.corona.data.DataException;
 import com.corona.data.DataSourceProvider;
+import com.corona.data.EntityMetaDataManager;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 
 /**
@@ -33,5 +34,14 @@ class GoogleConnectionManagerFactory implements ConnectionManagerFactory {
 	@Override
 	public ConnectionManager open() throws DataException {
 		return new GoogleConnectionManager(this, DatastoreServiceFactory.getDatastoreService());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.ConnectionManagerFactory#getEntityMetaDataManager()
+	 */
+	@Override
+	public EntityMetaDataManager getEntityMetaDataManager() {
+		return null;
 	}
 }

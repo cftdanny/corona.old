@@ -13,6 +13,16 @@ package com.corona.data;
 public interface EntityMetaData<E> extends ResultMetaData<E> {
 
 	/**
+	 * @return the entity schema
+	 */
+	String getSchema();
+	
+	/**
+	 * @return the entity name
+	 */
+	String getName();
+	
+	/**
 	 * @return the primary key definition
 	 */
 	PrimaryKeyDescriptor<E> getPrimarykey(); 

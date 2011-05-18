@@ -17,6 +17,11 @@ public interface ConnectionManagerFactory {
 	 * @return the parent data source provider
 	 */
 	DataSourceProvider getDataSourceProvider();
+
+	/**
+	 * @return the entity meta data manager
+	 */
+	EntityMetaDataManager getEntityMetaDataManager();
 	
 	/**
 	 * @return the new {@link ConnectionManager}

@@ -14,6 +14,7 @@ import javax.sql.DataSource;
 import com.corona.data.ConnectionManagerFactory;
 import com.corona.data.DataException;
 import com.corona.data.DataSourceProvider;
+import com.corona.data.EntityMetaDataManager;
 
 /**
  * <p>This factory is used to create {@link ConnectionManager}. Normally, it is created by {@DataSourceManager}
@@ -29,6 +30,11 @@ public abstract class SQLConnectionManagerFactory implements ConnectionManagerFa
 	 * the parent data source provider
 	 */
 	private DataSourceProvider dataSourceProvider;
+	
+	/**
+	 * the entity configuration manager
+	 */
+	private EntityMetaDataManager entityMetaDataManager = new SQLEntityMetaDataManager();
 	
 	/**
 	 * the data source configuration
@@ -80,6 +86,15 @@ public abstract class SQLConnectionManagerFactory implements ConnectionManagerFa
 	@Override
 	public DataSourceProvider getDataSourceProvider() {
 		return this.dataSourceProvider;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.ConnectionManagerFactory#getEntityMetaDataManager()
+	 */
+	@Override
+	public EntityMetaDataManager getEntityMetaDataManager() {
+		return this.entityMetaDataManager;
 	}
 
 	/**

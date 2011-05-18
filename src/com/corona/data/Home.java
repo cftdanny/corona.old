@@ -17,6 +17,12 @@ import java.util.List;
 public interface Home<K, E> {
 
 	/**
+	 * @param id the unique key id
+	 * @return the unique key or <code>null</code> if does not exist
+	 */
+	UniqueKey<E> getUniqueKey(int id);
+	
+	/**
 	 * <p>Try to test whether an entity instance (table record) exists in database or not by 
 	 * primary key (argument k). </p>
 	 * 

@@ -8,6 +8,9 @@ import java.util.Date;
 
 import com.corona.data.Command;
 import com.corona.data.Dialect;
+import com.corona.data.EntityDeleteBuilder;
+import com.corona.data.EntityQueryBuilder;
+import com.corona.data.EntityUpdateBuilder;
 import com.corona.data.ResultHolder;
 
 /**
@@ -17,6 +20,33 @@ import com.corona.data.ResultHolder;
  * @version $Id$
  */
 class GoogleDialect implements Dialect {
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.Dialect#getEntityQueryBuilder()
+	 */
+	@Override
+	public EntityQueryBuilder getEntityQueryBuilder() {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.Dialect#getEntityDeleteBuilder()
+	 */
+	@Override
+	public EntityDeleteBuilder getEntityDeleteBuilder() {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.Dialect#getEntityUpdateBuilder()
+	 */
+	@Override
+	public EntityUpdateBuilder getEntityUpdateBuilder() {
+		return null;
+	}
 
 	/**
 	 * the Google Datastore connection manager
