@@ -3,9 +3,11 @@
  */
 package com.corona.data.sql;
 
+import com.corona.data.BeanResultHandler;
 import com.corona.data.Command;
 import com.corona.data.ConnectionManager;
 import com.corona.data.DataRuntimeException;
+import com.corona.data.EntityMetaData;
 import com.corona.data.Query;
 import com.corona.data.UniqueKeyDescriptor;
 import com.corona.data.annotation.Entity;
@@ -21,6 +23,11 @@ import com.corona.data.annotation.UniqueKey;
 class SQLUniqueKeyDescriptor<E> implements UniqueKeyDescriptor<E> {
 
 	/**
+	 * the parent entity MetaData
+	 */
+	private EntityMetaData<E> parent;
+
+	/**
 	 * the unique key name
 	 */
 	private int id;
@@ -28,28 +35,30 @@ class SQLUniqueKeyDescriptor<E> implements UniqueKeyDescriptor<E> {
 	/**
 	 * the SELECT SQL script
 	 */
-	private String select;
+	private String query;
 	
 	/**
 	 * the DELETE SQL script
 	 */
-	private String delete;
+	private String command;
 	
 	/**
-	 * @param clazz the entity class that is annotated with {@link Entity} annotation
+	 * @param parent the parent entity MetaData
 	 * @param entity the entity annotation
 	 * @param uniqueKey the unique key annotation
 	 */
-	SQLUniqueKeyDescriptor(final Class<E> clazz, final Entity entity, final UniqueKey uniqueKey) {
+	SQLUniqueKeyDescriptor(final EntityMetaData<E> parent, final Entity entity, final UniqueKey uniqueKey) {
 		
+		this.parent = parent;
+
 		// check whether primary key for entity is empty or not
 		if (uniqueKey.columns().length == 0) {
-			throw new DataRuntimeException("Primary key for entity [{0}] is empty", clazz);
+			throw new DataRuntimeException("Primary key for entity [{0}] is empty", this.parent.getMappingClass());
 		}
 		this.id = uniqueKey.id();
 		
 		// find table name by class that is annotated entity class
-		String table = clazz.getSimpleName();
+		String table = this.parent.getMappingClass().getSimpleName();
 		if (entity.name().trim().length() != 0) {
 			table = entity.name();
 		}
@@ -65,8 +74,8 @@ class SQLUniqueKeyDescriptor<E> implements UniqueKeyDescriptor<E> {
 			}
 		}
 		
-		this.select = "SELECT * FROM " + table + " WHERE " + where + " = ?";
-		this.delete = "DELETE * FROM " + table + " WHERE " + where + " = ?";
+		this.query = "SELECT * FROM " + table + " WHERE " + where + " = ?";
+		this.command = "DELETE * FROM " + table + " WHERE " + where + " = ?";
 	}
 
 	/**
@@ -80,19 +89,26 @@ class SQLUniqueKeyDescriptor<E> implements UniqueKeyDescriptor<E> {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.UniqueKeyDescriptor#getSelectQuery(com.corona.data.ConnectionManager)
+	 * @see com.corona.data.UniqueKeyDescriptor#createUniqueKey(com.corona.data.ConnectionManager)
 	 */
 	@Override
-	public Query<E> getSelectQuery(final ConnectionManager connectionManager) {
-		return null;
+	public com.corona.data.UniqueKey<E> createUniqueKey(final ConnectionManager connectionManager) {
+		return new SQLUniqueKey<E>(this.getQuery(connectionManager), this.getCommand(connectionManager));
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see com.corona.data.UniqueKeyDescriptor#getDeleteCommand(com.corona.data.ConnectionManager)
+	 * @param connectionManager the current connection manager
+	 * @return the new query by SELECT SQL for unique key
 	 */
-	@Override
-	public Command getDeleteCommand(final ConnectionManager connectionManager) {
-		return connectionManager.createCommand(this.delete);
+	private Query<E> getQuery(final ConnectionManager connectionManager) {
+		return connectionManager.createQuery(new BeanResultHandler<E>(this.parent), this.query);
+	}
+
+	/**
+	 * @param connectionManager the current connection manager
+	 * @return the new query by DELETE SQL for unique key
+	 */
+	private Command getCommand(final ConnectionManager connectionManager) {
+		return connectionManager.createCommand(this.command);
 	}
 }

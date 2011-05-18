@@ -5,7 +5,11 @@ package com.corona.data.gds;
 
 import com.corona.data.Command;
 import com.corona.data.ConnectionManager;
+import com.corona.data.ConnectionManagerFactory;
+import com.corona.data.Dialect;
 import com.corona.data.Query;
+import com.corona.data.ResultHandler;
+import com.corona.data.Transaction;
 import com.google.appengine.api.datastore.DatastoreService;
 
 /**
@@ -39,14 +43,14 @@ class GoogleConnectionManager implements ConnectionManager {
 		this.connectionManagerFactory = factory;
 		this.datastore = datastore;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.ConnectionManager#getConnectionManagerFactory()
 	 */
 	@Override
-	public GoogleConnectionManagerFactory getConnectionManagerFactory() {
-		return this.connectionManagerFactory;
+	public ConnectionManagerFactory getConnectionManagerFactory() {
+		return null;
 	}
 
 	/**
@@ -54,8 +58,8 @@ class GoogleConnectionManager implements ConnectionManager {
 	 * @see com.corona.data.ConnectionManager#getDialect()
 	 */
 	@Override
-	public GoogleDialect getDialect() {
-		return this.dialect;
+	public Dialect getDialect() {
+		return null;
 	}
 
 	/**
@@ -64,7 +68,7 @@ class GoogleConnectionManager implements ConnectionManager {
 	 */
 	@Override
 	public Object getSource() {
-		return this.datastore;
+		return null;
 	}
 
 	/**
@@ -82,7 +86,15 @@ class GoogleConnectionManager implements ConnectionManager {
 	 */
 	@Override
 	public void close() {
-		// do nothing
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.ConnectionManager#getTransaction()
+	 */
+	@Override
+	public Transaction getTransaction() {
+		return null;
 	}
 
 	/**
@@ -90,7 +102,16 @@ class GoogleConnectionManager implements ConnectionManager {
 	 * @see com.corona.data.ConnectionManager#createQuery(java.lang.Class, java.lang.String)
 	 */
 	@Override
-	public <T> Query<T> createQuery(Class<? extends T> entityClass, String query) {
+	public <E> Query<E> createQuery(Class<E> resultClass, String query) {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.ConnectionManager#createQuery(com.corona.data.ResultHandler, java.lang.String)
+	 */
+	@Override
+	public <E> Query<E> createQuery(ResultHandler<E> resultHandler, String query) {
 		return null;
 	}
 
@@ -99,16 +120,43 @@ class GoogleConnectionManager implements ConnectionManager {
 	 * @see com.corona.data.ConnectionManager#createNamedQuery(java.lang.Class)
 	 */
 	@Override
-	public <T> Query<T> createNamedQuery(Class<? extends T> entityClass) {
+	public <E> Query<E> createNamedQuery(Class<E> resultClass) {
 		return null;
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.ConnectionManager#createCommand()
+	 * @see com.corona.data.ConnectionManager#createNamedQuery(java.lang.Class, java.lang.String)
 	 */
 	@Override
-	public Command createCommand() {
+	public <E> Query<E> createNamedQuery(Class<E> resultClass, String name) {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.ConnectionManager#createCommand(java.lang.String)
+	 */
+	@Override
+	public Command createCommand(String command) {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.ConnectionManager#createNamedCommand(java.lang.Class)
+	 */
+	@Override
+	public Command createNamedCommand(Class<?> commandClass) {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.ConnectionManager#createNamedCommand(java.lang.Class, java.lang.String)
+	 */
+	@Override
+	public Command createNamedCommand(Class<?> commandClass, String name) {
 		return null;
 	}
 }

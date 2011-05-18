@@ -8,6 +8,7 @@ import java.util.Date;
 
 import com.corona.data.Command;
 import com.corona.data.Dialect;
+import com.corona.data.ResultHolder;
 
 /**
  * <p>This dialect is used for Google Datastore Service. </p>
@@ -44,6 +45,15 @@ class GoogleDialect implements Dialect {
 	 */
 	@Override
 	public Object[] getGeneratedKeys(final Command command) {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.Dialect#getResultHolder(java.lang.Object)
+	 */
+	@Override
+	public ResultHolder getResultHolder(Object result) {
 		return null;
 	}
 }

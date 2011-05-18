@@ -3,9 +3,11 @@
  */
 package com.corona.data.sql;
 
+import com.corona.data.BeanResultHandler;
 import com.corona.data.Command;
 import com.corona.data.ConnectionManager;
 import com.corona.data.DataRuntimeException;
+import com.corona.data.EntityMetaData;
 import com.corona.data.PrimaryKeyDescriptor;
 import com.corona.data.Query;
 import com.corona.data.annotation.Entity;
@@ -21,29 +23,38 @@ import com.corona.data.annotation.PrimaryKey;
 public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 
 	/**
+	 * the parent entity MetaData
+	 */
+	private EntityMetaData<E> parent;
+	
+	/**
 	 * the SELECT SQL according this index
 	 */
-	private String selectSql;
+	private String query;
 	
 	/**
 	 * the DELETE SQL according to this index
 	 */
-	private String deleteSql;
+	private String command;
 	
 	/**
-	 * @param clazz the entity class that is annotated with {@link Entity} annotation
+	 * @param parent the parent entity MetaData
 	 * @param entity the {@link Entity} annotation in entity class
 	 * @param primaryKey the primary key that is annotated in entity class with {@link PrimaryKey} annotation
 	 */
-	public SQLPrimaryKeyDescriptor(final Class<E> clazz, final Entity entity, final PrimaryKey primaryKey) {
-		
+	public SQLPrimaryKeyDescriptor(final EntityMetaData<E> parent, final Entity entity, final PrimaryKey primaryKey) {
+
+		this.parent = parent;
+
 		// check whether primary key for entity is empty or not
 		if (primaryKey.value().length == 0) {
-			throw new DataRuntimeException("Primary key for entity [{0}] is empty", clazz);
+			throw new DataRuntimeException(
+					"Columns of primary key for entity [{0}] is empty", this.parent.getMappingClass()
+			);
 		}
 		
 		// find table name by class that is annotated entity class
-		String table = clazz.getSimpleName();
+		String table = parent.getMappingClass().getSimpleName();
 		if (entity.name().trim().length() != 0) {
 			table = entity.name();
 		}
@@ -59,25 +70,32 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 			}
 		}
 		
-		this.selectSql = "SELECT * FROM " + table + " WHERE " + where + " = ?";
-		this.deleteSql = "DELETE * FROM " + table + " WHERE " + where + " = ?";
+		this.query = "SELECT * FROM " + table + " WHERE " + where + " = ?";
+		this.command = "DELETE * FROM " + table + " WHERE " + where + " = ?";
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.PrimaryKeyDescriptor#getSelectQuery(com.corona.data.ConnectionManager)
+	 * @see com.corona.data.PrimaryKeyDescriptor#createPrimaryKey(com.corona.data.ConnectionManager)
 	 */
 	@Override
-	public Query<E> getSelectQuery(final ConnectionManager connectionManager) {
-		return null;
+	public <K> com.corona.data.PrimaryKey<K, E> createPrimaryKey(final ConnectionManager connectionManager) {
+		return new SQLPrimaryKey<K, E>(this.getQuery(connectionManager), this.getCommand(connectionManager));
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see com.corona.data.IndexDescriptor#getDeleteCommand(com.corona.data.ConnectionManager)
+	 * @param connectionManager the current connection manager
+	 * @return the new query for SELECT by primary key
 	 */
-	@Override
-	public Command getDeleteCommand(final ConnectionManager connectionManager) {
-		return connectionManager.createCommand(this.deleteSql);
+	private Query<E> getQuery(final ConnectionManager connectionManager) {
+		return connectionManager.createQuery(new BeanResultHandler<E>(this.parent), this.query);
+	}
+
+	/**
+	 * @param connectionManager the current connection manager
+	 * @return the new command for DELETE by primary key
+	 */
+	private Command getCommand(final ConnectionManager connectionManager) {
+		return connectionManager.createCommand(this.command);
 	}
 }

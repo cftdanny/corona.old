@@ -13,14 +13,9 @@ package com.corona.data;
 public interface PrimaryKeyDescriptor<E> {
 
 	/**
-	 * @param connectionManager the connection manager
-	 * @return the command to query entity by primary key
+	 * @param <K> the type of primary key class
+	 * @param connectionManager the current connection manager
+	 * @return the new primary key
 	 */
-	Query<E> getSelectQuery(ConnectionManager connectionManager);
-	
-	/**
-	 * @param connectionManager the connection manager
-	 * @return the command to delete entity by primary key
-	 */
-	Command getDeleteCommand(ConnectionManager connectionManager);
+	<K> PrimaryKey<K, E> createPrimaryKey(ConnectionManager connectionManager);
 }

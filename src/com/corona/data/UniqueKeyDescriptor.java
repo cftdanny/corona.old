@@ -18,14 +18,8 @@ public interface UniqueKeyDescriptor<E> {
 	int getId();
 	
 	/**
-	 * @param connectionManager the connection manager
-	 * @return the command to query entity by primary key
+	 * @param connectionManager the current connection manager
+	 * @return the new unique key
 	 */
-	Query<E> getSelectQuery(ConnectionManager connectionManager);
-	
-	/**
-	 * @param connectionManager the connection manager
-	 * @return the command to delete entity by primary key
-	 */
-	Command getDeleteCommand(ConnectionManager connectionManager);
+	UniqueKey<E> createUniqueKey(ConnectionManager connectionManager);
 }
