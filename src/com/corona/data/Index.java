@@ -3,12 +3,14 @@
  */
 package com.corona.data;
 
+import java.util.List;
+
 /**
  * <p>The index is used to manage table entity with index. </p>
  *
  * @author $Author$
  * @version $Id$
- * @param <E> the type of table entity
+ * @param <E> the type of entity class
  */
 public interface Index<E> {
 
@@ -17,7 +19,7 @@ public interface Index<E> {
 	 * @param values the values of index fields
 	 * @return the entities that matched with argument values according to index
 	 */
-	E[] list(Object... values);
+	List<E> list(Object... values);
 	
 	/**
 	 * 

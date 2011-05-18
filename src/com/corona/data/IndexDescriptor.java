@@ -4,7 +4,7 @@
 package com.corona.data;
 
 /**
- * <p>The index definition </p>
+ * <p>The index descriptor for an entity class that is defined by {@link Index} annotation. </p>
  *
  * @author $Author$
  * @version $Id$
@@ -18,14 +18,8 @@ public interface IndexDescriptor<E> {
 	int getId();
 	
 	/**
-	 * @param connectionManager the connection manager
-	 * @return the query to search by index 
+	 * @param connectionManager current connection manager
+	 * @return the new index
 	 */
-	Command getSearchQuery(ConnectionManager connectionManager);
-	
-	/**
-	 * @param connectionManager the connection manager
-	 * @return the command to delete by index
-	 */
-	Command getDeleteCommand(ConnectionManager connectionManager);
+	Index<E> createIndex(final ConnectionManager connectionManager);
 }

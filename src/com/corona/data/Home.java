@@ -11,26 +11,27 @@ import java.util.List;
  *
  * @author $Author$
  * @version $Id$
- * @param <E> the table entity data type
+ * @param <K> the type of primary key class
+ * @param <E> the type of entity class
  */
-public interface Home<E> {
+public interface Home<K, E> {
 
 	/**
 	 * <p>Try to test whether an entity instance (table record) exists in database or not by 
 	 * primary key (argument k). </p>
 	 * 
-	 * @param pks the values of the primary key
+	 * @param key the values of the primary key
 	 * @return <code>true</code> if entity with primary key exists
 	 */
-	boolean exists(Object... pks);
+	boolean exists(K key);
 	
 	/**
 	 * <p>Find an entity instance (table record) from database by primary key (argument k). </p> 
 	 * 
-	 * @param pks the values of the primary key
+	 * @param key the values of the primary key
 	 * @return the entity instance or <code>null</code> if does not exists
 	 */
-	E get(Object... pks);
+	E get(K key);
 	
 	/**
 	 * <p>Update a changed entity instance into database. Before update, this method will check
@@ -41,6 +42,16 @@ public interface Home<E> {
 	 * @return whether this record has been updated
 	 */
 	boolean update(E e);
+	
+	/**
+	 * <p>update the changed row to data source. 
+	 * </p>
+	 * 
+	 * @param e the instance of entity
+	 * @param columns the changed columns
+	 * @return whether entity has been save to data source
+	 */
+	boolean update(E e, String... columns);
 	
 	/**
 	 * <p>Insert a new entity instance into database. Before update, this method will check
@@ -54,39 +65,10 @@ public interface Home<E> {
 	/**
 	 * <p>Delete an entity instance (table record) from database by primary key (argument k). </p>
 	 * 
-	 * @param pks the primary key
+	 * @param key the primary key
 	 * @return <code>true</code> if this entity has been deleted
 	 */
-	boolean delete(Object... pks);
-	
-	/**
-	 * <p>Delete an entity instance (table record) from database by entity instance. </p>
-	 * 
-	 * @param e the entity instance
-	 * @return <code>true</code> if this entity has been deleted
-	 */
-	boolean delete(E e);
-	
-	/**
-	 * <p>Execute query statement and return result as entity instance. If more than one records
-	 * fetched, this method will throw an exception. </p>
-	 * 
-	 * @param sql the after FROM [ENTITY] SQL statement 
-	 * @param args the numbered parameters
-	 * @return the entity instance
-	 */
-	E single(String sql, Object... args);
-	
-	/**
-	 * <p>Execute query statement and return result as entity instance. If more than one records
-	 * fetched, this method will throw an exception. </p>
-	 * 
-	 * @param sql the after FROM [ENTITY] SQL statement 
-	 * @param names the parameter names
-	 * @param args the numbered parameters
-	 * @return the entity instance
-	 */
-	E single(String sql, String[] names, Object[] args);
+	boolean delete(K key);
 	
 	/**
 	 * @return all entity instances (table record) from database
@@ -147,34 +129,6 @@ public interface Home<E> {
 	 * @return how many records after filter in this table
 	 */
 	long count(String sql, String[] names, Object... args);
-	
-	/**
-	 * <p>This method is used to fetch an entity instance from database by primary key. </p>
-	 *  
-	 * @param unique the unique key index
-	 * @param args the values of unique key
-	 * @return the entity instance or <code>null</code> if does not exist
-	 */
-	E uget(int unique, Object... args);
-	
-	/**
-	 * <p>This method is used to check whether an entity instance exists in database or not by 
-	 * primary key. </p>
-	 * 
-	 * @param uk the unique key index
-	 * @param args the values of unique key
-	 * @return <code>true</code> if entity instance exists
-	 */
-	boolean uexists(int uk, Object... args);
-	
-	/**
-	 * <p>This method is used to delete an entity instance from database by primary key. </p>
-	 * 
-	 * @param uk the unique key index
-	 * @param args the values of unique key
-	 * @return <code>true</code> if the record has been deleted
-	 */
-	boolean udelete(int uk, Object... args);
 	
 	/**
 	 * <p>This method is used to batch update entity instances in database. </p>

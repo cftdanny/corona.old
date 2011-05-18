@@ -14,7 +14,7 @@ public @interface Index {
 	/**
 	 * the index name 
 	 */
-	int name();
+	int id();
 	
 	/**
 	 * the columns of index
