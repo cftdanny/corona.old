@@ -3,6 +3,7 @@
  */
 package com.corona.data;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 import com.corona.data.annotation.Column;
@@ -59,6 +60,15 @@ public class FieldColumnDescriptor<E> implements ColumnDescriptor<E> {
 	@Override
 	public Class<?> getType() {
 		return this.field.getType();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.ColumnDescriptor#getAnnotation(java.lang.Class)
+	 */
+	@Override
+	public <A extends Annotation> A getAnnotation(final Class<A> annotationClass) {
+		return this.field.getAnnotation(annotationClass);
 	}
 
 	/**

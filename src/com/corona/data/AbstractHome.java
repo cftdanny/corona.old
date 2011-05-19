@@ -13,10 +13,9 @@ import java.util.Map;
  *
  * @author $Author$
  * @version $Id$
- * @param <K> the type of primary key class
  * @param <E> the type of entity class
  */
-public class AbstractHome<K, E> implements Home<K, E> {
+public class AbstractHome<E> implements Home<E> {
 
 	/**
 	 * the entity configuration
@@ -31,7 +30,7 @@ public class AbstractHome<K, E> implements Home<K, E> {
 	/**
 	 * the primary key
 	 */
-	private PrimaryKey<K, E> primarykey;
+	private PrimaryKey<E> primarykey;
 	
 	/**
 	 * all unique keys
@@ -66,7 +65,7 @@ public class AbstractHome<K, E> implements Home<K, E> {
 	/**
 	 * @return the primary key
 	 */
-	private PrimaryKey<K, E> getPrimaryKey() {
+	private PrimaryKey<E> getPrimaryKey() {
 		
 		if (this.primarykey == null) {
 			this.primarykey = this.entityMetaData.getPrimarykey().createPrimaryKey(this.connectionManager);
@@ -105,20 +104,20 @@ public class AbstractHome<K, E> implements Home<K, E> {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.Home#exists(java.lang.Object)
+	 * @see com.corona.data.Home#exists(java.lang.Object[])
 	 */
 	@Override
-	public boolean exists(final K key) {
-		return this.getPrimaryKey().exists(key);
+	public boolean exists(final Object... keys) {
+		return this.getPrimaryKey().exists(keys);
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.Home#get(java.lang.Object)
+	 * @see com.corona.data.Home#get(java.lang.Object[])
 	 */
 	@Override
-	public E get(final K key) {
-		return this.getPrimaryKey().get(key);
+	public E get(final Object... keys) {
+		return this.getPrimaryKey().get(keys);
 	}
 
 	/**
@@ -165,11 +164,11 @@ public class AbstractHome<K, E> implements Home<K, E> {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.Home#delete(java.lang.Object)
+	 * @see com.corona.data.Home#delete(java.lang.Object[])
 	 */
 	@Override
-	public boolean delete(final K key) {
-		return this.getPrimaryKey().delete(key);
+	public boolean delete(final Object... keys) {
+		return this.getPrimaryKey().delete(keys);
 	}
 
 	/**

@@ -111,8 +111,8 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 	 * @see com.corona.data.PrimaryKeyDescriptor#createPrimaryKey(com.corona.data.ConnectionManager)
 	 */
 	@Override
-	public <K> com.corona.data.PrimaryKey<K, E> createPrimaryKey(final ConnectionManager connectionManager) {
-		return new SQLPrimaryKey<K, E>(connectionManager, this);
+	public com.corona.data.PrimaryKey<E> createPrimaryKey(final ConnectionManager connectionManager) {
+		return new SQLPrimaryKey<E>(connectionManager, this);
 	}
 	
 	/**

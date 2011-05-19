@@ -3,6 +3,8 @@
  */
 package com.corona.data;
 
+import java.lang.annotation.Annotation;
+
 /**
  * <p>This descriptor is used to map column of data source to field or property of entity class. </p>
  *
@@ -21,6 +23,13 @@ public interface ColumnDescriptor<E> {
 	 * @return the type of field or property in entity class
 	 */
 	Class<?> getType();
+	
+	/**
+	 * @param <A> the type of annotation
+	 * @param annotationType the annotation type
+	 * @return the annotation
+	 */
+	<A extends Annotation> A getAnnotation(Class<A> annotationType);
 	
 	/**
 	 * @param entity the entity instance

@@ -10,7 +10,6 @@ import com.corona.data.DataRuntimeException;
 import com.corona.data.EntityMetaData;
 import com.corona.data.Query;
 import com.corona.data.UniqueKeyDescriptor;
-import com.corona.data.annotation.Entity;
 import com.corona.data.annotation.UniqueKey;
 
 /**
@@ -83,14 +82,14 @@ class SQLUniqueKeyDescriptor<E> implements UniqueKeyDescriptor<E> {
 	 */
 	@Override
 	public com.corona.data.UniqueKey<E> createUniqueKey(final ConnectionManager connectionManager) {
-		return new SQLUniqueKey<E>(this.getQuery(connectionManager), this.getCommand(connectionManager));
+		return new SQLUniqueKey<E>(connectionManager, this);
 	}
 
 	/**
 	 * @param connectionManager the current connection manager
 	 * @return the new query by SELECT SQL for unique key
 	 */
-	private Query<E> getQuery(final ConnectionManager connectionManager) {
+	Query<E> createSelectQuery(final ConnectionManager connectionManager) {
 		return connectionManager.createQuery(new BeanResultHandler<E>(this.parent), this.selectSql);
 	}
 
@@ -98,7 +97,7 @@ class SQLUniqueKeyDescriptor<E> implements UniqueKeyDescriptor<E> {
 	 * @param connectionManager the current connection manager
 	 * @return the new query by DELETE SQL for unique key
 	 */
-	private Command getCommand(final ConnectionManager connectionManager) {
+	Command createDeleteCommand(final ConnectionManager connectionManager) {
 		return connectionManager.createCommand(this.deleteSql);
 	}
 }

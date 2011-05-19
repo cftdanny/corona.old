@@ -4,6 +4,7 @@
 package com.corona.data.sql;
 
 import com.corona.data.Command;
+import com.corona.data.ConnectionManager;
 import com.corona.data.DataRuntimeException;
 import com.corona.data.Query;
 import com.corona.data.UniqueKey;
@@ -19,24 +20,34 @@ import com.corona.data.UniqueKey;
 public class SQLUniqueKey<E> implements UniqueKey<E> {
 
 	/**
+	 * the current connection manager
+	 */
+	private ConnectionManager connectionManager;
+	
+	/**
+	 * the parent unique key descriptor
+	 */
+	private SQLUniqueKeyDescriptor<E> parent;
+	
+	/**
 	 * the query that can be used to query by single entity in data source by unique key
 	 */
-	private Query<E> query;
+	private Query<E> selectQuery;
 	
 	/**
 	 * the command that can be used to delete entity from data source by unique key
 	 */
-	private Command command;
+	private Command deleteCommand;
 
 	/**
-	 * @param query the query that can be used to query by single entity in data source by unique key
-	 * @param command the command that can be used to delete entity from data source by unique key
+	 * @param connectionManager the current connection manager
+	 * @param parent the parent unique key descriptor
 	 */
-	SQLUniqueKey(final Query<E> query, final Command command) {
-		this.query = query;
-		this.command = command;
+	SQLUniqueKey(final ConnectionManager connectionManager, final SQLUniqueKeyDescriptor<E> parent) {
+		this.connectionManager = connectionManager;
+		this.parent = parent;
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.UniqueKey#exists(java.lang.Object[])
@@ -52,7 +63,11 @@ public class SQLUniqueKey<E> implements UniqueKey<E> {
 	 */
 	@Override
 	public E get(final Object... values) {
-		return this.query.get(values);
+		
+		if (this.selectQuery == null) {
+			this.selectQuery = this.parent.createSelectQuery(this.connectionManager);
+		}
+		return this.selectQuery.get(values);
 	}
 
 	/**
@@ -62,10 +77,15 @@ public class SQLUniqueKey<E> implements UniqueKey<E> {
 	@Override
 	public boolean delete(final Object... values) {
 
-		int count = this.command.delete(values);
+		if (this.deleteCommand == null) {
+			this.deleteCommand = this.parent.createDeleteCommand(this.connectionManager);
+		}
+		
+		int count = this.deleteCommand.delete(values);
 		if (count > 1) {
 			throw new DataRuntimeException(
-					"Unique key is invalid, please check this DELETE SQL [{0}]", this.command
+					"Unique key [{0}] is invalid, please check DELETE SQL [{0}]", 
+					this.parent.getId(), this.deleteCommand
 			);
 		}
 		return count == 1;

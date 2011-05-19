@@ -11,10 +11,9 @@ import java.util.List;
  *
  * @author $Author$
  * @version $Id$
- * @param <K> the type of primary key class
  * @param <E> the type of entity class
  */
-public interface Home<K, E> {
+public interface Home<E> {
 
 	/**
 	 * @param id the unique key id
@@ -26,18 +25,18 @@ public interface Home<K, E> {
 	 * <p>Try to test whether an entity instance (table record) exists in database or not by 
 	 * primary key (argument k). </p>
 	 * 
-	 * @param key the values of the primary key
+	 * @param keys the values of the primary key
 	 * @return <code>true</code> if entity with primary key exists
 	 */
-	boolean exists(K key);
+	boolean exists(Object... keys);
 	
 	/**
 	 * <p>Find an entity instance (table record) from database by primary key (argument k). </p> 
 	 * 
-	 * @param key the values of the primary key
+	 * @param keys the values of the primary key
 	 * @return the entity instance or <code>null</code> if does not exists
 	 */
-	E get(K key);
+	E get(Object... keys);
 	
 	/**
 	 * <p>update the changed row to data source. If entity is a new entity (does not commit to data
@@ -65,10 +64,10 @@ public interface Home<K, E> {
 	/**
 	 * <p>Delete an entity instance (table record) from database by primary key (argument k). </p>
 	 * 
-	 * @param key the primary key
+	 * @param keys the primary key
 	 * @return <code>true</code> if this entity has been deleted
 	 */
-	boolean delete(K key);
+	boolean delete(Object... keys);
 	
 	/**
 	 * @return all entity instances (table record) from database

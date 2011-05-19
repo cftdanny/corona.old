@@ -13,9 +13,8 @@ package com.corona.data;
 public interface PrimaryKeyDescriptor<E> {
 
 	/**
-	 * @param <K> the type of primary key class
 	 * @param connectionManager the current connection manager
 	 * @return the new primary key
 	 */
-	<K> PrimaryKey<K, E> createPrimaryKey(ConnectionManager connectionManager);
+	PrimaryKey<E> createPrimaryKey(ConnectionManager connectionManager);
 }

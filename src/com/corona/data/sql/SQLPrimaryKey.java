@@ -20,9 +20,8 @@ import com.corona.data.Query;
  * @author $Author$
  * @version $Id$
  * @param <E> the type of entity class
- * @param <K> the type of primary key class
  */
-class SQLPrimaryKey<K, E> implements PrimaryKey<K, E> {
+class SQLPrimaryKey<E> implements PrimaryKey<E> {
 	
 	/**
 	 * the current connection manager
@@ -68,23 +67,23 @@ class SQLPrimaryKey<K, E> implements PrimaryKey<K, E> {
 		}
 		return this.selectQuery;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.PrimaryKey#exists(java.lang.Object)
+	 * @see com.corona.data.PrimaryKey#exists(java.lang.Object[])
 	 */
 	@Override
-	public boolean exists(final K value) {
-		return this.get(value) != null;
+	public boolean exists(final Object... keys) {
+		return this.get(keys) != null;
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.PrimaryKey#get(java.lang.Object)
+	 * @see com.corona.data.PrimaryKey#get(java.lang.Object[])
 	 */
 	@Override
-	public E get(final K value) {
-		return this.getSelectQuery().get(value);
+	public E get(final Object... keys) {
+		return this.getSelectQuery().get(keys);
 	}
 
 	/**
@@ -97,14 +96,15 @@ class SQLPrimaryKey<K, E> implements PrimaryKey<K, E> {
 		}
 		return this.deleteCommand;
 	}
+	
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.PrimaryKey#delete(java.lang.Object)
+	 * @see com.corona.data.PrimaryKey#delete(java.lang.Object[])
 	 */
 	@Override
-	public boolean delete(final K value) {
+	public boolean delete(final Object... keys) {
 
-		int count = this.getDeleteCommand().delete(value);
+		int count = this.getDeleteCommand().delete(keys);
 		if (count > 1) {
 			throw new DataRuntimeException(
 					"Primary key is invalid, please check this DELETE SQL [{0}]", this.getDeleteCommand()
@@ -144,7 +144,7 @@ class SQLPrimaryKey<K, E> implements PrimaryKey<K, E> {
 		int count = this.getUpdateCommand().update(arguments.toArray());
 		if (count > 1) {
 			throw new DataRuntimeException(
-					"Primary key is invalid, please check this UPDATE SQL [{0}]", this.getUpdateCommand()
+					"Primary key is invalid, please check UPDATE SQL [{0}]", this.getUpdateCommand()
 			);
 		}
 		return count == 1;

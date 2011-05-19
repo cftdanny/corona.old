@@ -52,28 +52,26 @@ public abstract class AbstractResultMetaData<E> implements ResultMetaData<E> {
 		this.mappingClass = resultClass;
 		Entity entity = this.mappingClass.getAnnotation(Entity.class);
 		
-		MappingBy mapping = MappingBy.PROPERTY; 
-		if (entity != null) {
-			mapping = entity.mappingBy();
-		}
+		// find how to map column to bean property or field
+		MappingBy mapping = (entity != null) ? entity.mappingBy() : MappingBy.PROPERTY; 
 		
 		// get bean info by entity class
 		BeanInfo beaninfo = null;
 		try {
 			beaninfo = Introspector.getBeanInfo(this.mappingClass);
 		} catch (IntrospectionException e) {
-			throw new DataRuntimeException("Fail to get bean info with entity class [{0}]", e, this.mappingClass);
+			throw new DataRuntimeException("Fail to get bean info with entity [{0}]", e, this.mappingClass);
 		}
 
 		// find all properties (getter and setter) if it will map to column in query result
 		for (PropertyDescriptor property : beaninfo.getPropertyDescriptors()) {
 			
 			if (this.isMappingColumn(property, mapping)) {
-				MethodColumnDescriptor<E> descriptor = new MethodColumnDescriptor<E>(property);
-				if (!property.getReadMethod().isAnnotationPresent(Id.class)) {
-					this.columnDescriptors.put(descriptor.getName(), descriptor);
-				} else {
-					this.idColumnDescriptor = descriptor;
+				PropertyColumnDescriptor<E> descriptor = new PropertyColumnDescriptor<E>(property);
+				this.columnDescriptors.put(descriptor.getName(), descriptor);
+				
+				if (property.getReadMethod().isAnnotationPresent(Id.class)) {
+					this.setIdColumnDescriptor(descriptor);
 				}
 			}
 		}
@@ -83,13 +81,24 @@ public abstract class AbstractResultMetaData<E> implements ResultMetaData<E> {
 			
 			if (this.isMappingColumn(field, mapping)) {
 				FieldColumnDescriptor<E> descriptor = new FieldColumnDescriptor<E>(field);
-				if (!field.isAnnotationPresent(Id.class)) {
-					this.columnDescriptors.put(descriptor.getName(), descriptor);
-				} else {
-					this.idColumnDescriptor = descriptor;
+				this.columnDescriptors.put(descriptor.getName(), descriptor);
+				
+				if (field.isAnnotationPresent(Id.class)) {
+					this.setIdColumnDescriptor(descriptor);
 				}
 			}
 		}
+	}
+
+	/**
+	 * @param descriptor the column descriptor for identity column
+	 */
+	private void setIdColumnDescriptor(final ColumnDescriptor<E> descriptor) {
+		
+		if (this.idColumnDescriptor != null) {
+			throw new DataRuntimeException("Only one Id column is allowed in entity [{0}]", this.mappingClass);
+		}
+		this.idColumnDescriptor = descriptor;
 	}
 	
 	/**
