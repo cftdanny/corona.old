@@ -14,7 +14,7 @@ package com.corona.data;
 public interface PrimaryKey<K, E> {
 
 	/**
-	 * <p>Try to test whether an entity instance (table record) exists in database or not by 
+	 * <p>test whether an entity instance (table record) exists in database or not by 
 	 * primary key (argument k). </p>
 	 * 
 	 * @param value the value of the primary key

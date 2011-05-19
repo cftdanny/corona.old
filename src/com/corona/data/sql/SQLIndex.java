@@ -6,6 +6,7 @@ package com.corona.data.sql;
 import java.util.List;
 
 import com.corona.data.Command;
+import com.corona.data.ConnectionManager;
 import com.corona.data.Index;
 import com.corona.data.Query;
 
@@ -19,31 +20,45 @@ import com.corona.data.Query;
 public class SQLIndex<E> implements Index<E> {
 
 	/**
+	 * the current connection manager
+	 */
+	private ConnectionManager connectionManager;
+	
+	/**
+	 * the index descriptor
+	 */
+	private SQLIndexDescriptor<E> parent;
+	
+	/**
 	 * the query that can be used to query by single entity in data source by unique key
 	 */
-	private Query<E> query;
+	private Query<E> selectQuery;
 	
 	/**
 	 * the command that can be used to delete entity from data source by unique key
 	 */
-	private Command command;
+	private Command deleteCommand;
 
 	/**
-	 * @param query the query that can be used to query by entities in data source by index
-	 * @param command the command that can be used to delete entities from data source by index
+	 * @param connectionManager the current connection manager
+	 * @param parent the index descriptor
 	 */
-	SQLIndex(final Query<E> query, final Command command) {
-		this.query = query;
-		this.command = command;
+	SQLIndex(final ConnectionManager connectionManager, final SQLIndexDescriptor<E> parent) {
+		this.connectionManager = connectionManager;
+		this.parent = parent;
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.Index#list(java.lang.Object[])
 	 */
 	@Override
 	public List<E> list(final Object... values) {
-		return this.query.list(values);
+		
+		if (this.selectQuery == null) {
+			this.selectQuery = this.parent.createSelectQuery(this.connectionManager);
+		}
+		return this.selectQuery.list(values);
 	}
 
 	/**
@@ -52,6 +67,10 @@ public class SQLIndex<E> implements Index<E> {
 	 */
 	@Override
 	public int delete(final Object... values) {
-		return this.command.delete(values);
+		
+		if (this.deleteCommand == null) {
+			this.deleteCommand = this.parent.createDeleteCommand(this.connectionManager);
+		}
+		return this.deleteCommand.delete(values);
 	}
 }

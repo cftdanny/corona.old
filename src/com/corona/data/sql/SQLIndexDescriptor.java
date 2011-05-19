@@ -10,7 +10,6 @@ import com.corona.data.DataRuntimeException;
 import com.corona.data.EntityMetaData;
 import com.corona.data.IndexDescriptor;
 import com.corona.data.Query;
-import com.corona.data.annotation.Entity;
 import com.corona.data.annotation.Index;
 
 /**
@@ -35,43 +34,38 @@ public class SQLIndexDescriptor<E> implements IndexDescriptor<E> {
 	/**
 	 * the SELECT SQL according this index
 	 */
-	private String query;
+	private String selectSql;
 	
 	/**
 	 * the DELETE SQL according to this index
 	 */
-	private String command;
+	private String deleteSql;
 	
 	/**
 	 * @param parent the parent entity MetaData
-	 * @param entity the entity annotation
 	 * @param index the index annotation in entity class
 	 */
-	public SQLIndexDescriptor(final EntityMetaData<E> parent, final Entity entity, final Index index) {
-		
-		this.parent = parent;
+	public SQLIndexDescriptor(final EntityMetaData<E> parent, final Index index) {
 		
 		// check whether columns of index is empty or not
-		if (index.columns().length == 0) {
-			throw new DataRuntimeException("Index for entity [{0}] is empty", this.parent.getMappingClass());
-		}
+		this.parent = parent;
 		this.id = index.id();
 		
-		// find table name by class that is annotated entity class
-		String table = this.parent.getMappingClass().getSimpleName();
-		if (entity.name().trim().length() != 0) {
-			table = entity.name();
-		}
-
-		// make where and order by SQL by table index definition
-		String where = "", orderby = "";
-		for (String field : index.columns()) {
-			where += ((where.length() == 0) ? field : (" AND " + field)) + " = ?";
-			orderby += ((where.length() == 0) ? field : (", " + field));
+		if (index.columns().length == 0) {
+			throw new DataRuntimeException(
+					"Index [{0}] for entity [{1}] is empty", this.id, this.parent.getMappingClass()
+			);
 		}
 		
-		this.query = "SELECT * FROM " + table + " WHERE " + where + " " + orderby;
-		this.command = "DELETE * FROM " + table + " WHERE " + where;
+		// make where and order by SQL by table index definition
+		String where = "", orderby = "";
+		for (String column : index.columns()) {
+			where = where + ((where.length() == 0) ? "" : " AND ") + "(" + column.toUpperCase() + " = ?)";
+			orderby = orderby + ((where.length() == 0) ? "" : ", ") + column;
+		}
+		
+		this.selectSql = "SELECT * FROM " + this.parent.getName() + " WHERE " + where + " " + orderby;
+		this.deleteSql = "DELETE FROM " + this.parent.getName() + " WHERE " + where;
 	}
 
 	/**
@@ -89,22 +83,22 @@ public class SQLIndexDescriptor<E> implements IndexDescriptor<E> {
 	 */
 	@Override
 	public com.corona.data.Index<E> createIndex(final ConnectionManager connectionManager) {
-		return new SQLIndex<E>(this.getQuery(connectionManager), this.getCommand(connectionManager));
+		return new SQLIndex<E>(connectionManager, this);
 	}
 
 	/**
 	 * @param connectionManager the current connection manager
 	 * @return the new query by SELECT SQL for unique key
 	 */
-	private Query<E> getQuery(final ConnectionManager connectionManager) {
-		return connectionManager.createQuery(new BeanResultHandler<E>(this.parent), this.query);
+	Query<E> createSelectQuery(final ConnectionManager connectionManager) {
+		return connectionManager.createQuery(new BeanResultHandler<E>(this.parent), this.selectSql);
 	}
 
 	/**
 	 * @param connectionManager the current connection manager
 	 * @return the new query by DELETE SQL for unique key
 	 */
-	private Command getCommand(final ConnectionManager connectionManager) {
-		return connectionManager.createCommand(this.command);
+	Command createDeleteCommand(final ConnectionManager connectionManager) {
+		return connectionManager.createCommand(this.deleteSql);
 	}
 }

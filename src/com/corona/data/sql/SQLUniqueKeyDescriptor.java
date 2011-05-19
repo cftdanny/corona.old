@@ -35,47 +35,37 @@ class SQLUniqueKeyDescriptor<E> implements UniqueKeyDescriptor<E> {
 	/**
 	 * the SELECT SQL script
 	 */
-	private String query;
+	private String selectSql;
 	
 	/**
 	 * the DELETE SQL script
 	 */
-	private String command;
+	private String deleteSql;
 	
 	/**
 	 * @param parent the parent entity MetaData
-	 * @param entity the entity annotation
 	 * @param uniqueKey the unique key annotation
 	 */
-	SQLUniqueKeyDescriptor(final EntityMetaData<E> parent, final Entity entity, final UniqueKey uniqueKey) {
+	SQLUniqueKeyDescriptor(final EntityMetaData<E> parent, final UniqueKey uniqueKey) {
 		
-		this.parent = parent;
-
 		// check whether primary key for entity is empty or not
-		if (uniqueKey.columns().length == 0) {
-			throw new DataRuntimeException("Primary key for entity [{0}] is empty", this.parent.getMappingClass());
-		}
+		this.parent = parent;
 		this.id = uniqueKey.id();
 		
-		// find table name by class that is annotated entity class
-		String table = this.parent.getMappingClass().getSimpleName();
-		if (entity.name().trim().length() != 0) {
-			table = entity.name();
+		if (uniqueKey.columns().length == 0) {
+			throw new DataRuntimeException(
+					"Unique key [{0}] for entity [{1}] is empty", this.id, this.parent.getMappingClass()
+			);
 		}
 		
 		// find id (primary key) column by annotated field 
 		String where = "";
 		for (String column : uniqueKey.columns()) {
-			
-			if (where.length() == 0) {
-				where = where + "(" + column + " = ?)";
-			} else {
-				where = where + " AND (" + column + " = ?)";
-			}
+			where = where + ((where.length() == 0) ? "" : " AND ") + "(" + column.toUpperCase() + " = ?)";
 		}
 		
-		this.query = "SELECT * FROM " + table + " WHERE " + where + " = ?";
-		this.command = "DELETE * FROM " + table + " WHERE " + where + " = ?";
+		this.selectSql = "SELECT * FROM " + this.parent.getName() + " WHERE " + where + " = ?";
+		this.deleteSql = "DELETE FROM " + this.parent.getName() + " WHERE " + where + " = ?";
 	}
 
 	/**
@@ -101,7 +91,7 @@ class SQLUniqueKeyDescriptor<E> implements UniqueKeyDescriptor<E> {
 	 * @return the new query by SELECT SQL for unique key
 	 */
 	private Query<E> getQuery(final ConnectionManager connectionManager) {
-		return connectionManager.createQuery(new BeanResultHandler<E>(this.parent), this.query);
+		return connectionManager.createQuery(new BeanResultHandler<E>(this.parent), this.selectSql);
 	}
 
 	/**
@@ -109,6 +99,6 @@ class SQLUniqueKeyDescriptor<E> implements UniqueKeyDescriptor<E> {
 	 * @return the new query by DELETE SQL for unique key
 	 */
 	private Command getCommand(final ConnectionManager connectionManager) {
-		return connectionManager.createCommand(this.command);
+		return connectionManager.createCommand(this.deleteSql);
 	}
 }

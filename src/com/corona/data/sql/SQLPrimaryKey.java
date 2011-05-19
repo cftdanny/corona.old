@@ -23,16 +23,16 @@ import com.corona.data.Query;
  * @param <K> the type of primary key class
  */
 class SQLPrimaryKey<K, E> implements PrimaryKey<K, E> {
+	
+	/**
+	 * the current connection manager
+	 */
+	private ConnectionManager connectionManager;
 
 	/**
 	 * the primary key descriptor
 	 */
 	private SQLPrimaryKeyDescriptor<E> parent;
-	
-	/**
-	 * the connection manager factory
-	 */
-	private ConnectionManager connectionManager;
 	
 	/**
 	 * the query that can be used to query by single entity in data source by primary key

@@ -17,7 +17,8 @@ import com.corona.data.Query;
 import com.corona.data.annotation.PrimaryKey;
 
 /**
- * <p>This definition is used to store and create primary key configuration. </p>
+ * <p>This descriptor is used to SELECT, UPDATE, DELETE a single row by SQL statement in database 
+ * by primary key. </p>
  *
  * @author $Author$
  * @version $Id$
@@ -26,39 +27,34 @@ import com.corona.data.annotation.PrimaryKey;
 public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 
 	/**
-	 * the parent entity MetaData
+	 * the entity configuration that defines this primary key
 	 */
 	private EntityMetaData<E> parent;
 	
 	/**
-	 * all descriptors about column that its value can be updated by primary key
+	 * all column descriptors for primary key
 	 */
 	private List<ColumnDescriptor<E>> updatableColumnDescriptors;
 	
 	/**
-	 * all column descriptors for primary key 
+	 * all column descriptors for non-primary key 
 	 */
 	private List<ColumnDescriptor<E>> primaryKeyColumnDescriptors;
 	
 	/**
-	 * the WHRER SQL according to primary key
+	 * the SELECT SQL and WHERE clause is created according to primary key
 	 */
-	private String where = "";
+	private String selectSql;
 	
 	/**
-	 * the SELECT SQL according this index
+	 * the DELETE SQL and WHERE clause is created according to primary key
 	 */
-	private String selectStatement;
+	private String deleteSql;
 	
 	/**
-	 * the DELETE SQL according to this index
+	 * the UPDATE SQL and WHERE clause is created according to primary key
 	 */
-	private String deleteStatement;
-	
-	/**
-	 * the update SQL
-	 */
-	private String updateStatement = "";
+	private String updateSql = "";
 	
 	/**
 	 * @param parent the parent entity MetaData
@@ -87,9 +83,9 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 		}
 		
 		// create WHERE clause by primary key for SELECT, DELETE and UPDATE statement
+		String where = "";
 		for (ColumnDescriptor<E> descriptor : this.primaryKeyColumnDescriptors) {
-			this.where = this.where + ((this.where.length() == 0) ? "" : " AND ");
-			this.where = this.where + "(" + descriptor.getName() + " = ?)";
+			where = where + ((where.length() == 0) ? "" : " AND ") + "(" + descriptor.getName() + " = ?)";
 		}
 		
 		// create UPDATE SQL statement by all column descriptors in entity and primary key
@@ -97,17 +93,17 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 		for (ColumnDescriptor<E> descriptor : this.parent.getColumnDescriptors()) {
 			
 			if (!this.primaryKeyColumnDescriptors.contains(descriptor)) {
-				this.updateStatement = this.updateStatement + ((this.updateStatement.length() == 0) ? "" : ", ");
-				this.updateStatement = this.updateStatement + descriptor.getName() + " = ?";
+				this.updateSql = this.updateSql + ((this.updateSql.length() == 0) ? "" : ", ");
+				this.updateSql = this.updateSql + descriptor.getName() + " = ?";
 
 				this.updatableColumnDescriptors.add(descriptor);
 			}
 		}
 
 		// create UPDATE, DELETE, SELECT SQL statement for primary key
-		this.updateStatement = "UPDATE " + this.parent.getName() + " SET " + this.updateStatement + " WHERE " + where;
-		this.selectStatement = "SELECT * FROM " + this.parent.getName() + " WHERE " + where;
-		this.deleteStatement = "DELETE FROM " + this.parent.getName() + " WHERE " + where;
+		this.updateSql = "UPDATE " + this.parent.getName() + " SET " + this.updateSql + " WHERE " + where;
+		this.selectSql = "SELECT * FROM " + this.parent.getName() + " WHERE " + where;
+		this.deleteSql = "DELETE FROM " + this.parent.getName() + " WHERE " + where;
 	}
 	
 	/**
@@ -138,7 +134,7 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 	 * @return the new query for SELECT by primary key
 	 */
 	Query<E> createSelectQuery(final ConnectionManager connectionManager) {
-		return connectionManager.createQuery(new BeanResultHandler<E>(this.parent), this.selectStatement);
+		return connectionManager.createQuery(new BeanResultHandler<E>(this.parent), this.selectSql);
 	}
 
 	/**
@@ -146,7 +142,7 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 	 * @return the new command for DELETE by primary key
 	 */
 	Command createDeleteCommand(final ConnectionManager connectionManager) {
-		return connectionManager.createCommand(this.deleteStatement);
+		return connectionManager.createCommand(this.deleteSql);
 	}
 	
 	/**
@@ -154,6 +150,6 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 	 * @return the new command for UPDATE by primary key
 	 */
 	Command createUpdateCommand(final ConnectionManager connectionManager) {
-		return connectionManager.createCommand(this.updateStatement);
+		return connectionManager.createCommand(this.updateSql);
 	}
 }
