@@ -29,7 +29,7 @@ public class SQLIndexDescriptor<E> implements IndexDescriptor<E> {
 	/**
 	 * the index name
 	 */
-	private int id;
+	private Integer id;
 	
 	/**
 	 * the SELECT SQL according this index
@@ -53,7 +53,7 @@ public class SQLIndexDescriptor<E> implements IndexDescriptor<E> {
 		
 		if (index.columns().length == 0) {
 			throw new DataRuntimeException(
-					"Index [{0}] for entity [{1}] is empty", this.id, this.parent.getMappingClass()
+					"Index [{0}] for entity [{1}] is empty", this.id, this.parent.getType()
 			);
 		}
 		
@@ -73,7 +73,7 @@ public class SQLIndexDescriptor<E> implements IndexDescriptor<E> {
 	 * @see com.corona.data.IndexDescriptor#getId()
 	 */
 	@Override
-	public int getId() {
+	public Integer getId() {
 		return this.id;
 	}
 

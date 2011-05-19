@@ -32,7 +32,7 @@ public class BeanResultHandler<E> extends AbstractResultHandler<E> {
 	 */
 	public BeanResultHandler(final ResultMetaData<E> resultMetaData) {
 		
-		this.entityClass = resultMetaData.getMappingClass();
+		this.entityClass = resultMetaData.getType();
 		for (ColumnDescriptor<E> columnDescriptor : resultMetaData.getColumnDescriptors()) {
 			this.columnDescriptors.put(columnDescriptor.getName(), columnDescriptor);
 		}

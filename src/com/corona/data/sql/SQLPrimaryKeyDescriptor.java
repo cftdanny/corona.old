@@ -66,7 +66,7 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 		this.parent = parent;
 		if (primaryKey.value().length == 0) {
 			throw new DataRuntimeException("Primary key columns for entity [{0}] is empty", 
-					this.parent.getMappingClass()
+					this.parent.getType()
 			);
 		}
 		
@@ -76,7 +76,7 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 			ColumnDescriptor<E> descriptor = this.parent.getColumnDescriptor(columnLabel);
 			if (descriptor == null) {
 				throw new DataRuntimeException("Column [{0}] is not defined in entity [{1}]", 
-						columnLabel, this.parent.getMappingClass()
+						columnLabel, this.parent.getType()
 				);
 			}
 			this.primaryKeyColumnDescriptors.add(descriptor);

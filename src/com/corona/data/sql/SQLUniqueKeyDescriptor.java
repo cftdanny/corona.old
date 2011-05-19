@@ -29,7 +29,7 @@ class SQLUniqueKeyDescriptor<E> implements UniqueKeyDescriptor<E> {
 	/**
 	 * the unique key name
 	 */
-	private int id;
+	private Integer id;
 	
 	/**
 	 * the SELECT SQL script
@@ -53,7 +53,7 @@ class SQLUniqueKeyDescriptor<E> implements UniqueKeyDescriptor<E> {
 		
 		if (uniqueKey.columns().length == 0) {
 			throw new DataRuntimeException(
-					"Unique key [{0}] for entity [{1}] is empty", this.id, this.parent.getMappingClass()
+					"Unique key [{0}] for entity [{1}] is empty", this.id, this.parent.getType()
 			);
 		}
 		
@@ -72,7 +72,7 @@ class SQLUniqueKeyDescriptor<E> implements UniqueKeyDescriptor<E> {
 	 * @see com.corona.data.UniqueKeyDescriptor#getId()
 	 */
 	@Override
-	public int getId() {
+	public Integer getId() {
 		return this.id;
 	}
 	

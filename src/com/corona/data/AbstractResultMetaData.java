@@ -31,12 +31,7 @@ public abstract class AbstractResultMetaData<E> implements ResultMetaData<E> {
 	/**
 	 * the class that is used to map row of query result
 	 */
-	private Class<E> mappingClass;
-	
-	/**
-	 * the id column descriptor
-	 */
-	private ColumnDescriptor<E> idColumnDescriptor;
+	private Class<E> type;
 	
 	/**
 	 * all column descriptors
@@ -49,8 +44,8 @@ public abstract class AbstractResultMetaData<E> implements ResultMetaData<E> {
 	public AbstractResultMetaData(final Class<E> resultClass) {
 		
 		// find whether map query result to field or property by Entity annotation, default is property
-		this.mappingClass = resultClass;
-		Entity entity = this.mappingClass.getAnnotation(Entity.class);
+		this.type = resultClass;
+		Entity entity = this.type.getAnnotation(Entity.class);
 		
 		// find how to map column to bean property or field
 		MappingBy mapping = (entity != null) ? entity.mappingBy() : MappingBy.PROPERTY; 
@@ -58,9 +53,9 @@ public abstract class AbstractResultMetaData<E> implements ResultMetaData<E> {
 		// get bean info by entity class
 		BeanInfo beaninfo = null;
 		try {
-			beaninfo = Introspector.getBeanInfo(this.mappingClass);
+			beaninfo = Introspector.getBeanInfo(this.type);
 		} catch (IntrospectionException e) {
-			throw new DataRuntimeException("Fail to get bean info with entity [{0}]", e, this.mappingClass);
+			throw new DataRuntimeException("Fail to get bean info with entity [{0}]", e, this.type);
 		}
 
 		// find all properties (getter and setter) if it will map to column in query result
@@ -69,38 +64,19 @@ public abstract class AbstractResultMetaData<E> implements ResultMetaData<E> {
 			if (this.isMappingColumn(property, mapping)) {
 				PropertyColumnDescriptor<E> descriptor = new PropertyColumnDescriptor<E>(property);
 				this.columnDescriptors.put(descriptor.getName(), descriptor);
-				
-				if (property.getReadMethod().isAnnotationPresent(Id.class)) {
-					this.setIdColumnDescriptor(descriptor);
-				}
 			}
 		}
 
 		// find all fields if it will map to column in query result
-		for (Field field : this.mappingClass.getDeclaredFields()) {
+		for (Field field : this.type.getDeclaredFields()) {
 			
 			if (this.isMappingColumn(field, mapping)) {
 				FieldColumnDescriptor<E> descriptor = new FieldColumnDescriptor<E>(field);
 				this.columnDescriptors.put(descriptor.getName(), descriptor);
-				
-				if (field.isAnnotationPresent(Id.class)) {
-					this.setIdColumnDescriptor(descriptor);
-				}
 			}
 		}
 	}
 
-	/**
-	 * @param descriptor the column descriptor for identity column
-	 */
-	private void setIdColumnDescriptor(final ColumnDescriptor<E> descriptor) {
-		
-		if (this.idColumnDescriptor != null) {
-			throw new DataRuntimeException("Only one Id column is allowed in entity [{0}]", this.mappingClass);
-		}
-		this.idColumnDescriptor = descriptor;
-	}
-	
 	/**
 	 * @param property the property
 	 * @param mapping map column to field or property
@@ -118,8 +94,11 @@ public abstract class AbstractResultMetaData<E> implements ResultMetaData<E> {
 		if (readMethod == null) {
 			return false;
 		}
-		// TRUE - if read method is annotated with Column annotation, use it as mapping
+		// TRUE - if read method is annotated with Column or Id annotation, use it as mapping
 		if (readMethod.isAnnotationPresent(Column.class)) {
+			return true;
+		}
+		if (readMethod.isAnnotationPresent(Id.class)) {
 			return true;
 		}
 		// FALSE - if read method is annotated with Transient, do not use it as mapping
@@ -138,8 +117,11 @@ public abstract class AbstractResultMetaData<E> implements ResultMetaData<E> {
 	 */
 	private boolean isMappingColumn(final Field field, final MappingBy mapping) {
 		
-		// TRUE - if field is annotated with Column, use it as mapping
+		// TRUE - if field is annotated with Column or Id annotation, use it as mapping
 		if (field.isAnnotationPresent(Column.class)) {
+			return true;
+		}
+		if (field.isAnnotationPresent(Id.class)) {
 			return true;
 		}
 		// FALSE - if field is annotated with Transient, do not use it as mapping
@@ -153,20 +135,11 @@ public abstract class AbstractResultMetaData<E> implements ResultMetaData<E> {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.ResultMetaData#getMappingClass()
+	 * @see com.corona.data.ResultMetaData#getType()
 	 */
 	@Override
-	public Class<E> getMappingClass() {
-		return this.mappingClass;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * @see com.corona.data.ResultMetaData#getIdColumnDescriptor()
-	 */
-	@Override
-	public ColumnDescriptor<E> getIdColumnDescriptor() {
-		return this.idColumnDescriptor;
+	public Class<E> getType() {
+		return this.type;
 	}
 
 	/**

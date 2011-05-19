@@ -28,14 +28,14 @@ public abstract class AbstractEntityMetaData<E> extends AbstractResultMetaData<E
 		super(entityClass);
 		
 		// find Entity annotation that is annotated to entity class
-		Entity entity = this.getMappingClass().getAnnotation(Entity.class);
+		Entity entity = this.getType().getAnnotation(Entity.class);
 		if (entity != null) {
 			this.name = entity.name();
 		}
 		
 		// if entity name is empty, will use entity class name
 		if (this.name.trim().length() == 0) {
-			this.name = this.getMappingClass().getSimpleName();
+			this.name = this.getType().getSimpleName();
 		}
 	}
 

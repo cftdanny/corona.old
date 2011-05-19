@@ -15,7 +15,7 @@ public interface UniqueKeyDescriptor<E> {
 	/**
 	 * @return the id of unique key
 	 */
-	int getId();
+	Integer getId();
 	
 	/**
 	 * @param connectionManager the current connection manager

@@ -154,10 +154,10 @@ public class AbstractHome<E> implements Home<E> {
 		}
 		
 		// if there is ID column, will get generated ID from data source and pass to entity instance
-		if (this.entityMetaData.getIdColumnDescriptor() != null) {
+		if (this.entityMetaData.getIdentityDescriptor() != null) {
 			Object[] keys = this.connectionManager.getDialect().getGeneratedKeys(this.insertCommand);
 			if ((keys != null) && (keys.length > 1)) {
-				this.entityMetaData.getIdColumnDescriptor().set(e, keys[0]);
+				this.entityMetaData.getIdentityDescriptor().set(e, keys[0]);
 			}
 		}
 	}

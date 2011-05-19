@@ -15,7 +15,7 @@ public interface IndexDescriptor<E> {
 	/**
 	 * @return the id of index
 	 */
-	int getId();
+	Integer getId();
 	
 	/**
 	 * @param connectionManager current connection manager

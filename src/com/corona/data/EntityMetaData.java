@@ -18,6 +18,11 @@ public interface EntityMetaData<E> extends ResultMetaData<E> {
 	String getName();
 	
 	/**
+	 * @return the descriptor for identity column
+	 */
+	ColumnDescriptor<E> getIdentityDescriptor();
+	
+	/**
 	 * @return the primary key definition
 	 */
 	PrimaryKeyDescriptor<E> getPrimarykey(); 
