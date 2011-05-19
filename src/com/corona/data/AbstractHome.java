@@ -68,7 +68,8 @@ public class AbstractHome<E> implements Home<E> {
 	private PrimaryKey<E> getPrimaryKey() {
 		
 		if (this.primarykey == null) {
-			this.primarykey = this.entityMetaData.getPrimarykey().createPrimaryKey(this.connectionManager);
+			PrimaryKeyDescriptor<E> descriptor = this.entityMetaData.getPrimarykey();
+			this.primarykey = descriptor.createPrimaryKey(this.connectionManager);
 		}
 		return this.primarykey;
 	}
@@ -130,6 +131,13 @@ public class AbstractHome<E> implements Home<E> {
 	}
 
 	/**
+	 * @return the home builder
+	 */
+	private HomeBuilder getBuilder() {
+		return this.connectionManager.getDialect().getHomeBuilder();
+	}
+	
+	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.Home#insert(java.lang.Object)
 	 */
@@ -138,7 +146,7 @@ public class AbstractHome<E> implements Home<E> {
 		
 		// if INSERT command is not created before, we will create it by dialect and HomeBuilder
 		if (this.insertCommand == null) {
-			this.insertCommand = this.connectionManager.getDialect().getHomeBuilder().createInsertCommand(
+			this.insertCommand = this.getBuilder().createInsertCommand(
 					this.connectionManager, this.entityMetaData
 			);
 		}
@@ -199,12 +207,20 @@ public class AbstractHome<E> implements Home<E> {
 	}
 
 	/**
+	 * @param filter the filter
+	 * @return the SELECT COUNT(*) SQL query
+	 */
+	private Query<Long> createCountQuery(final String filter) {
+		return this.getBuilder().createCountQuery(connectionManager, entityMetaData, filter);
+	}
+	
+	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.Home#count()
 	 */
 	@Override
 	public long count() {
-		return 0;
+		return this.createCountQuery("").get();
 	}
 
 	/**
@@ -212,8 +228,8 @@ public class AbstractHome<E> implements Home<E> {
 	 * @see com.corona.data.Home#count(java.lang.String, java.lang.Object[])
 	 */
 	@Override
-	public long count(String sql, Object... args) {
-		return 0;
+	public long count(final String filter, final Object... args) {
+		return this.createCountQuery(filter).get(args);
 	}
 
 	/**
@@ -221,8 +237,8 @@ public class AbstractHome<E> implements Home<E> {
 	 * @see com.corona.data.Home#count(java.lang.String, java.lang.String[], java.lang.Object[])
 	 */
 	@Override
-	public long count(String sql, String[] names, Object... args) {
-		return 0;
+	public long count(final String filter, final String[] names, final Object... args) {
+		return this.createCountQuery(filter).get(names, args);
 	}
 
 	/**

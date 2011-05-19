@@ -112,22 +112,22 @@ public interface Home<E> {
 	 * <p>This method will count how many records in this table with a filter argument SQL and its 
 	 * parameters. </p>
 	 * 
-	 * @param sql the after FROM [ENTITY] SQL statement
+	 * @param filter the after FROM [ENTITY] SQL statement
 	 * @param args the parameter values
 	 * @return how many records after filter in this table
 	 */
-	long count(String sql, Object... args);
+	long count(String filter, Object... args);
 	
 	/**
 	 * <p>This method will count how many records in this table with a filter argument SQL and its 
 	 * parameters. </p>
 	 * 
-	 * @param sql the after FROM [ENTITY] SQL statement
+	 * @param filter the after FROM [ENTITY] SQL statement
 	 * @param names the parameter names
 	 * @param args the parameter values
 	 * @return how many records after filter in this table
 	 */
-	long count(String sql, String[] names, Object... args);
+	long count(String filter, String[] names, Object... args);
 	
 	/**
 	 * <p>This method is used to batch update entity instances in database. </p>

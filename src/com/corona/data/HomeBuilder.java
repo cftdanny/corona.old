@@ -18,4 +18,6 @@ public interface HomeBuilder {
 	 * @return the command is used to insert entity to data source
 	 */
 	<E> Command createInsertCommand(ConnectionManager connectionManager, EntityMetaData<E> config);
+	
+	<E> Query<Long> createCountQuery(ConnectionManager connectionManager, EntityMetaData<E> config, String filter);
 }

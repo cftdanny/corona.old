@@ -27,19 +27,28 @@ public class SQLHomeBuilder implements HomeBuilder {
 	@Override
 	public <E> Command createInsertCommand(final ConnectionManager connectionManager, final EntityMetaData<E> config) {
 		
-		String values = "", params = "";
+		String columns = "", params = "";
 		for (ColumnDescriptor<E> descriptor : config.getColumnDescriptors()) {
-			
-			if (values.length() == 0) {
-				values = values + descriptor.getName();
-				params = params + "?";
-			} else {
-				values = values + ", " + descriptor.getName();
-				params = params + ", ?";
+			if ((config.getIdentityDescriptor() == null) || (!descriptor.equals(config.getIdentityDescriptor()))) {
+				columns = columns + (columns.length() == 0 ? "" : ", ") + descriptor.getName();
+				columns = columns + (columns.length() == 0 ? "" : ", ") + "?";
 			}
 		}
 		
-		String sql = "INSERT INTO " + config.getName() + "(" + values + ") VALUES (" + params + ")";
+		String sql = "INSERT INTO " + config.getName() + "(" + columns + ") VALUES (" + params + ")";
 		return connectionManager.createCommand(sql);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.HomeBuilder#createCountQuery(
+	 * 	com.corona.data.ConnectionManager, com.corona.data.EntityMetaData, java.lang.String
+	 * )
+	 */
+	@Override
+	public <E> Query<Long> createCountQuery(
+			final ConnectionManager connectionManager, final EntityMetaData<E> config, final String filter
+	) {
+		return null;
 	}
 }
