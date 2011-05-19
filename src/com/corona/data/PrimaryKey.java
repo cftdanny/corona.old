@@ -37,4 +37,12 @@ public interface PrimaryKey<K, E> {
 	 * @return <code>true</code> if this entity has been deleted
 	 */
 	boolean delete(K value);
+	
+	/**
+	 * <p>Update an changed entity instance to data source by entity instance and primary key. </p>
+	 * 
+	 * @param e the instance of entity
+	 * @return whether entity has been save to data source
+	 */
+	boolean update(E e);
 }

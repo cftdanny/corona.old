@@ -31,6 +31,11 @@ public interface Dialect {
 	ResultHolder getResultHolder(Object result);
 	
 	/**
+	 * @return the home builder
+	 */
+	HomeBuilder getHomeBuilder();
+	
+	/**
 	 * @return the entity query builder
 	 */
 	EntityQueryBuilder getEntityQueryBuilder();

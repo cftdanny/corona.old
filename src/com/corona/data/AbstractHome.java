@@ -3,6 +3,7 @@
  */
 package com.corona.data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,11 @@ public class AbstractHome<K, E> implements Home<K, E> {
 	 * all unique keys
 	 */
 	private Map<Integer, UniqueKey<E>> uniqueKeys;
+	
+	/**
+	 * the INSERT entity command
+	 */
+	private Command insertCommand;
 	
 	/**
 	 * @param connectionManager current connection manager
@@ -117,11 +123,11 @@ public class AbstractHome<K, E> implements Home<K, E> {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.Home#update(java.lang.Object, java.lang.String[])
+	 * @see com.corona.data.Home#update(java.lang.Object)
 	 */
 	@Override
-	public boolean update(final E e, final String... columns) {
-		return false;
+	public boolean update(final E e) {
+		return this.getPrimaryKey().update(e);
 	}
 
 	/**
@@ -130,6 +136,31 @@ public class AbstractHome<K, E> implements Home<K, E> {
 	 */
 	@Override
 	public void insert(final E e) {
+		
+		// if INSERT command is not created before, we will create it by dialect and HomeBuilder
+		if (this.insertCommand == null) {
+			this.insertCommand = this.connectionManager.getDialect().getHomeBuilder().createInsertCommand(
+					this.connectionManager, this.entityMetaData
+			);
+		}
+		
+		List<Object> arguments = new ArrayList<Object>();
+		for (ColumnDescriptor<E> descriptor : this.entityMetaData.getColumnDescriptors()) {
+			arguments.add(descriptor.get(e));
+		}
+		
+		// after execute INSERT command, return NO of inserted row should be 1
+		if (this.insertCommand.insert(arguments.toArray()) != 1) {
+			throw new DataRuntimeException("More than one rows are inserted to data source, but should be 1");
+		}
+		
+		// if there is ID column, will get generated ID from data source and pass to entity instance
+		if (this.entityMetaData.getIdColumnDescriptor() != null) {
+			Object[] keys = this.connectionManager.getDialect().getGeneratedKeys(this.insertCommand);
+			if ((keys != null) && (keys.length > 1)) {
+				this.entityMetaData.getIdColumnDescriptor().set(e, keys[0]);
+			}
+		}
 	}
 
 	/**

@@ -51,6 +51,7 @@ public class MethodColumnDescriptor<E> implements ColumnDescriptor<E> {
 		if (this.name.trim().length() == 0) {
 			this.name = property.getName();
 		}
+		this.name = this.name.toUpperCase();
 	}
 	
 	/**

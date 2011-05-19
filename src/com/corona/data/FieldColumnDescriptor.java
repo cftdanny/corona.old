@@ -40,6 +40,7 @@ public class FieldColumnDescriptor<E> implements ColumnDescriptor<E> {
 		} else {
 			this.name = column.name();
 		}
+		this.name = this.name.toUpperCase();
 	}
 	
 	/**

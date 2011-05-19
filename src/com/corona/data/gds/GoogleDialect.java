@@ -11,6 +11,7 @@ import com.corona.data.Dialect;
 import com.corona.data.EntityDeleteBuilder;
 import com.corona.data.EntityQueryBuilder;
 import com.corona.data.EntityUpdateBuilder;
+import com.corona.data.HomeBuilder;
 import com.corona.data.ResultHolder;
 
 /**
@@ -84,6 +85,15 @@ class GoogleDialect implements Dialect {
 	 */
 	@Override
 	public ResultHolder getResultHolder(Object result) {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.Dialect#getHomeBuilder()
+	 */
+	@Override
+	public HomeBuilder getHomeBuilder() {
 		return null;
 	}
 }

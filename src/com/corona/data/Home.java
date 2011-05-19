@@ -49,10 +49,9 @@ public interface Home<K, E> {
 	 * </p>
 	 * 
 	 * @param e the instance of entity
-	 * @param columns the changed columns
 	 * @return whether entity has been save to data source
 	 */
-	boolean update(E e, String... columns);
+	boolean update(E e);
 	
 	/**
 	 * <p>Insert a new entity instance into database. Before update, this method will check

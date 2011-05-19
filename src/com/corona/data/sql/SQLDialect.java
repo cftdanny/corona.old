@@ -10,6 +10,7 @@ import com.corona.data.Dialect;
 import com.corona.data.EntityDeleteBuilder;
 import com.corona.data.EntityQueryBuilder;
 import com.corona.data.EntityUpdateBuilder;
+import com.corona.data.HomeBuilder;
 import com.corona.data.ResultHolder;
 
 /**
@@ -20,6 +21,11 @@ import com.corona.data.ResultHolder;
  */
 public abstract class SQLDialect implements Dialect {
 
+	/**
+	 * the home builder
+	 */
+	private SQLHomeBuilder homeBuilder = new SQLHomeBuilder();
+	
 	/**
 	 * the entity builder builder
 	 */
@@ -46,6 +52,15 @@ public abstract class SQLDialect implements Dialect {
 			throw new DataRuntimeException("SQL extractor can only extract value from ResultSet");
 		}
 		return new SQLResultHolder((ResultSet) result);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.Dialect#getHomeBuilder()
+	 */
+	@Override
+	public HomeBuilder getHomeBuilder() {
+		return this.homeBuilder;
 	}
 
 	/**

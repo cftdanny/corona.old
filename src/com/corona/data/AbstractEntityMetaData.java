@@ -15,11 +15,6 @@ import com.corona.data.annotation.Entity;
 public abstract class AbstractEntityMetaData<E> extends AbstractResultMetaData<E> implements EntityMetaData<E> {
 
 	/**
-	 * the schema, if SQL data source, it is database schema 
-	 */
-	private String schema = "";
-	
-	/**
 	 * the name, if SQL data source, it is table name
 	 */
 	private String name = "";
@@ -35,7 +30,6 @@ public abstract class AbstractEntityMetaData<E> extends AbstractResultMetaData<E
 		// find Entity annotation that is annotated to entity class
 		Entity entity = this.getMappingClass().getAnnotation(Entity.class);
 		if (entity != null) {
-			this.schema = entity.schema();
 			this.name = entity.name();
 		}
 		
@@ -43,14 +37,6 @@ public abstract class AbstractEntityMetaData<E> extends AbstractResultMetaData<E
 		if (this.name.trim().length() == 0) {
 			this.name = this.getMappingClass().getSimpleName();
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * @see com.corona.data.EntityMetaData#getSchema()
-	 */
-	public String getSchema() {
-		return schema;
 	}
 
 	/**

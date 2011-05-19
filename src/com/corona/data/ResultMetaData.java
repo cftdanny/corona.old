@@ -24,6 +24,12 @@ public interface ResultMetaData<E> {
 	ColumnDescriptor<E> getIdColumnDescriptor();
 	
 	/**
+	 * @param columnLabel the column label
+	 * @return the column descriptor about the label or <code>null</code> if does not exists
+	 */
+	ColumnDescriptor<E> getColumnDescriptor(String columnLabel);
+	
+	/**
 	 * @return the map to column descriptors that are defined in result class
 	 */
 	ColumnDescriptor<E>[] getColumnDescriptors(); 

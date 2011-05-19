@@ -10,7 +10,8 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.corona.data.annotation.Column;
 import com.corona.data.annotation.Entity;
@@ -40,7 +41,7 @@ public abstract class AbstractResultMetaData<E> implements ResultMetaData<E> {
 	/**
 	 * all column descriptors
 	 */
-	private List<ColumnDescriptor<E>> columnDescriptors;
+	private Map<String, ColumnDescriptor<E>> columnDescriptors = new HashMap<String, ColumnDescriptor<E>>();
 	
 	/**
 	 * @param resultClass the result class that query result can be mapped to
@@ -70,7 +71,7 @@ public abstract class AbstractResultMetaData<E> implements ResultMetaData<E> {
 			if (this.isMappingColumn(property, mapping)) {
 				MethodColumnDescriptor<E> descriptor = new MethodColumnDescriptor<E>(property);
 				if (!property.getReadMethod().isAnnotationPresent(Id.class)) {
-					this.columnDescriptors.add(descriptor);
+					this.columnDescriptors.put(descriptor.getName(), descriptor);
 				} else {
 					this.idColumnDescriptor = descriptor;
 				}
@@ -83,7 +84,7 @@ public abstract class AbstractResultMetaData<E> implements ResultMetaData<E> {
 			if (this.isMappingColumn(field, mapping)) {
 				FieldColumnDescriptor<E> descriptor = new FieldColumnDescriptor<E>(field);
 				if (!field.isAnnotationPresent(Id.class)) {
-					this.columnDescriptors.add(descriptor);
+					this.columnDescriptors.put(descriptor.getName(), descriptor);
 				} else {
 					this.idColumnDescriptor = descriptor;
 				}
@@ -161,11 +162,20 @@ public abstract class AbstractResultMetaData<E> implements ResultMetaData<E> {
 
 	/**
 	 * {@inheritDoc}
+	 * @see com.corona.data.ResultMetaData#getColumnDescriptor(java.lang.String)
+	 */
+	@Override
+	public ColumnDescriptor<E> getColumnDescriptor(final String columnLabel) {
+		return this.columnDescriptors.get(columnLabel.toUpperCase());
+	}
+
+	/**
+	 * {@inheritDoc}
 	 * @see com.corona.data.ResultMetaData#getColumnDescriptors()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public ColumnDescriptor<E>[] getColumnDescriptors() {
-		return (ColumnDescriptor<E>[]) this.columnDescriptors.toArray();
+		return (ColumnDescriptor<E>[]) this.columnDescriptors.values().toArray();
 	}
 }
