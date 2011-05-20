@@ -33,7 +33,7 @@ public interface ResultHandler<E> {
 	ResultHandler<String> STRING = new AbstractResultHandler<String>() {
 		
 		public String get(final ResultHolder result) {
-			Object outcome = result.get(1);
+			Object outcome = result.getObject(1);
 			return (outcome == null) ? null : outcome.toString();
 		}
 	};
@@ -44,7 +44,7 @@ public interface ResultHandler<E> {
 	ResultHandler<Integer> INTEGER = new AbstractResultHandler<Integer>() {
 		
 		public Integer get(final ResultHolder result) {
-			return (Integer) result.get(1);
+			return (Integer) result.getObject(1);
 		}
 	};
 
@@ -54,7 +54,7 @@ public interface ResultHandler<E> {
 	ResultHandler<Object> OBJECT = new AbstractResultHandler<Object>() {
 		
 		public Object get(final ResultHolder result) {
-			return result.get(1);
+			return result.getObject(1);
 		}
 	};
 
@@ -67,7 +67,7 @@ public interface ResultHandler<E> {
 			
 			List<Object> outcome = new ArrayList<Object>();
 			for (int i = 1; i <= result.getColumnCount(); i++) {
-				outcome.add(result.get(i));
+				outcome.add(result.getObject(i));
 			}
 			return outcome;
 		}
@@ -82,7 +82,7 @@ public interface ResultHandler<E> {
 			
 			Object[] outcome = new Object[result.getColumnCount()];
 			for (int i = 1; i <= result.getColumnCount(); i++) {
-				outcome[i - 1] = result.get(i);
+				outcome[i - 1] = result.getObject(i);
 			}
 			return outcome;
 		}
@@ -97,7 +97,7 @@ public interface ResultHandler<E> {
 			
 			Map<String, Object> outcome = new HashMap<String, Object>();
 			for (String label : result.getColumnLabels()) {
-				outcome.put(label, result.get(label));
+				outcome.put(label, result.getObject(label));
 			}
 			return outcome;
 		}

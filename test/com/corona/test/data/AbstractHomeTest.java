@@ -53,8 +53,30 @@ public class AbstractHomeTest {
 		hordmst.insert(tordmst);
 		
 		Assert.assertNotNull(tordmst.getORDRID());
-		
+
+		tordmst = new TORDMST();
+		tordmst.setORDRNO("0002");
+		hordmst.insert(tordmst);
+
+		tordmst = new TORDMST();
+		tordmst.setORDRNO("0003");
+		hordmst.insert(tordmst);
+
 		transaction.commit();
+		
+		transaction.begin();
+		Assert.assertEquals(3, hordmst.count());
+		Assert.assertEquals(1, hordmst.count("ORDRNO = ?", "0001"));
+		
+		TORDMST other = hordmst.get(tordmst.getORDRID());
+		Assert.assertEquals(tordmst.getORDRNO(), other.getORDRNO());
+		transaction.commit();
+
+		transaction.begin();
+		hordmst.delete(other.getORDRID());
+		Assert.assertEquals(2, hordmst.count());
+		transaction.commit();
+
 		connectionManager.close();
 	}
 	
