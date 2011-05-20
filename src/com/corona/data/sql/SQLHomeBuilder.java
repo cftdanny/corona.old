@@ -9,6 +9,7 @@ import com.corona.data.ConnectionManager;
 import com.corona.data.EntityMetaData;
 import com.corona.data.HomeBuilder;
 import com.corona.data.Query;
+import com.corona.data.ResultHandler;
 
 /**
  * <p>This builder is used to build query and command for {@link Home} for SQL database </p>
@@ -28,14 +29,14 @@ public class SQLHomeBuilder implements HomeBuilder {
 	public <E> Command createInsertCommand(final ConnectionManager connectionManager, final EntityMetaData<E> config) {
 		
 		String columns = "", params = "";
-		for (ColumnDescriptor<E> descriptor : config.getColumnDescriptors()) {
+		for (ColumnDescriptor<E> descriptor : config.getColumnDescriptors().values()) {
 			if ((config.getIdentityDescriptor() == null) || (!descriptor.equals(config.getIdentityDescriptor()))) {
 				columns = columns + (columns.length() == 0 ? "" : ", ") + descriptor.getName();
-				columns = columns + (columns.length() == 0 ? "" : ", ") + "?";
+				params = params + (params.length() == 0 ? "" : ", ") + "?";
 			}
 		}
 		
-		String sql = "INSERT INTO " + config.getName() + "(" + columns + ") VALUES (" + params + ")";
+		String sql = "INSERT INTO " + config.getName() + " (" + columns + ") VALUES (" + params + ")";
 		return connectionManager.createCommand(sql);
 	}
 
@@ -49,6 +50,7 @@ public class SQLHomeBuilder implements HomeBuilder {
 	public <E> Query<Long> createCountQuery(
 			final ConnectionManager connectionManager, final EntityMetaData<E> config, final String filter
 	) {
-		return null;
+		SQLSelectBuilder builder = new SQLSelectBuilder(config, filter);
+		return connectionManager.createQuery(ResultHandler.LONG, builder.getStatement("SELECT COUNT(*)"));
 	}
 }

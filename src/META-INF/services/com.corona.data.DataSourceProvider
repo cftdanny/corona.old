@@ -1,1 +1,2 @@
 com.corona.data.mysql.MySQLDataSourceProvider
+com.corona.data.hsqldb.HSQLDataSourceProvider

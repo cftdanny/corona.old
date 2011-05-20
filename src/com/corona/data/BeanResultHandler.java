@@ -33,7 +33,7 @@ public class BeanResultHandler<E> extends AbstractResultHandler<E> {
 	public BeanResultHandler(final ResultMetaData<E> resultMetaData) {
 		
 		this.entityClass = resultMetaData.getType();
-		for (ColumnDescriptor<E> columnDescriptor : resultMetaData.getColumnDescriptors()) {
+		for (ColumnDescriptor<E> columnDescriptor : resultMetaData.getColumnDescriptors().values()) {
 			this.columnDescriptors.put(columnDescriptor.getName(), columnDescriptor);
 		}
 	}
@@ -110,7 +110,7 @@ public class BeanResultHandler<E> extends AbstractResultHandler<E> {
 		
 		// transfer column value from query result to new created entity instance
 		for (ColumnDescriptor<E> descriptor : descriptors) {
-			descriptor.set(entity, result.get(descriptor.getName()));
+			descriptor.set(entity, result);
 		}
 		
 		return entity;

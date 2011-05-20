@@ -94,7 +94,6 @@ class MySQLDialect extends SQLDialect {
 		
 		ResultSet resultset = null;
 		try {
-			
 			List<Object> keys = new ArrayList<Object>();
 			resultset = ((SQLCommand) command).getSource().getGeneratedKeys();
 			if (resultset.next()) {
@@ -110,8 +109,7 @@ class MySQLDialect extends SQLDialect {
 			if (resultset != null) {
 				try {
 					resultset.close();
-				} catch (Exception e) {
-					
+				} catch (SQLException e) {
 					this.logger.error("Fail to close the opened MySQL result set", e);
 					throw new DataRuntimeException("Fail to close the opened MySQL result set", e);
 				}

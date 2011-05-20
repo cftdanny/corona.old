@@ -28,6 +28,11 @@ public class FieldColumnDescriptor<E> implements ColumnDescriptor<E> {
 	private Field field;
 	
 	/**
+	 * the resolver to get column value from query result
+	 */
+	private ColumnValueResolver resolver;
+
+	/**
 	 * @param field the field in entity class that is annotated with {@link Column}
 	 */
 	public FieldColumnDescriptor(final Field field) {
@@ -35,6 +40,7 @@ public class FieldColumnDescriptor<E> implements ColumnDescriptor<E> {
 		this.field = field;
 		this.field.setAccessible(true);
 		
+		// get column name from field and its annotation
 		Column column = this.field.getAnnotation(Column.class);
 		if ((column == null) || ("".endsWith(column.name()))) {
 			this.name = this.field.getName();
@@ -42,6 +48,9 @@ public class FieldColumnDescriptor<E> implements ColumnDescriptor<E> {
 			this.name = column.name();
 		}
 		this.name = this.name.toUpperCase();
+		
+		// find column value resolver for this column
+		this.resolver = ColumnValueResolvers.getInstance().find(this.getType());
 	}
 	
 	/**
@@ -79,7 +88,7 @@ public class FieldColumnDescriptor<E> implements ColumnDescriptor<E> {
 	public Object get(final E entity) {
 		
 		try {
-			return (entity == null) ? null : this.field.get(entity);
+			return this.field.get(entity);
 		} catch (Throwable e) {
 			throw new DataRuntimeException("Fail to get value by field [{0}]", e, this.field);
 		}
@@ -92,12 +101,19 @@ public class FieldColumnDescriptor<E> implements ColumnDescriptor<E> {
 	@Override
 	public void set(final E entity, final Object value) {
 		
-		if (entity != null) {
-			try {
-				this.field.set(entity, value);
-			} catch (Throwable e) {
-				throw new DataRuntimeException("Fail to set value to field [{0}]", e, this.field);
-			}
+		try {
+			this.field.set(entity, value);
+		} catch (Throwable e) {
+			throw new DataRuntimeException("Fail to set value to field [{0}] by query result", e, this.field);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.ColumnDescriptor#set(java.lang.Object, com.corona.data.ResultHolder)
+	 */
+	@Override
+	public void set(final E entity, final ResultHolder resultHolder) {
+		this.set(entity, this.resolver.get(resultHolder, this.name));
 	}
 }

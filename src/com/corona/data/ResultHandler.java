@@ -23,7 +23,7 @@ public interface ResultHandler<E> {
 	ResultHandler<Long> LONG = new AbstractResultHandler<Long>() {
 		
 		public Long get(final ResultHolder result) {
-			return (Long) result.get(1);
+			return result.getLong(1);
 		}
 	};
 

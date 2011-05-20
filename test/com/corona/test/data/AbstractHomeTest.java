@@ -11,16 +11,15 @@ import com.corona.data.ConnectionManager;
 import com.corona.data.ConnectionManagerFactory;
 import com.corona.data.DataException;
 import com.corona.data.DataSourceManager;
-import com.corona.data.ResultHandler;
 import com.corona.data.Transaction;
 
 /**
- * <p>This test is used to test create ConnectionManagerFactory, ConnectionManager and Transaction. </p>
+ * <p>This test is used to test{@link AbstractHome} </p>
  *
  * @author $Author$
  * @version $Id$
  */
-public class ConnectionManagerFactoryTest {
+public class AbstractHomeTest {
 
 	/**
 	 * @return the new connection manager factory
@@ -37,27 +36,44 @@ public class ConnectionManagerFactoryTest {
 	private ConnectionManager getConnectionManager() throws DataException {
 		return this.getConnectionManagerFactory().open();
 	}
+
+	/**
+	 * @throws Exception if insert error
+	 */
+	@Test public void testInsert() throws Exception {
+		
+		ConnectionManager connectionManager = this.getConnectionManager();
+		HORDMST hordmst = new HORDMST(connectionManager);
+		
+		Transaction transaction = connectionManager.getTransaction();
+		transaction.begin();
+		
+		TORDMST tordmst = new TORDMST();
+		tordmst.setORDRNO("0001");
+		hordmst.insert(tordmst);
+		
+		Assert.assertNotNull(tordmst.getORDRID());
+		
+		transaction.commit();
+		connectionManager.close();
+	}
 	
 	/**
-	 * @exception Exception If fail
+	 * test AbstractHome.count
+	 * @exception Exception if fail
 	 */
-	@Test public void testCreateConnectionManager() throws Exception {
-
-		// create new connection manager with testing database
+	@Test public void testCount() throws Exception {
+		
 		ConnectionManager connectionManager = this.getConnectionManager();
+		HORDMST hordmst = new HORDMST(connectionManager);
 		
-		// create transaction in order to control resource in database 
 		Transaction transaction = connectionManager.getTransaction();
-		
-		// count an empty test in database between transaction
 		transaction.begin();
-		int count = connectionManager.createQuery(ResultHandler.INTEGER, "SELECT COUNT(*) FROM TEMPTDB").get();
-		transaction.rollback();
 		
-		// close connection manager
-		connectionManager.close();
-		
-		// the row count from empty table should be 0
+		long count = hordmst.count();
 		Assert.assertEquals(0, count);
+		
+		transaction.commit();
+		connectionManager.close();
 	}
 }

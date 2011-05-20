@@ -58,20 +58,20 @@ public abstract class AbstractResultMetaData<E> implements ResultMetaData<E> {
 			throw new DataRuntimeException("Fail to get bean info with entity [{0}]", e, this.type);
 		}
 
-		// find all properties (getter and setter) if it will map to column in query result
-		for (PropertyDescriptor property : beaninfo.getPropertyDescriptors()) {
-			
-			if (this.isMappingColumn(property, mapping)) {
-				PropertyColumnDescriptor<E> descriptor = new PropertyColumnDescriptor<E>(property);
-				this.columnDescriptors.put(descriptor.getName(), descriptor);
-			}
-		}
-
 		// find all fields if it will map to column in query result
 		for (Field field : this.type.getDeclaredFields()) {
 			
 			if (this.isMappingColumn(field, mapping)) {
 				FieldColumnDescriptor<E> descriptor = new FieldColumnDescriptor<E>(field);
+				this.columnDescriptors.put(descriptor.getName(), descriptor);
+			}
+		}
+
+		// find all properties (getter and setter) if it will map to column in query result
+		for (PropertyDescriptor property : beaninfo.getPropertyDescriptors()) {
+			
+			if (this.isMappingColumn(property, mapping)) {
+				PropertyColumnDescriptor<E> descriptor = new PropertyColumnDescriptor<E>(property);
 				this.columnDescriptors.put(descriptor.getName(), descriptor);
 			}
 		}
@@ -86,6 +86,11 @@ public abstract class AbstractResultMetaData<E> implements ResultMetaData<E> {
 		
 		// FALSE - if it is index property, do not support for query result mapping
 		if (property instanceof IndexedPropertyDescriptor) {
+			return false;
+		}
+
+		// FALSE - if there is not write method for this property, do not support this pattern 
+		if (property.getWriteMethod() == null) {
 			return false;
 		}
 		
@@ -144,20 +149,10 @@ public abstract class AbstractResultMetaData<E> implements ResultMetaData<E> {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.ResultMetaData#getColumnDescriptor(java.lang.String)
-	 */
-	@Override
-	public ColumnDescriptor<E> getColumnDescriptor(final String columnLabel) {
-		return this.columnDescriptors.get(columnLabel.toUpperCase());
-	}
-
-	/**
-	 * {@inheritDoc}
 	 * @see com.corona.data.ResultMetaData#getColumnDescriptors()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public ColumnDescriptor<E>[] getColumnDescriptors() {
-		return (ColumnDescriptor<E>[]) this.columnDescriptors.values().toArray();
+	public Map<String, ColumnDescriptor<E>> getColumnDescriptors() {
+		return this.columnDescriptors;
 	}
 }

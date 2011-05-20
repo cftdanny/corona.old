@@ -8,6 +8,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 import com.corona.data.annotation.Column;
+import com.corona.util.StringUtil;
 
 /**
  * <p>This descriptor is used to map column of query result to a property of entity class </p>
@@ -34,6 +35,11 @@ public class PropertyColumnDescriptor<E> implements ColumnDescriptor<E> {
 	private Method readMethod;
 	
 	/**
+	 * the resolver to get column value from query result
+	 */
+	private ColumnValueResolver resolver;
+	
+	/**
 	 * @param property the property descriptor of java bean
 	 */
 	public PropertyColumnDescriptor(final PropertyDescriptor property) {
@@ -42,17 +48,18 @@ public class PropertyColumnDescriptor<E> implements ColumnDescriptor<E> {
 		this.writeMethod = property.getWriteMethod();
 		
 		// try to find mapped to column name by Column annotation in getter or setter method
-		if ((this.readMethod != null) && (this.readMethod.isAnnotationPresent(Column.class))) {
+		if (this.readMethod.isAnnotationPresent(Column.class)) {
 			this.name = this.readMethod.getAnnotation(Column.class).name();
-		} else if ((this.writeMethod != null) && (this.writeMethod.isAnnotationPresent(Column.class))) {
-			this.name = this.writeMethod.getAnnotation(Column.class).name();
 		}
 		
 		// if column name is not defined by annotation, will use property name instead
-		if (this.name.trim().length() == 0) {
+		if (StringUtil.isBlank(this.name)) {
 			this.name = property.getName();
 		}
 		this.name = this.name.toUpperCase();
+		
+		// find column value resolver for this column
+		this.resolver = ColumnValueResolvers.getInstance().find(this.getType());
 	}
 	
 	/**
@@ -70,7 +77,7 @@ public class PropertyColumnDescriptor<E> implements ColumnDescriptor<E> {
 	 */
 	@Override
 	public Class<?> getType() {
-		return (this.readMethod != null) ? this.readMethod.getReturnType() : this.writeMethod.getParameterTypes()[0];
+		return this.readMethod.getReturnType();
 	}
 
 	
@@ -80,12 +87,7 @@ public class PropertyColumnDescriptor<E> implements ColumnDescriptor<E> {
 	 */
 	@Override
 	public <A extends Annotation> A getAnnotation(final Class<A> annotationClass) {
-		
-		if (this.readMethod != null) {
-			return this.readMethod.getAnnotation(annotationClass);
-		} else {
-			return this.writeMethod.getAnnotation(annotationClass);
-		}
+		return this.readMethod.getAnnotation(annotationClass);
 	}
 
 	/**
@@ -94,10 +96,6 @@ public class PropertyColumnDescriptor<E> implements ColumnDescriptor<E> {
 	 */
 	@Override
 	public Object get(final E entity) {
-		
-		if (this.readMethod == null) {
-			throw new NullPointerException("Getter method is not defined for column [" + this.name + "]");
-		}
 		
 		try {
 			return this.readMethod.invoke(entity);
@@ -112,15 +110,20 @@ public class PropertyColumnDescriptor<E> implements ColumnDescriptor<E> {
 	 */
 	@Override
 	public void set(final E entity, final Object value) {
-		
-		if (this.writeMethod == null) {
-			throw new NullPointerException("Setter method is not defined for column [" + this.name + "]");
-		}
-		
+
 		try {
 			this.writeMethod.invoke(entity, value);
 		} catch (Throwable e) {
-			throw new DataRuntimeException("Fail to invoke setter method for column [{0}]", e, this.name);
+			throw new DataRuntimeException("Fail to invoke method for column [{0}] by query result", e, this.name);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.ColumnDescriptor#set(java.lang.Object, com.corona.data.ResultHolder)
+	 */
+	@Override
+	public void set(final E entity, final ResultHolder resultHolder) {
+		this.set(entity, this.resolver.get(resultHolder, this.name));
 	}
 }

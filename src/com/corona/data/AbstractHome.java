@@ -151,9 +151,15 @@ public class AbstractHome<E> implements Home<E> {
 			);
 		}
 		
+		// get id column descriptor for entity
+		ColumnDescriptor<E> identity = this.entityMetaData.getIdentityDescriptor();
+		
+		// get values of columns in order to insert into data source
 		List<Object> arguments = new ArrayList<Object>();
-		for (ColumnDescriptor<E> descriptor : this.entityMetaData.getColumnDescriptors()) {
-			arguments.add(descriptor.get(e));
+		for (ColumnDescriptor<E> descriptor : this.entityMetaData.getColumnDescriptors().values()) {
+			if ((identity == null) || (!descriptor.equals(identity))) {
+				arguments.add(descriptor.get(e));
+			}
 		}
 		
 		// after execute INSERT command, return NO of inserted row should be 1
@@ -162,10 +168,10 @@ public class AbstractHome<E> implements Home<E> {
 		}
 		
 		// if there is ID column, will get generated ID from data source and pass to entity instance
-		if (this.entityMetaData.getIdentityDescriptor() != null) {
+		if (identity != null) {
 			Object[] keys = this.connectionManager.getDialect().getGeneratedKeys(this.insertCommand);
-			if ((keys != null) && (keys.length > 1)) {
-				this.entityMetaData.getIdentityDescriptor().set(e, keys[0]);
+			if ((keys != null) && (keys.length > 0)) {
+				identity.set(e, keys[0]);
 			}
 		}
 	}

@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.corona.data.Command;
-import com.corona.data.sql.SQLCommand;
 import com.corona.data.sql.SQLDialect;
 import com.corona.data.DataRuntimeException;
 import com.corona.logging.Log;
@@ -92,19 +91,22 @@ class HSQLDialect extends SQLDialect {
 	@Override
 	public Object[] getGeneratedKeys(final Command command) {
 		
+		Statement statement = null;
 		ResultSet resultset = null;
 		try {
 			
+			statement = this.connectionManager.getSource().createStatement();
+			resultset = statement.executeQuery("CALL IDENTITY()");
+			
 			List<Object> keys = new ArrayList<Object>();
-			resultset = ((SQLCommand) command).getSource().getGeneratedKeys();
 			if (resultset.next()) {
 				keys.add(resultset.getObject(1));
 			}
 			return keys.toArray();
 		} catch (Exception e) {
 			
-			this.logger.error("Fail to get generated key from last MySQL INSERT statement", e);
-			throw new DataRuntimeException("Fail to get generated key from last MySQL INSERT statement", e);
+			this.logger.error("Fail to get generated key from last HSQLDB INSERT statement", e);
+			throw new DataRuntimeException("Fail to get generated key from last HSQLDB INSERT statement", e);
 		} finally {
 			
 			if (resultset != null) {
@@ -112,6 +114,15 @@ class HSQLDialect extends SQLDialect {
 					resultset.close();
 				} catch (Exception e) {
 					
+					this.logger.error("Fail to close the opened HSQLDB result set", e);
+					throw new DataRuntimeException("Fail to close the opened HSQLDB result set", e);
+				}
+			}
+			
+			if (statement != null) {
+				try {
+					statement.close();
+				} catch (SQLException e) {
 					this.logger.error("Fail to close the opened MySQL result set", e);
 					throw new DataRuntimeException("Fail to close the opened MySQL result set", e);
 				}

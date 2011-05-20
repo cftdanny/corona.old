@@ -22,19 +22,55 @@ public interface ResultHolder {
 	String[] getColumnLabels();
 	
 	/**
-	 * @param columnLabel the column name or label
-	 * @return the value of column in current row
-	 */
-	Object get(String columnLabel);
-	
-	/**
-	 * @param columnIndex the column index
-	 * @return the value of column in current row
-	 */
-	Object get(int columnIndex);
-	
-	/**
 	 * @return whether there is row in query result
 	 */
 	boolean next();
+	
+	/**
+	 * @param column the column label
+	 * @return the value of column in current row
+	 */
+	Object get(String column);
+	
+	/**
+	 * @param column the column index
+	 * @return the value of column in current row
+	 */
+	Object get(int column);
+	
+	/**
+	 * @param column the column label
+	 * @return the long value of column in current row
+	 */
+	String getString(String column);
+	
+	/**
+	 * @param column the column index
+	 * @return the long value of column in current row
+	 */
+	String getString(int column);
+	
+	/**
+	 * @param column the column label
+	 * @return the long value of column in current row
+	 */
+	Integer getInteger(String column);
+	
+	/**
+	 * @param column the column index
+	 * @return the long value of column in current row
+	 */
+	Integer getInteger(int column);
+	
+	/**
+	 * @param column the column label
+	 * @return the long value of column in current row
+	 */
+	Long getLong(String column);
+	
+	/**
+	 * @param column the column index
+	 * @return the long value of column in current row
+	 */
+	Long getLong(int column);
 }

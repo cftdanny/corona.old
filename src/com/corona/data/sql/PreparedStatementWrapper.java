@@ -54,6 +54,15 @@ public class PreparedStatementWrapper implements PreparedStatement {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return (this.statement == null) ? "" : this.statement.toString();
+	}
+
+	/**
 	 * @param preparedStatement the prepared JDBC statement
 	 */
 	protected void setPreparedStatement(final PreparedStatement preparedStatement) {

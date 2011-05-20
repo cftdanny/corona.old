@@ -39,7 +39,13 @@ public interface ColumnDescriptor<E> {
 	
 	/**
 	 * @param entity the entity instance
-	 * @param value the value that set to entity instance for this column
+	 * @param value the value to be set to entity
 	 */
 	void set(E entity, Object value);
+	
+	/**
+	 * @param entity the entity instance
+	 * @param resultHolder the query result
+	 */
+	void set(E entity, ResultHolder resultHolder);
 }

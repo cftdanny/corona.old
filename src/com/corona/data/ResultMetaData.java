@@ -3,6 +3,8 @@
  */
 package com.corona.data;
 
+import java.util.Map;
+
 /**
  * <p>This class is used to store Meta Data information in order to map rows of query result from data source
  * to instances of mapping to result class. </p>
@@ -19,13 +21,7 @@ public interface ResultMetaData<E> {
 	Class<E> getType();
 	
 	/**
-	 * @param columnLabel the column label
-	 * @return the column descriptor about the label or <code>null</code> if does not exists
-	 */
-	ColumnDescriptor<E> getColumnDescriptor(String columnLabel);
-	
-	/**
 	 * @return the map to column descriptors that are defined in result class
 	 */
-	ColumnDescriptor<E>[] getColumnDescriptors(); 
+	Map<String, ColumnDescriptor<E>> getColumnDescriptors(); 
 }
