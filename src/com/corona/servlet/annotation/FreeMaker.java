@@ -25,5 +25,5 @@ public @interface FreeMaker {
 	/**
 	 * the <b>FreeMaker</b> template to create HTTP response 
 	 */
-	String template();
+	String value();
 }
