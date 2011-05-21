@@ -23,7 +23,6 @@ import com.corona.util.StringUtil;
  * 	A, B B, C C WHERE A.A = B.A AND B.A = C.A
  * </pre>
  * 
- *
  * @author $Author$
  * @version $Id$
  */
