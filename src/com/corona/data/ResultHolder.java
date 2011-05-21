@@ -24,12 +24,12 @@ public interface ResultHolder {
 	/**
 	 * @return how many columns in query result
 	 */
-	int getColumnCount();
+	int getCount();
 	
 	/**
 	 * @return all column labels in query result
 	 */
-	String[] getColumnLabels();
+	String[] getColumns();
 	
 	/**
 	 * @return whether there is row in query result

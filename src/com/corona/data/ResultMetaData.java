@@ -23,5 +23,5 @@ public interface ResultMetaData<E> {
 	/**
 	 * @return the map to column descriptors that are defined in result class
 	 */
-	Map<String, ColumnDescriptor<E>> getColumnDescriptors(); 
+	Map<String, ColumnDescriptor<E>> getColumns(); 
 }

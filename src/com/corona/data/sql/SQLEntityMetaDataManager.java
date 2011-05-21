@@ -7,15 +7,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.corona.data.EntityMetaData;
-import com.corona.data.EntityMetaDataManager;
+import com.corona.data.EntityMetaDataRepository;
 
 /**
- * <p>The helper class for {@link EntityMetaDataManager}. </p>
+ * <p>The helper class for {@link EntityMetaDataRepository}. </p>
  *
  * @author $Author$
  * @version $Id$
  */
-public class SQLEntityMetaDataManager implements EntityMetaDataManager {
+public class SQLEntityMetaDataManager implements EntityMetaDataRepository {
 
 	/**
 	 * the cached storage for {@link EntityMetaData}
@@ -24,7 +24,7 @@ public class SQLEntityMetaDataManager implements EntityMetaDataManager {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.EntityMetaDataManager#getEntityMetaData(java.lang.Class)
+	 * @see com.corona.data.EntityMetaDataRepository#getEntityMetaData(java.lang.Class)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override

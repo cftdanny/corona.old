@@ -85,7 +85,7 @@ class SQLEntityMetaData<E> extends AbstractEntityMetaData<E> {
 		}
 		
 		// find identity column if it is defined in all columns descriptor
-		for (ColumnDescriptor<E> descriptor : this.getColumnDescriptors().values()) {
+		for (ColumnDescriptor<E> descriptor : this.getColumns().values()) {
 			if (descriptor.getAnnotation(Id.class) != null) {
 				if (this.identityDescriptor != null) {
 					throw new DataRuntimeException("More than one Id column is defined in entity [{0}]", 

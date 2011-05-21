@@ -56,7 +56,7 @@ public class AbstractHome<E> implements Home<E> {
 		this.connectionManager = connectionManager;
 		
 		// find entity configuration for entity class
-		EntityMetaDataManager entityMetaDataManager = this.getConnectionManagerFactory().getEntityMetaDataManager();
+		EntityMetaDataRepository entityMetaDataManager = this.getEntityMetaDataRepository();
 		this.entityMetaData = entityMetaDataManager.getEntityMetaData(entityClass);
 	}
 	
@@ -85,6 +85,13 @@ public class AbstractHome<E> implements Home<E> {
 		}
 	}
 
+	/**
+	 * @return the repository for entity configuration
+	 */
+	private EntityMetaDataRepository getEntityMetaDataRepository() {
+		return this.getConnectionManagerFactory().getEntityMetaDataRepository();
+	}
+	
 	/**
 	 * @return the current connection manager
 	 */
@@ -215,7 +222,7 @@ public class AbstractHome<E> implements Home<E> {
 		
 		// get values of columns in order to insert into data source
 		List<Object> arguments = new ArrayList<Object>();
-		for (ColumnDescriptor<E> descriptor : this.entityMetaData.getColumnDescriptors().values()) {
+		for (ColumnDescriptor<E> descriptor : this.entityMetaData.getColumns().values()) {
 			if ((identity == null) || (!descriptor.equals(identity))) {
 				arguments.add(descriptor.get(e));
 			}

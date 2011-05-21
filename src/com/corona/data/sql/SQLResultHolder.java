@@ -45,10 +45,10 @@ public class SQLResultHolder implements ResultHolder {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.ResultHolder#getColumnCount()
+	 * @see com.corona.data.ResultHolder#getCount()
 	 */
 	@Override
-	public int getColumnCount() {
+	public int getCount() {
 		
 		try {
 			return this.resultset.getMetaData().getColumnCount();
@@ -59,10 +59,10 @@ public class SQLResultHolder implements ResultHolder {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.ResultHolder#getColumnLabels()
+	 * @see com.corona.data.ResultHolder#getColumns()
 	 */
 	@Override
-	public String[] getColumnLabels() {
+	public String[] getColumns() {
 		
 		try {
 			ResultSetMetaData metadata = this.resultset.getMetaData();

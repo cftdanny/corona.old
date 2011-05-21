@@ -37,7 +37,7 @@ public class PropertyColumnDescriptor<E> implements ColumnDescriptor<E> {
 	/**
 	 * the resolver to get column value from query result
 	 */
-	private ColumnValueResolver resolver;
+	private DataType resolver;
 	
 	/**
 	 * @param property the property descriptor of java bean
@@ -59,7 +59,7 @@ public class PropertyColumnDescriptor<E> implements ColumnDescriptor<E> {
 		this.name = this.name.toUpperCase();
 		
 		// find column value resolver for this column
-		this.resolver = ColumnValueResolvers.getInstance().find(this.getType());
+		this.resolver = DataTypeRepository.getInstance().find(this.getType());
 	}
 	
 	/**
@@ -100,7 +100,9 @@ public class PropertyColumnDescriptor<E> implements ColumnDescriptor<E> {
 		try {
 			return this.readMethod.invoke(entity);
 		} catch (Throwable e) {
-			throw new DataRuntimeException("Fail to invoke getter method for column [{0}]", e, this.name);
+			throw new DataRuntimeException("Fail to get value by method [{0}] for column [{1}]", 
+					e, this.readMethod, this.name
+			);
 		}
 	}
 
@@ -114,7 +116,9 @@ public class PropertyColumnDescriptor<E> implements ColumnDescriptor<E> {
 		try {
 			this.writeMethod.invoke(entity, value);
 		} catch (Throwable e) {
-			throw new DataRuntimeException("Fail to invoke method for column [{0}] by query result", e, this.name);
+			throw new DataRuntimeException("Fail to set value by method [{0}] for column [{1}]", 
+					e, this.writeMethod, this.name
+			);
 		}
 	}
 

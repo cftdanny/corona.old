@@ -17,32 +17,32 @@ import java.util.Map;
  * @author $Author$
  * @version $Id$
  */
-public class ColumnValueResolvers {
+public class DataTypeRepository {
 
 	/**
 	 * single instance for this resolvers
 	 */
-	private static ColumnValueResolvers instance = null;
+	private static DataTypeRepository instance = null;
 	
 	/**
 	 * all predefined column value resolvers
 	 */
-	private Map<Class<?>, ColumnValueResolver> resolvers = new HashMap<Class<?>, ColumnValueResolver>();
+	private Map<Class<?>, DataType> dataTypes = new HashMap<Class<?>, DataType>();
 	
 	/**
 	 * do not allow to create this class and create all predefined resolvers
 	 */
-	protected ColumnValueResolvers() {
+	protected DataTypeRepository() {
 		
 		// OBJECT
-		this.resolvers.put(Object.class, new ColumnValueResolver() {
+		this.dataTypes.put(Object.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return resultHolder.getObject(column);
 			}
 		});
 
 		// STRING
-		this.resolvers.put(String.class, new ColumnValueResolver() {
+		this.dataTypes.put(String.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return trim(resultHolder.getString(column));
 			}
@@ -52,103 +52,103 @@ public class ColumnValueResolvers {
 		});
 
 		// BYTE
-		this.resolvers.put(Byte.class, new ColumnValueResolver() {
+		this.dataTypes.put(Byte.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return resultHolder.getByte(column);
 			}
 		});
-		this.resolvers.put(byte.class, new ColumnValueResolver() {
+		this.dataTypes.put(byte.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return resultHolder.getByte(column);
 			}
 		});
 
 		// SHORT
-		this.resolvers.put(Short.class, new ColumnValueResolver() {
+		this.dataTypes.put(Short.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return resultHolder.getShort(column);
 			}
 		});
-		this.resolvers.put(short.class, new ColumnValueResolver() {
+		this.dataTypes.put(short.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return resultHolder.getShort(column);
 			}
 		});
 
 		// INTEGR
-		this.resolvers.put(Integer.class, new ColumnValueResolver() {
+		this.dataTypes.put(Integer.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return resultHolder.getInteger(column);
 			}
 		});
-		this.resolvers.put(int.class, new ColumnValueResolver() {
+		this.dataTypes.put(int.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return resultHolder.getInteger(column);
 			}
 		});
 
 		// LONG
-		this.resolvers.put(Long.class, new ColumnValueResolver() {
+		this.dataTypes.put(Long.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return resultHolder.getLong(column);
 			}
 		});
-		this.resolvers.put(long.class, new ColumnValueResolver() {
+		this.dataTypes.put(long.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return resultHolder.getLong(column);
 			}
 		});
 		
 		// FLOAT
-		this.resolvers.put(Float.class, new ColumnValueResolver() {
+		this.dataTypes.put(Float.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return resultHolder.getFloat(column);
 			}
 		});
-		this.resolvers.put(float.class, new ColumnValueResolver() {
+		this.dataTypes.put(float.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return resultHolder.getFloat(column);
 			}
 		});
 
 		// DOUBLE
-		this.resolvers.put(Double.class, new ColumnValueResolver() {
+		this.dataTypes.put(Double.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return resultHolder.getDouble(column);
 			}
 		});
-		this.resolvers.put(double.class, new ColumnValueResolver() {
+		this.dataTypes.put(double.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return resultHolder.getDouble(column);
 			}
 		});
 
 		// BOOLEAN
-		this.resolvers.put(Boolean.class, new ColumnValueResolver() {
+		this.dataTypes.put(Boolean.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return resultHolder.getBoolean(column);
 			}
 		});
-		this.resolvers.put(boolean.class, new ColumnValueResolver() {
+		this.dataTypes.put(boolean.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return resultHolder.getBoolean(column);
 			}
 		});
 
 		// DATE
-		this.resolvers.put(Date.class, new ColumnValueResolver() {
+		this.dataTypes.put(Date.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return resultHolder.getDate(column);
 			}
 		});
-		this.resolvers.put(java.util.Date.class, new ColumnValueResolver() {
+		this.dataTypes.put(java.util.Date.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return resultHolder.getDate(column);
 			}
 		});
 
 		// CALENDAR
-		this.resolvers.put(Calendar.class, new ColumnValueResolver() {
+		this.dataTypes.put(Calendar.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				
 				Date date = resultHolder.getDate(column);
@@ -163,21 +163,21 @@ public class ColumnValueResolvers {
 		});
 		
 		// TIMESTAMP
-		this.resolvers.put(Timestamp.class, new ColumnValueResolver() {
+		this.dataTypes.put(Timestamp.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return resultHolder.getTimestamp(column);
 			}
 		});
 
 		// TIME
-		this.resolvers.put(Time.class, new ColumnValueResolver() {
+		this.dataTypes.put(Time.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return resultHolder.getTime(column);
 			}
 		});
 
 		// URL
-		this.resolvers.put(URL.class, new ColumnValueResolver() {
+		this.dataTypes.put(URL.class, new DataType() {
 			public Object get(final ResultHolder resultHolder, final String column) {
 				return resultHolder.getURL(column);
 			}
@@ -187,10 +187,10 @@ public class ColumnValueResolvers {
 	/**
 	 * @return single instance for this resolver
 	 */
-	public static ColumnValueResolvers getInstance() {
+	public static DataTypeRepository getInstance() {
 		
 		if (instance == null) {
-			instance = new ColumnValueResolvers();
+			instance = new DataTypeRepository();
 		}
 		return instance;
 	}
@@ -199,12 +199,12 @@ public class ColumnValueResolvers {
 	 * @param type the class of value
 	 * @return the column value resolver
 	 */
-	public ColumnValueResolver find(final Class<?> type) {
+	public DataType find(final Class<?> type) {
 		
-		ColumnValueResolver resolver = this.resolvers.get(type);
-		if (resolver == null) {
-			resolver = this.resolvers.get(Object.class);
+		DataType dataType = this.dataTypes.get(type);
+		if (dataType == null) {
+			dataType = this.dataTypes.get(Object.class);
 		}
-		return resolver;
+		return dataType;
 	}
 }

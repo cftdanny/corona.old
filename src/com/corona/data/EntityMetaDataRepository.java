@@ -10,7 +10,7 @@ package com.corona.data;
  * @author $Author$
  * @version $Id$
  */
-public interface EntityMetaDataManager {
+public interface EntityMetaDataRepository {
 
 	/**
 	 * @param <E> the type of entity class

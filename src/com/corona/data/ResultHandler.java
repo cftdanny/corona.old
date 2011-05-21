@@ -64,9 +64,8 @@ public interface ResultHandler<E> {
 	ResultHandler<List<Object>> LIST = new AbstractResultHandler<List<Object>>() {
 		
 		public List<Object> get(final ResultHolder result) {
-			
 			List<Object> outcome = new ArrayList<Object>();
-			for (int i = 1; i <= result.getColumnCount(); i++) {
+			for (int i = 1; i <= result.getCount(); i++) {
 				outcome.add(result.getObject(i));
 			}
 			return outcome;
@@ -80,8 +79,8 @@ public interface ResultHandler<E> {
 		
 		public Object[] get(final ResultHolder result) {
 			
-			Object[] outcome = new Object[result.getColumnCount()];
-			for (int i = 1; i <= result.getColumnCount(); i++) {
+			Object[] outcome = new Object[result.getCount()];
+			for (int i = 1; i <= result.getCount(); i++) {
 				outcome[i - 1] = result.getObject(i);
 			}
 			return outcome;
@@ -94,9 +93,8 @@ public interface ResultHandler<E> {
 	ResultHandler<Map<String, Object>> MAP = new AbstractResultHandler<Map<String, Object>>() {
 		
 		public Map<String, Object> get(final ResultHolder result) {
-			
 			Map<String, Object> outcome = new HashMap<String, Object>();
-			for (String label : result.getColumnLabels()) {
+			for (String label : result.getColumns()) {
 				outcome.put(label, result.getObject(label));
 			}
 			return outcome;

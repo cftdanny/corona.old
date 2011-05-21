@@ -21,7 +21,7 @@ public interface ConnectionManagerFactory {
 	/**
 	 * @return the entity meta data manager
 	 */
-	EntityMetaDataManager getEntityMetaDataManager();
+	EntityMetaDataRepository getEntityMetaDataRepository();
 	
 	/**
 	 * @return the new {@link ConnectionManager}

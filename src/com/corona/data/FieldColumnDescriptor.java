@@ -30,7 +30,7 @@ public class FieldColumnDescriptor<E> implements ColumnDescriptor<E> {
 	/**
 	 * the resolver to get column value from query result
 	 */
-	private ColumnValueResolver resolver;
+	private DataType resolver;
 
 	/**
 	 * @param field the field in entity class that is annotated with {@link Column}
@@ -50,7 +50,7 @@ public class FieldColumnDescriptor<E> implements ColumnDescriptor<E> {
 		this.name = this.name.toUpperCase();
 		
 		// find column value resolver for this column
-		this.resolver = ColumnValueResolvers.getInstance().find(this.getType());
+		this.resolver = DataTypeRepository.getInstance().find(this.getType());
 	}
 	
 	/**
@@ -104,7 +104,7 @@ public class FieldColumnDescriptor<E> implements ColumnDescriptor<E> {
 		try {
 			this.field.set(entity, value);
 		} catch (Throwable e) {
-			throw new DataRuntimeException("Fail to set value to field [{0}] by query result", e, this.field);
+			throw new DataRuntimeException("Fail to set value to field [{0}]", e, this.field);
 		}
 	}
 

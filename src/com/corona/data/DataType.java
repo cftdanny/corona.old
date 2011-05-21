@@ -9,7 +9,7 @@ package com.corona.data;
  * @author $Author$
  * @version $Id$
  */
-public interface ColumnValueResolver {
+public interface DataType {
 
 	/**
 	 * @param resultHolder the query result holder

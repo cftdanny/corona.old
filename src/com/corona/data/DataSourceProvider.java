@@ -34,6 +34,11 @@ public interface DataSourceProvider {
 	String PASSWORD = "password";
 	
 	/**
+	 * the default schema
+	 */
+	String SCHEMA = "schema";
+	
+	/**
 	 * @return the database family (MySQL, SQL Server, DB2, etc)
 	 */
 	String getFamily();

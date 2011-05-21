@@ -43,7 +43,7 @@ public class SQLHomeBuilder implements HomeBuilder {
 	public <E> Command createInsertCommand(final ConnectionManager connectionManager, final EntityMetaData<E> config) {
 		
 		String columns = "", params = "";
-		for (ColumnDescriptor<E> descriptor : config.getColumnDescriptors().values()) {
+		for (ColumnDescriptor<E> descriptor : config.getColumns().values()) {
 			if ((config.getIdentityDescriptor() == null) || (!descriptor.equals(config.getIdentityDescriptor()))) {
 				columns = columns + (columns.length() == 0 ? "" : ", ") + descriptor.getName();
 				params = params + (params.length() == 0 ? "" : ", ") + "?";

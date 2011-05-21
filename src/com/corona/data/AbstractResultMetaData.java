@@ -149,10 +149,10 @@ public abstract class AbstractResultMetaData<E> implements ResultMetaData<E> {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.ResultMetaData#getColumnDescriptors()
+	 * @see com.corona.data.ResultMetaData#getColumns()
 	 */
 	@Override
-	public Map<String, ColumnDescriptor<E>> getColumnDescriptors() {
+	public Map<String, ColumnDescriptor<E>> getColumns() {
 		return this.columnDescriptors;
 	}
 }

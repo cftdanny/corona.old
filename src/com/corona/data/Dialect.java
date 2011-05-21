@@ -34,19 +34,4 @@ public interface Dialect {
 	 * @return the home builder
 	 */
 	HomeBuilder getHomeBuilder();
-	
-	/**
-	 * @return the entity query builder
-	 */
-	EntityQueryBuilder getEntityQueryBuilder();
-
-	/**
-	 * @return the entity delete builder
-	 */
-	EntityDeleteBuilder getEntityDeleteBuilder();
-
-	/**
-	 * @return the entity update builder
-	 */
-	EntityUpdateBuilder getEntityUpdateBuilder();
 }

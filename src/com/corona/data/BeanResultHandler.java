@@ -33,7 +33,7 @@ public class BeanResultHandler<E> extends AbstractResultHandler<E> {
 	public BeanResultHandler(final ResultMetaData<E> resultMetaData) {
 		
 		this.entityClass = resultMetaData.getType();
-		for (ColumnDescriptor<E> columnDescriptor : resultMetaData.getColumnDescriptors().values()) {
+		for (ColumnDescriptor<E> columnDescriptor : resultMetaData.getColumns().values()) {
 			this.columnDescriptors.put(columnDescriptor.getName(), columnDescriptor);
 		}
 	}
@@ -80,7 +80,7 @@ public class BeanResultHandler<E> extends AbstractResultHandler<E> {
 	private List<ColumnDescriptor<E>> getDescriptors(final ResultHolder result) {
 		
 		List<ColumnDescriptor<E>> descriptors = new ArrayList<ColumnDescriptor<E>>();
-		for (String columnLabel : result.getColumnLabels()) {
+		for (String columnLabel : result.getColumns()) {
 			
 			ColumnDescriptor<E> descriptor = this.columnDescriptors.get(columnLabel);
 			if (descriptor != null) {

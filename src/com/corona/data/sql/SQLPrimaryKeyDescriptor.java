@@ -73,7 +73,7 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 		// find all column descriptors that are defined in primary key
 		this.primaryKeyColumns = new ArrayList<ColumnDescriptor<E>>();
 		for (String columnLabel : primaryKey.value()) {
-			ColumnDescriptor<E> descriptor = this.parent.getColumnDescriptors().get(columnLabel);
+			ColumnDescriptor<E> descriptor = this.parent.getColumns().get(columnLabel);
 			if (descriptor == null) {
 				throw new DataRuntimeException("Column [{0}] is not defined in entity [{1}]", 
 						columnLabel, this.parent.getType()
@@ -90,7 +90,7 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 		
 		// create UPDATE SQL statement by all column descriptors in entity and primary key
 		this.updatableColumns = new ArrayList<ColumnDescriptor<E>>();
-		for (ColumnDescriptor<E> descriptor : this.parent.getColumnDescriptors().values()) {
+		for (ColumnDescriptor<E> descriptor : this.parent.getColumns().values()) {
 			
 			if (!this.primaryKeyColumns.contains(descriptor)) {
 				this.updateSql = this.updateSql + ((this.updateSql.length() == 0) ? "" : ", ");
