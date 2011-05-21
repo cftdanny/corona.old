@@ -36,7 +36,12 @@ public class AbstractHome<E> implements Home<E> {
 	 * all unique keys
 	 */
 	private Map<Integer, UniqueKey<E>> uniqueKeys;
-	
+
+	/**
+	 * all unique keys
+	 */
+	private Map<Integer, Index<E>> indexes;
+
 	/**
 	 * the INSERT entity command
 	 */
@@ -101,6 +106,35 @@ public class AbstractHome<E> implements Home<E> {
 		uniqueKey = descriptor.createUniqueKey(this.connectionManager);
 		this.uniqueKeys.put(id, uniqueKey);
 		return uniqueKey;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.Home#getIndex(int)
+	 */
+	@Override
+	public Index<E> getIndex(final int id) {
+		
+		if (this.indexes == null) {
+			this.indexes = new HashMap<Integer, Index<E>>();
+		}
+		
+		// if index about id has been created before, just return
+		Index<E> index = this.indexes.get(id);
+		if (index != null) {
+			return index;
+		}
+		
+		// if index descriptor about id is not defined, just return null
+		IndexDescriptor<E> descriptor = this.entityMetaData.getIndex(id);
+		if (descriptor == null) {
+			return null;
+		}
+		
+		// if defined, create index and store it to cache
+		index = descriptor.createIndex(this.connectionManager);
+		this.indexes.put(id, index);
+		return index;
 	}
 
 	/**
@@ -186,12 +220,20 @@ public class AbstractHome<E> implements Home<E> {
 	}
 
 	/**
+	 * @param filter the filter
+	 * @return the SELECT COUNT(*) SQL query
+	 */
+	private Query<E> createListQuery(final String filter) {
+		return this.getBuilder().createListQuery(connectionManager, entityMetaData, filter);
+	}
+
+	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.Home#list()
 	 */
 	@Override
 	public List<E> list() {
-		return null;
+		return this.createListQuery("").list();
 	}
 
 	/**
@@ -199,8 +241,8 @@ public class AbstractHome<E> implements Home<E> {
 	 * @see com.corona.data.Home#list(java.lang.String, java.lang.Object[])
 	 */
 	@Override
-	public List<E> list(String sql, Object... args) {
-		return null;
+	public List<E> list(final String sql, final Object... args) {
+		return this.createListQuery(sql).list(args);
 	}
 
 	/**
@@ -208,8 +250,8 @@ public class AbstractHome<E> implements Home<E> {
 	 * @see com.corona.data.Home#list(java.lang.String, java.lang.String[], java.lang.Object[])
 	 */
 	@Override
-	public List<E> list(String sql, String[] names, Object[] args) {
-		return null;
+	public List<E> list(final String sql, final String[] names, final Object[] args) {
+		return this.createListQuery(sql).list(names, args);
 	}
 
 	/**
@@ -248,12 +290,20 @@ public class AbstractHome<E> implements Home<E> {
 	}
 
 	/**
+	 * @param filter the filter
+	 * @return the command
+	 */
+	private Command createUpdateCommand(final String filter) {
+		return this.getBuilder().createUpdateCommand(this.connectionManager, this.entityMetaData, filter);
+	}
+	
+	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.Home#update(java.lang.String, java.lang.Object[])
 	 */
 	@Override
-	public int update(String sql, Object... args) {
-		return 0;
+	public int update(final String sql, final Object... args) {
+		return this.createUpdateCommand(sql).update(args);
 	}
 
 	/**
@@ -261,17 +311,25 @@ public class AbstractHome<E> implements Home<E> {
 	 * @see com.corona.data.Home#update(java.lang.String, java.lang.String[], java.lang.Object[])
 	 */
 	@Override
-	public int update(String sql, String[] names, Object[] args) {
-		return 0;
+	public int update(final String sql, final String[] names, final Object[] args) {
+		return this.createUpdateCommand(sql).update(names, args);
 	}
 
+	/**
+	 * @param filter the filter
+	 * @return the command
+	 */
+	private Command createDeleteCommand(final String filter) {
+		return this.getBuilder().createDeleteCommand(connectionManager, this.entityMetaData, filter);
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.Home#delete(java.lang.String, java.lang.Object[])
 	 */
 	@Override
-	public int delete(String sql, Object... args) {
-		return 0;
+	public int delete(final String sql, final Object... args) {
+		return this.createDeleteCommand(sql).delete(args);
 	}
 
 	/**
@@ -279,7 +337,7 @@ public class AbstractHome<E> implements Home<E> {
 	 * @see com.corona.data.Home#delete(java.lang.String, java.lang.String[], java.lang.Object[])
 	 */
 	@Override
-	public int delete(String sql, String[] names, Object[] args) {
-		return 0;
+	public int delete(final String sql, final String[] names, final Object[] args) {
+		return this.createDeleteCommand(sql).delete(names, args);
 	}
 }

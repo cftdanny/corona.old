@@ -3,6 +3,8 @@
  */
 package com.corona.test.data;
 
+import java.util.List;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -77,6 +79,21 @@ public class AbstractHomeTest {
 		Assert.assertEquals(2, hordmst.count());
 		transaction.commit();
 
+		transaction.begin();
+		List<TORDMST> orders = hordmst.list();
+		Assert.assertEquals(2, orders.size());
+		
+		orders = hordmst.list("ORDRNO = ?", "0002");
+		Assert.assertEquals(1, orders.size());
+
+		orders = hordmst.list("ORDRNO = :ORDRNO", new String[] {"ORDRNO"},  new Object[] {"0002"});
+		Assert.assertEquals(1, orders.size());
+
+		orders = hordmst.list("ORDRNO = ?", "0003");
+		Assert.assertEquals(0, orders.size());
+
+		transaction.commit();
+		
 		connectionManager.close();
 	}
 	

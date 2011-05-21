@@ -15,11 +15,19 @@ import java.util.List;
  */
 public interface Home<E> {
 
+	// ??? close()
+	
 	/**
 	 * @param id the unique key id
 	 * @return the unique key or <code>null</code> if does not exist
 	 */
 	UniqueKey<E> getUniqueKey(int id);
+	
+	/**
+	 * @param id the index id
+	 * @return the index or <code>null</code> if does not exist
+	 */
+	Index<E> getIndex(int id);
 	
 	/**
 	 * <p>Try to test whether an entity instance (table record) exists in database or not by 
