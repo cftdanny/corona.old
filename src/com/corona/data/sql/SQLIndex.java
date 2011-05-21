@@ -32,12 +32,12 @@ public class SQLIndex<E> implements Index<E> {
 	/**
 	 * the query that can be used to query by single entity in data source by unique key
 	 */
-	private Query<E> selectQuery;
+	private Query<E> select;
 	
 	/**
 	 * the command that can be used to delete entity from data source by unique key
 	 */
-	private Command deleteCommand;
+	private Command delete;
 
 	/**
 	 * @param connectionManager the current connection manager
@@ -50,15 +50,30 @@ public class SQLIndex<E> implements Index<E> {
 	
 	/**
 	 * {@inheritDoc}
+	 * @see com.corona.data.Index#close()
+	 */
+	@Override
+	public void close() {
+		
+		if (this.select != null) {
+			this.close();
+		}
+		if (this.delete != null) {
+			this.close();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
 	 * @see com.corona.data.Index#list(java.lang.Object[])
 	 */
 	@Override
 	public List<E> list(final Object... values) {
 		
-		if (this.selectQuery == null) {
-			this.selectQuery = this.parent.createSelectQuery(this.connectionManager);
+		if (this.select == null) {
+			this.select = this.parent.createSelectQuery(this.connectionManager);
 		}
-		return this.selectQuery.list(values);
+		return this.select.list(values);
 	}
 
 	/**
@@ -68,9 +83,9 @@ public class SQLIndex<E> implements Index<E> {
 	@Override
 	public int delete(final Object... values) {
 		
-		if (this.deleteCommand == null) {
-			this.deleteCommand = this.parent.createDeleteCommand(this.connectionManager);
+		if (this.delete == null) {
+			this.delete = this.parent.createDeleteCommand(this.connectionManager);
 		}
-		return this.deleteCommand.delete(values);
+		return this.delete.delete(values);
 	}
 }

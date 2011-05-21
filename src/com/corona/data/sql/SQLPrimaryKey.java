@@ -36,17 +36,17 @@ class SQLPrimaryKey<E> implements PrimaryKey<E> {
 	/**
 	 * the query that can be used to query by single entity in data source by primary key
 	 */
-	private Query<E> selectQuery;
+	private Query<E> select;
 	
 	/**
 	 * the command that can be used to delete entity from data source by primary key
 	 */
-	private Command deleteCommand;
+	private Command delete;
 
 	/**
 	 * the UPDATE command that is used to update value of all columns by entity instance
 	 */
-	private Command updateCommand;
+	private Command update;
 
 	/**
 	 * @param connectionManager the current connection manager
@@ -58,14 +58,32 @@ class SQLPrimaryKey<E> implements PrimaryKey<E> {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.PrimaryKey#close()
+	 */
+	@Override
+	public void close() {
+		
+		if (this.select != null) {
+			this.select.close();
+		}
+		if (this.delete != null) {
+			this.delete.close();
+		}
+		if (this.update != null) {
+			this.update.close();
+		}
+	}
+
+	/**
 	 * @return the SELECT query according to primary key
 	 */
 	private Query<E> getSelectQuery() {
 		
-		if (this.selectQuery == null) {
-			this.selectQuery = this.parent.createSelectQuery(this.connectionManager);
+		if (this.select == null) {
+			this.select = this.parent.createSelectQuery(this.connectionManager);
 		}
-		return this.selectQuery;
+		return this.select;
 	}
 
 	/**
@@ -91,10 +109,10 @@ class SQLPrimaryKey<E> implements PrimaryKey<E> {
 	 */
 	private Command getDeleteCommand() {
 
-		if (this.deleteCommand == null) {
-			this.deleteCommand = this.parent.createDeleteCommand(this.connectionManager);
+		if (this.delete == null) {
+			this.delete = this.parent.createDeleteCommand(this.connectionManager);
 		}
-		return this.deleteCommand;
+		return this.delete;
 	}
 	
 	/**
@@ -118,10 +136,10 @@ class SQLPrimaryKey<E> implements PrimaryKey<E> {
 	 */
 	private Command getUpdateCommand() {
 		
-		if (this.updateCommand == null) {
-			this.updateCommand = this.parent.createUpdateCommand(this.connectionManager);
+		if (this.update == null) {
+			this.update = this.parent.createUpdateCommand(this.connectionManager);
 		}
-		return this.updateCommand;
+		return this.update;
 	}
 	
 	/**

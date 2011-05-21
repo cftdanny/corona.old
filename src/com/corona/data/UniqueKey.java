@@ -4,36 +4,41 @@
 package com.corona.data;
 
 /**
- * <p>This unique key is used to manage table entity with unique key </p>
+ * <p>This unique key is used to find or delete entity with values of unique key. It implements <b>exists</b>, 
+ * <b>get</b> and <b>delete</b> methods for every unique key. </p>
  *
  * @author $Author$
  * @version $Id$
- * @param <E> the type of table entity
+ * @param <E> the type of entity class
  */
 public interface UniqueKey<E> {
 
 	/**
-	 * <p>Try to test whether an entity instance (table record) exists in database or not by 
-	 * unique key. </p>
+	 * close all resources that allocated for unique key
+	 */
+	void close();
+	
+	/**
+	 * <p>Test whether an entity exists in data source or not by values of columns in unique key. </p>
 	 * 
-	 * @param values the values of the unique key
-	 * @return <code>true</code> if entity with primary key exists
+	 * @param values the values of columns in unique key
+	 * @return <code>true</code> if entity exists in data source
 	 */
 	boolean exists(Object... values);
 	
 	/**
-	 * <p>Find an entity instance (table record) from database by unique key. </p> 
+	 * <p>Find an entity instance from data source by values of columns in unique key. </p> 
 	 * 
-	 * @param values the values of the unique key
-	 * @return the entity instance or <code>null</code> if does not exists
+	 * @param values the values of columns in unique key
+	 * @return entity instance or <code>null</code> if does not exists
 	 */
 	E get(Object... values);
 	
 	/**
-	 * <p>Delete an entity instance (table record) from database by unique key. </p>
+	 * <p>Delete an entity from data source by values of columns in unique key. </p>
 	 * 
-	 * @param values the value of unique key
-	 * @return <code>true</code> if this entity has been deleted
+	 * @param values the values of columns in unique key
+	 * @return <code>true</code> if entity has been deleted from data source
 	 */
 	boolean delete(Object... values);
 }

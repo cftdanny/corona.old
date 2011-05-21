@@ -13,7 +13,7 @@ import com.corona.data.Query;
 import com.corona.data.annotation.Index;
 
 /**
- * <p>This class is used to store the index configuration in entity class. </p>
+ * <p>The {@link IndexDescriptor} implementation for SQL database. </p>
  *
  * @author $Author$
  * @version $Id$
@@ -52,8 +52,8 @@ public class SQLIndexDescriptor<E> implements IndexDescriptor<E> {
 		this.id = index.id();
 		
 		if (index.columns().length == 0) {
-			throw new DataRuntimeException(
-					"Index [{0}] for entity [{1}] is empty", this.id, this.parent.getType()
+			throw new DataRuntimeException("Index [{0}] for entity [{1}] is empty", 
+					this.id, this.parent.getType()
 			);
 		}
 		
@@ -79,10 +79,10 @@ public class SQLIndexDescriptor<E> implements IndexDescriptor<E> {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.IndexDescriptor#createIndex(com.corona.data.ConnectionManager)
+	 * @see com.corona.data.IndexDescriptor#create(com.corona.data.ConnectionManager)
 	 */
 	@Override
-	public com.corona.data.Index<E> createIndex(final ConnectionManager connectionManager) {
+	public com.corona.data.Index<E> create(final ConnectionManager connectionManager) {
 		return new SQLIndex<E>(connectionManager, this);
 	}
 

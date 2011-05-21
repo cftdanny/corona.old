@@ -6,7 +6,8 @@ package com.corona.data;
 import java.util.List;
 
 /**
- * <p>The index is used to manage table entity with index. </p>
+ * <p>This index is used to find or delete entities with values of index. It implements <b>list</b> and 
+ * <b>delete</b> methods for every index. </p>
  *
  * @author $Author$
  * @version $Id$
@@ -14,6 +15,11 @@ import java.util.List;
  */
 public interface Index<E> {
 
+	/**
+	 * close all resources that is allocated for this index
+	 */
+	void close();
+	
 	/**
 	 * 
 	 * @param values the values of index fields

@@ -45,7 +45,7 @@ public class AbstractHome<E> implements Home<E> {
 	/**
 	 * the INSERT entity command
 	 */
-	private Command insertCommand;
+	private Command insert;
 	
 	/**
 	 * @param connectionManager current connection manager
@@ -61,6 +61,31 @@ public class AbstractHome<E> implements Home<E> {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.Home#close()
+	 */
+	@Override
+	public void close() {
+		
+		if (this.primarykey != null) {
+			this.primarykey.close();
+		}
+		if (this.uniqueKeys != null) {
+			for (UniqueKey<E> uniqueKey : this.uniqueKeys.values()) {
+				uniqueKey.close();
+			}
+		}
+		if (this.indexes != null) {
+			for (Index<E> index : this.indexes.values()) {
+				index.close();
+			}
+		}
+		if (this.insert != null) {
+			this.insert.close();
+		}
+	}
+
+	/**
 	 * @return the current connection manager
 	 */
 	private ConnectionManagerFactory getConnectionManagerFactory() {
@@ -74,7 +99,7 @@ public class AbstractHome<E> implements Home<E> {
 		
 		if (this.primarykey == null) {
 			PrimaryKeyDescriptor<E> descriptor = this.entityMetaData.getPrimarykey();
-			this.primarykey = descriptor.createPrimaryKey(this.connectionManager);
+			this.primarykey = descriptor.create(this.connectionManager);
 		}
 		return this.primarykey;
 	}
@@ -103,7 +128,7 @@ public class AbstractHome<E> implements Home<E> {
 		}
 		
 		// if defined, create unique and store it to cache
-		uniqueKey = descriptor.createUniqueKey(this.connectionManager);
+		uniqueKey = descriptor.create(this.connectionManager);
 		this.uniqueKeys.put(id, uniqueKey);
 		return uniqueKey;
 	}
@@ -132,7 +157,7 @@ public class AbstractHome<E> implements Home<E> {
 		}
 		
 		// if defined, create index and store it to cache
-		index = descriptor.createIndex(this.connectionManager);
+		index = descriptor.create(this.connectionManager);
 		this.indexes.put(id, index);
 		return index;
 	}
@@ -179,8 +204,8 @@ public class AbstractHome<E> implements Home<E> {
 	public void insert(final E e) {
 		
 		// if INSERT command is not created before, we will create it by dialect and HomeBuilder
-		if (this.insertCommand == null) {
-			this.insertCommand = this.getBuilder().createInsertCommand(
+		if (this.insert == null) {
+			this.insert = this.getBuilder().createInsertCommand(
 					this.connectionManager, this.entityMetaData
 			);
 		}
@@ -197,13 +222,13 @@ public class AbstractHome<E> implements Home<E> {
 		}
 		
 		// after execute INSERT command, return NO of inserted row should be 1
-		if (this.insertCommand.insert(arguments.toArray()) != 1) {
+		if (this.insert.insert(arguments.toArray()) != 1) {
 			throw new DataRuntimeException("More than one rows are inserted to data source, but should be 1");
 		}
 		
 		// if there is ID column, will get generated ID from data source and pass to entity instance
 		if (identity != null) {
-			Object[] keys = this.connectionManager.getDialect().getGeneratedKeys(this.insertCommand);
+			Object[] keys = this.connectionManager.getDialect().getGeneratedKeys(this.insert);
 			if ((keys != null) && (keys.length > 0)) {
 				identity.set(e, keys[0]);
 			}

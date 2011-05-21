@@ -4,7 +4,8 @@
 package com.corona.data;
 
 /**
- * <p>The index descriptor for an entity class that is defined by {@link Index} annotation. </p>
+ * <p>This descriptor is used to store index configuration about an entity. It is also used to 
+ * create {@link UniqueKey}.
  *
  * @author $Author$
  * @version $Id$
@@ -21,5 +22,5 @@ public interface IndexDescriptor<E> {
 	 * @param connectionManager current connection manager
 	 * @return the new index
 	 */
-	Index<E> createIndex(final ConnectionManager connectionManager);
+	Index<E> create(final ConnectionManager connectionManager);
 }

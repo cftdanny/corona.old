@@ -34,12 +34,12 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 	/**
 	 * all column descriptors for primary key
 	 */
-	private List<ColumnDescriptor<E>> updatableColumnDescriptors;
+	private List<ColumnDescriptor<E>> updatableColumns;
 	
 	/**
 	 * all column descriptors for non-primary key 
 	 */
-	private List<ColumnDescriptor<E>> primaryKeyColumnDescriptors;
+	private List<ColumnDescriptor<E>> primaryKeyColumns;
 	
 	/**
 	 * the SELECT SQL and WHERE clause is created according to primary key
@@ -71,7 +71,7 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 		}
 		
 		// find all column descriptors that are defined in primary key
-		this.primaryKeyColumnDescriptors = new ArrayList<ColumnDescriptor<E>>();
+		this.primaryKeyColumns = new ArrayList<ColumnDescriptor<E>>();
 		for (String columnLabel : primaryKey.value()) {
 			ColumnDescriptor<E> descriptor = this.parent.getColumnDescriptors().get(columnLabel);
 			if (descriptor == null) {
@@ -79,24 +79,24 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 						columnLabel, this.parent.getType()
 				);
 			}
-			this.primaryKeyColumnDescriptors.add(descriptor);
+			this.primaryKeyColumns.add(descriptor);
 		}
 		
 		// create WHERE clause by primary key for SELECT, DELETE and UPDATE statement
 		String where = "";
-		for (ColumnDescriptor<E> descriptor : this.primaryKeyColumnDescriptors) {
+		for (ColumnDescriptor<E> descriptor : this.primaryKeyColumns) {
 			where = where + ((where.length() == 0) ? "" : " AND ") + "(" + descriptor.getName() + " = ?)";
 		}
 		
 		// create UPDATE SQL statement by all column descriptors in entity and primary key
-		this.updatableColumnDescriptors = new ArrayList<ColumnDescriptor<E>>();
+		this.updatableColumns = new ArrayList<ColumnDescriptor<E>>();
 		for (ColumnDescriptor<E> descriptor : this.parent.getColumnDescriptors().values()) {
 			
-			if (!this.primaryKeyColumnDescriptors.contains(descriptor)) {
+			if (!this.primaryKeyColumns.contains(descriptor)) {
 				this.updateSql = this.updateSql + ((this.updateSql.length() == 0) ? "" : ", ");
 				this.updateSql = this.updateSql + descriptor.getName() + " = ?";
 
-				this.updatableColumnDescriptors.add(descriptor);
+				this.updatableColumns.add(descriptor);
 			}
 		}
 
@@ -108,10 +108,10 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.PrimaryKeyDescriptor#createPrimaryKey(com.corona.data.ConnectionManager)
+	 * @see com.corona.data.PrimaryKeyDescriptor#create(com.corona.data.ConnectionManager)
 	 */
 	@Override
-	public com.corona.data.PrimaryKey<E> createPrimaryKey(final ConnectionManager connectionManager) {
+	public com.corona.data.PrimaryKey<E> create(final ConnectionManager connectionManager) {
 		return new SQLPrimaryKey<E>(connectionManager, this);
 	}
 	
@@ -119,14 +119,14 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 	 * @return the updatableColumnDescriptors
 	 */
 	List<ColumnDescriptor<E>> getUpdatableColumnDescriptors() {
-		return updatableColumnDescriptors;
+		return updatableColumns;
 	}
 
 	/**
 	 * @return the primaryKeyColumnDescriptors
 	 */
 	List<ColumnDescriptor<E>> getPrimaryKeyColumnDescriptors() {
-		return primaryKeyColumnDescriptors;
+		return primaryKeyColumns;
 	}
 
 	/**

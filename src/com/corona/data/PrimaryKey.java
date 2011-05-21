@@ -13,6 +13,11 @@ package com.corona.data;
 public interface PrimaryKey<E> {
 
 	/**
+	 * close all resources that are allocated for primary key
+	 */
+	void close();
+	
+	/**
 	 * <p>test whether an entity instance (table record) exists in database or not by 
 	 * primary key (argument k). </p>
 	 * 

@@ -15,7 +15,10 @@ import java.util.List;
  */
 public interface Home<E> {
 
-	// ??? close()
+	/**
+	 * release all resources that are allocated for this home
+	 */
+	void close();
 	
 	/**
 	 * @param id the unique key id

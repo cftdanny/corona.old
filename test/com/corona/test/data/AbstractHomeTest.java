@@ -94,6 +94,8 @@ public class AbstractHomeTest {
 
 		transaction.commit();
 		
+		hordmst.close();
+		
 		connectionManager.close();
 	}
 	

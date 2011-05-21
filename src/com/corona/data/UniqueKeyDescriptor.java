@@ -4,11 +4,13 @@
 package com.corona.data;
 
 /**
- * <p>This definition is used to store and create unique key information. </p>
+ * <p>This descriptor is used to store unique key configuration about an entity. It is also used to 
+ * create {@link UniqueKey}.
+ * </p>
  *
  * @author $Author$
  * @version $Id$
- * @param <E> the type of entity
+ * @param <E> the type of entity class
  */
 public interface UniqueKeyDescriptor<E> {
 
@@ -18,8 +20,11 @@ public interface UniqueKeyDescriptor<E> {
 	Integer getId();
 	
 	/**
+	 * <p>create {@link UniqueKey} by connection manager and this unique key descriptor.
+	 * </p>
+	 * 
 	 * @param connectionManager the current connection manager
 	 * @return the new unique key
 	 */
-	UniqueKey<E> createUniqueKey(ConnectionManager connectionManager);
+	UniqueKey<E> create(ConnectionManager connectionManager);
 }

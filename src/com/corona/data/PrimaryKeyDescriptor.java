@@ -16,5 +16,5 @@ public interface PrimaryKeyDescriptor<E> {
 	 * @param connectionManager the current connection manager
 	 * @return the new primary key
 	 */
-	PrimaryKey<E> createPrimaryKey(ConnectionManager connectionManager);
+	PrimaryKey<E> create(ConnectionManager connectionManager);
 }

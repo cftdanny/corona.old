@@ -13,7 +13,7 @@ import com.corona.data.UniqueKeyDescriptor;
 import com.corona.data.annotation.UniqueKey;
 
 /**
- * <p>This class is used to create QUERY and COMMAND for unique key in a entity. </p>
+ * <p>The {@link UniqueKeyDescriptor} implementation for SQL database. </p>
  *
  * @author $Author$
  * @version $Id$
@@ -52,8 +52,8 @@ class SQLUniqueKeyDescriptor<E> implements UniqueKeyDescriptor<E> {
 		this.id = uniqueKey.id();
 		
 		if (uniqueKey.columns().length == 0) {
-			throw new DataRuntimeException(
-					"Unique key [{0}] for entity [{1}] is empty", this.id, this.parent.getType()
+			throw new DataRuntimeException("Unique key [{0}] in entity [{1}] is empty", 
+					this.id, this.parent.getType()
 			);
 		}
 		
@@ -63,8 +63,8 @@ class SQLUniqueKeyDescriptor<E> implements UniqueKeyDescriptor<E> {
 			where = where + ((where.length() == 0) ? "" : " AND ") + "(" + column.toUpperCase() + " = ?)";
 		}
 		
-		this.selectSql = "SELECT * FROM " + this.parent.getName() + " WHERE " + where + " = ?";
-		this.deleteSql = "DELETE FROM " + this.parent.getName() + " WHERE " + where + " = ?";
+		this.selectSql = "SELECT * FROM " + this.parent.getName() + " WHERE " + where;
+		this.deleteSql = "DELETE FROM " + this.parent.getName() + " WHERE " + where;
 	}
 
 	/**
@@ -78,10 +78,10 @@ class SQLUniqueKeyDescriptor<E> implements UniqueKeyDescriptor<E> {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.UniqueKeyDescriptor#createUniqueKey(com.corona.data.ConnectionManager)
+	 * @see com.corona.data.UniqueKeyDescriptor#create(com.corona.data.ConnectionManager)
 	 */
 	@Override
-	public com.corona.data.UniqueKey<E> createUniqueKey(final ConnectionManager connectionManager) {
+	public com.corona.data.UniqueKey<E> create(final ConnectionManager connectionManager) {
 		return new SQLUniqueKey<E>(connectionManager, this);
 	}
 
