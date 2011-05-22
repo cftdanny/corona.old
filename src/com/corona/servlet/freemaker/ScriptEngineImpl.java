@@ -12,36 +12,15 @@ import com.corona.context.annotation.Inject;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 
-import org.apache.velocity.app.Velocity;
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.RuntimeConstants;
-import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
-
 /**
- * <p>The implementation class of Velocity </p>
+ * <p>The implementation class of FreeMaker </p>
  *
  * @author $Author$
  * @version $Id$
  */
-@Dependency("org.apache.velocity.app.VelocityEngine")
+@Dependency("freemarker.template.Configuration")
 public class ScriptEngineImpl implements ScriptEngine {
 
-	/**
-	 * <p>How to load script: from FILE or CLASS path </p>
-	 */
-	public enum ResourceLoader {
-		
-		/**
-		 * from file
-		 */
-		FILE,
-		
-		/**
-		 * from class path
-		 */
-		CLASS
-	}
-	
 	/**
 	 * the FreeMaker configuration
 	 */
@@ -53,28 +32,9 @@ public class ScriptEngineImpl implements ScriptEngine {
 	@Inject private ServletContext servletContext;
 	
 	/**
-	 * the resource loader
-	 */
-	private ResourceLoader resourceLoader = ResourceLoader.FILE;
-	
-	/**
 	 * the root path
 	 */
 	private String basePath = "/WEB-INF";
-	
-	/**
-	 * @return where (FILE or CLASS) to load script
-	 */
-	public ResourceLoader getResourceLoader() {
-		return resourceLoader;
-	}
-
-	/**
-	 * @param resourceLoader where (FILE or CLASS) to load script to set
-	 */
-	public void setResourceLoader(final ResourceLoader resourceLoader) {
-		this.resourceLoader = resourceLoader;
-	}
 	
 	/**
 	 * @return the path
@@ -95,17 +55,11 @@ public class ScriptEngineImpl implements ScriptEngine {
 	 */
 	@Create public void init() {
 		
+		freemarker.log.Logger.selectLoggerLibrary(freemarker.log.Logger.LIBRARY_JAVA);
 		this.config = new Configuration();
 		this.config.setObjectWrapper(new DefaultObjectWrapper());
-		switch (this.resourceLoader) {
-			case FILE:
-				this.config.setServletContextForTemplateLoading(this.servletContext, this.basePath);
-				break;
-				
-			default:
-				this.config.setClassForTemplateLoading(Class.forName(this.getBasePath()), "");
-				break;
-		}
+		
+		this.config.setServletContextForTemplateLoading(this.servletContext, this.basePath);
 	}
 
 	/**

@@ -1,1 +1,6 @@
-User: $this.name - Password: $this.password
+<html>
+	<title>$this.name</title>
+	<body>
+		$this.password
+	</body>
+</html>

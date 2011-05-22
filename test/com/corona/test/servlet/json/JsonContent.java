@@ -41,11 +41,21 @@ public class JsonContent {
 	/**
 	 * @return the user
 	 */
-	@Same("/json/user.vm")
+	@Same("/json/user.html")
 	@Velocity("/velocity.vm") 
 	@GET @Expiration(60 * 1000)
 	public User getVelocity() {
-		return new User("AAAA", "BBBB");
+		return new User("AAAA", "BBXXXXBB");
+	}
+
+	/**
+	 * @return the user
+	 */
+	@Same("/json/pass.html")
+	@Velocity("/velocity.vm") 
+	@GET @Expiration(60 * 1000)
+	public User getVelocityA() {
+		return new User("XXXXXXXXXXXXXXXXXX", "DsadddddddddddddADAD");
 	}
 
 	/**
