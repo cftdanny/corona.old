@@ -23,7 +23,12 @@ import java.lang.annotation.Target;
 public @interface FreeMaker {
 
 	/**
-	 * the <b>FreeMaker</b> template to create HTTP response 
+	 * the name of FreeMaker engine
+	 */
+	String engine() default "";
+	
+	/**
+	 * the name of FreeMaker template 
 	 */
 	String value();
 }
