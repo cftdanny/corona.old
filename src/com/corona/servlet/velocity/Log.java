@@ -5,8 +5,8 @@ package com.corona.servlet.velocity;
 
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.log.LogChute;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.corona.logging.LogFactory;
 
 /**
  * <p>This Velocity log is used to log Velocity logging </p>
@@ -24,7 +24,7 @@ public class Log implements LogChute {
 	/**
 	 * the logger
 	 */
-	private Logger logger = null;
+	private com.corona.logging.Log logger = null;
 	
 	/**
 	 * {@inheritDoc}
@@ -35,9 +35,9 @@ public class Log implements LogChute {
 		
 		String name = (String) services.getProperty(RUNTIME_LOG_LOGGER);
 		if (name != null) {
-			this.logger = LoggerFactory.getLogger(name);
+			this.logger = LogFactory.getLog(name);
 		} else {
-			this.logger = LoggerFactory.getLogger(Log.class);
+			this.logger = LogFactory.getLog(Log.class);
 		}
 	}
 

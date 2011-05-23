@@ -3,7 +3,9 @@
  */
 package com.corona.logging;
 
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 /**
  * <p>This logger factory is used to create logger in application. It will create a logger by, 
@@ -27,12 +29,62 @@ import org.slf4j.LoggerFactory;
 public class LogFactory {
 
 	/**
+	 * the testing Java Logging configuration file
+	 */
+	private static final String TESTING = "/logging-test.properties";
+	
+	/**
+	 * the production Java Logging configuration file
+	 */
+	private static final String RUNTIME = "/logging.properties";
+	
+	/**
+	 * load Java Logging Configuration from properties file
+	 */
+	static { 
+		config(LogManager.getLogManager()); 
+	}
+
+	/**
 	 * the utility class
 	 */
 	protected LogFactory() {
 		// do nothing
 	}
 
+	/**
+	 * configure Java Logging by properties file 
+	 * @param logManager the current log manager
+	 */
+	private static void config(final LogManager logManager) {
+		
+		// try to load logging configuration by testing and runtime in sequence
+		if (!(config(logManager, TESTING) || config(logManager, RUNTIME))) {
+			logManager.reset();
+		}
+	}
+	
+	/**
+	 * @param logManager the log manager
+	 * @param resource the Java Logging configuration file
+	 * @return whether Java Logging has been configured
+	 */
+	private static boolean config(final LogManager logManager, final String resource) {
+		
+		boolean configured = true;
+		try {
+			logManager.readConfiguration(
+					LogFactory.class.getResourceAsStream(resource)
+			);
+			Logger.getLogger(LogFactory.class.getName()).info(
+					"Configure Java Logging by class path properties file: " + resource
+			);
+		} catch (IOException e) {
+			configured = false;
+		}
+		return configured;
+	}
+	
 	/**
 	 * <p>create logger by a class. Usually, it is used in a class to log message for this class. For example:
 	 * <pre>
@@ -46,8 +98,8 @@ public class LogFactory {
 	 * @param clazz the class for the new logger
 	 * @return the new logger
 	 */
-	public static Log getLog(@SuppressWarnings("rawtypes") final Class clazz) {
-		return new Log(LoggerFactory.getLogger(clazz));
+	public static Log getLog(final Class<?> clazz) {
+		return new Log(Logger.getLogger(clazz.getName()));
 	}
 	
 	/**
@@ -64,6 +116,6 @@ public class LogFactory {
 	 * @return the new logger
 	 */
 	public static Log getLog(final String name) {
-		return new Log(LoggerFactory.getLogger(name));
+		return new Log(Logger.getLogger(name));
 	}
 }
