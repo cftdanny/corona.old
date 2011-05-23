@@ -4,6 +4,7 @@
 package com.corona.servlet;
 
 import com.corona.context.annotation.Application;
+import com.corona.servlet.annotation.FreeMaker;
 import com.corona.servlet.annotation.Head;
 import com.corona.servlet.annotation.Json;
 import com.corona.servlet.annotation.Path;
@@ -13,6 +14,7 @@ import com.corona.servlet.annotation.Service;
 import com.corona.servlet.annotation.Tail;
 import com.corona.servlet.annotation.Velocity;
 import com.corona.servlet.annotation.Xml;
+import com.corona.servlet.freemaker.FreeMakerProducerFactory;
 import com.corona.servlet.json.JsonProducerFactory;
 import com.corona.servlet.matching.HeadMatcherFactory;
 import com.corona.servlet.matching.PathMatcherFactory;
@@ -64,5 +66,13 @@ public class ApplicationModule extends WebKernelModule {
 				com.corona.servlet.velocity.ScriptEngineImpl.class
 		).in(Application.class);
 		this.bindExtension(ProducerFactory.class).as(Velocity.class).to(new VelocityProducerFactory());
+
+		// configure default FreeMaker producer environment with dependency component and extension
+		this.bind(
+				com.corona.servlet.freemaker.FreeMakerEngineManager.class
+		).to(
+				com.corona.servlet.freemaker.FreeMakerEngineManagerImpl.class
+		).in(Application.class);
+		this.bindExtension(ProducerFactory.class).as(FreeMaker.class).to(new FreeMakerProducerFactory());
 	}
 }

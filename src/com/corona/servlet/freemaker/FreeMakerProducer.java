@@ -6,12 +6,8 @@ package com.corona.servlet.freemaker;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.corona.context.ContextManager;
 import com.corona.context.Key;
@@ -90,18 +86,10 @@ public class FreeMakerProducer extends AbstractProducer {
 			throw new ProduceException("Fail to compile FreeMaker template [{0}]", e, this.template);
 		}
 		
-		// prepare context variables in order to process compiled template
-		Map<String, Object> context = new HashMap<String, Object>();
-		context.put("this", root);
-		
-		context.put("request", request);
-		context.put("response", contextManager.get(ServletResponse.class));
-		context.put("session", contextManager.get(HttpSession.class));
-		
 		// process compiled template with variable context
 		OutputStreamWriter writer = new OutputStreamWriter(out);
 		try {
-			compiled.process(context, writer);
+			compiled.process(new FreeMakerDataModel(contextManager, root), writer);
 			writer.flush();
 		} catch (Exception e) {
 			this.logger.error("Fail to process FreeMaker template [{0}]", e, this.template);
