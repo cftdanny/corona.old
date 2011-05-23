@@ -6,17 +6,14 @@ package com.corona.servlet.freemaker;
 import java.io.IOException;
 import java.util.Locale;
 
-import com.corona.context.annotation.Dependency;
-
 import freemarker.template.Template;
 
 /**
- * <p>The implementation class of FreeMaker </p>
+ * <p>The FreeMaker template engine. </p>
  *
  * @author $Author$
  * @version $Id$
  */
-@Dependency("freemarker.template.Configuration")
 public interface FreeMakerEngineManager {
 
 	/**
