@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
-import javax.servlet.ServletRequest;
-
 import com.corona.context.ContextManager;
 import com.corona.context.Key;
 import com.corona.context.extension.DecoratedMethod;
@@ -17,6 +15,7 @@ import com.corona.logging.LogFactory;
 import com.corona.servlet.AbstractProducer;
 import com.corona.servlet.ProduceException;
 import com.corona.servlet.annotation.FreeMaker;
+import com.corona.util.StringUtil;
 
 import freemarker.template.Template;
 
@@ -44,6 +43,11 @@ public class FreeMakerProducer extends AbstractProducer {
 	private String template;
 	
 	/**
+	 * whether enable theme for this content
+	 */
+	private boolean theme;
+	
+	/**
 	 * @param key the component key
 	 * @param method the method that is annotated with {@link FreeMaker}
 	 */
@@ -57,6 +61,7 @@ public class FreeMakerProducer extends AbstractProducer {
 		if (this.engine.trim().length() == 0) {
 			this.engine = null;
 		}
+		this.theme = freemaker.theme();
 	}
 
 	/**
@@ -76,11 +81,30 @@ public class FreeMakerProducer extends AbstractProducer {
 			throw new ProduceException("FreeMaker engine [{0}] is not configured, please configure it", this.engine);
 		}
 		
+		// create FreeMaker data model
+		FreeMakerDataModel dataModel = new FreeMakerDataModel(contextManager, root);
+		
+		// find template to be processed
+		String forCompiledTemplate = null;
+		if (this.theme) {
+			
+			// pass FreeMaker engine and child template
+			dataModel.setFreeMakerEngineManager(manager);
+			dataModel.setChildTemplate(this.template);
+			
+			// find theme template. If not exist, use child template
+			forCompiledTemplate = dataModel.getThemeTemplate();
+			if (StringUtil.isBlank(forCompiledTemplate)) {
+				forCompiledTemplate = this.template;
+			}
+		} else {
+			forCompiledTemplate = this.template;
+		}
+		
 		// compile FreeMaker template by found FreeMaker engine
-		ServletRequest request = contextManager.get(ServletRequest.class);
-		Template compiled = null;
+		Template compiledTemplate = null;
 		try {
-			compiled = manager.compile(this.template, request.getLocale());
+			compiledTemplate = manager.compile(forCompiledTemplate, dataModel.getRequest().getLocale());
 		} catch (IOException e) {
 			this.logger.error("Fail to compile FreeMaker template [{0}]", e, this.template);
 			throw new ProduceException("Fail to compile FreeMaker template [{0}]", e, this.template);
@@ -89,11 +113,21 @@ public class FreeMakerProducer extends AbstractProducer {
 		// process compiled template with variable context
 		OutputStreamWriter writer = new OutputStreamWriter(out);
 		try {
-			compiled.process(new FreeMakerDataModel(contextManager, root), writer);
+			
+			compiledTemplate.process(dataModel, writer);
 			writer.flush();
 		} catch (Exception e) {
+			
 			this.logger.error("Fail to process FreeMaker template [{0}]", e, this.template);
 			throw new ProduceException("Fail to process FreeMaker template [{0}]", e, this.template);
+		} finally {
+			
+			try {
+				writer.close();
+			} catch (IOException e) {
+				this.logger.error("Fail to close writer for FreeMaker template [{0}]", e, this.template);
+				throw new ProduceException("Fail to close writer for FreeMaker template [{0}]", e, this.template);
+			}
 		}
 	}
 }

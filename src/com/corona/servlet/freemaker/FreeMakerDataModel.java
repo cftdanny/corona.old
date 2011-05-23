@@ -23,24 +23,34 @@ import freemarker.template.TemplateModelException;
 public class FreeMakerDataModel extends BeanModel {
 
 	/**
-	 * the variable name for ServletRequest
-	 */
-	private static final String REQUEST = "request";
-	
-	/**
-	 * the variable name for ServletResponse
-	 */
-	private static final String RESPONSE = "response";
-	
-	/**
-	 * the variable name for HttpSession
-	 */
-	private static final String SESSION = "session";
-	
-	/**
 	 * the context manager
 	 */
 	private ContextManager contextManager;
+	
+	/**
+	 * the FreeMaker engine
+	 */
+	private FreeMakerEngineManager freeMakerEngineManager;
+	
+	/**
+	 * the child template
+	 */
+	private String childTemplate;
+	
+	/**
+	 * the current HTTP request
+	 */
+	private ServletRequest request;
+	
+	/**
+	 * the current HTTP session
+	 */
+	private HttpSession session;
+	
+	/**
+	 * the current HTTP response
+	 */
+	private ServletResponse response;
 	
 	/**
 	 * @param contextManager the current context manager
@@ -49,6 +59,20 @@ public class FreeMakerDataModel extends BeanModel {
 	public FreeMakerDataModel(final ContextManager contextManager, final Object root) {
 		super(root, new BeansWrapper());
 		this.contextManager = contextManager;
+	}
+	
+	/**
+	 * @param freeMakerEngineManager the freeMakerEngineManager to set
+	 */
+	public void setFreeMakerEngineManager(final FreeMakerEngineManager freeMakerEngineManager) {
+		this.freeMakerEngineManager = freeMakerEngineManager;
+	}
+
+	/**
+	 * @param childTemplate the child template to set
+	 */
+	public void setChildTemplate(final String childTemplate) {
+		this.childTemplate = childTemplate;
 	}
 
 	/**
@@ -61,14 +85,87 @@ public class FreeMakerDataModel extends BeanModel {
 		TemplateModel model = super.get(name);
 		if (model != null) {
 			return model;
-		} else if (REQUEST.equals(name)) {
-			return this.wrap(this.contextManager.get(ServletRequest.class));
-		} else if (RESPONSE.equals(name)) {
-			return this.wrap(this.contextManager.get(ServletResponse.class));
-		} else if (SESSION.equals(name)) {
-			return this.wrap(this.contextManager.get(HttpSession.class));
+		} else if ("request".equals(name)) {
+			return this.wrap(this.getRequest());
+		} else if ("response".equals(name)) {
+			return this.wrap(this.getResponse());
+		} else if ("session".equals(name)) {
+			return this.wrap(this.getSession());
+		} else if (this.freeMakerEngineManager.getThemeTemplateVariableName().equals(name)) {
+			return this.wrap(this.childTemplate);
 		} else {
 			return null;
 		}
+	}
+	
+	/**
+	 * @return the current HTTP request
+	 */
+	ServletRequest getRequest() {
+		
+		if (this.request == null) {
+			this.request = this.contextManager.get(ServletRequest.class);
+		}
+		return this.request;
+	}
+	
+	/**
+	 * @return the current HTTP session 
+	 */
+	HttpSession getSession() {
+		
+		if (this.session == null) {
+			this.session = this.contextManager.get(HttpSession.class);
+		}
+		return this.session;
+	}
+	
+	/**
+	 * @return the current HTTP response
+	 */
+	ServletResponse getResponse() {
+		
+		if (this.response == null) {
+			this.response = this.contextManager.get(ServletResponse.class);
+		}
+		return response;
+	}
+	
+	/**
+	 * @return get theme name from request or session with this attribute name
+	 */
+	private String getThemeAttributeName() {
+		return this.freeMakerEngineManager.getThemeRequestAttributeName();
+	}
+	
+	/**
+	 * @param themeName the theme name
+	 * @return the theme template
+	 */
+	private String getThemeTemplate(final String themeName) {
+		return this.freeMakerEngineManager.getThemeTemplates().get(themeName);
+	}
+	
+	/**
+	 * @return the theme template
+	 */
+	String getThemeTemplate() {
+		
+		// find theme name from request parameter, and then session attribute
+		String themeName = this.getRequest().getParameter(this.getThemeAttributeName());
+		if (themeName == null) {
+			Object value = this.getSession().getAttribute(this.getThemeAttributeName());
+			if (value != null) {
+				themeName = value.toString();
+			}
+		}
+		
+		// find theme template by theme name from FreeMaker engine
+		String themeTemplate = this.getThemeTemplate(themeName);
+		if (themeTemplate == null) {
+			themeTemplate = this.getThemeTemplate(this.freeMakerEngineManager.getDefaultThemeName());
+		}
+		
+		return themeTemplate;
 	}
 }

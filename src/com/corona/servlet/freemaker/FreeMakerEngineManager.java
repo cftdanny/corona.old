@@ -5,6 +5,7 @@ package com.corona.servlet.freemaker;
 
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Map;
 
 import freemarker.template.Template;
 
@@ -15,6 +16,26 @@ import freemarker.template.Template;
  * @version $Id$
  */
 public interface FreeMakerEngineManager {
+
+	/**
+	 * @return all defined theme templates
+	 */
+	Map<String, String> getThemeTemplates();
+
+	/**
+	 * @return the default theme name
+	 */
+	String getDefaultThemeName();
+
+	/**
+	 * @return the variable name is used to include child template
+	 */
+	String getThemeTemplateVariableName();
+
+	/**
+	 * @return the applied theme name to get from request or session by attribute name 
+	 */
+	String getThemeRequestAttributeName();
 
 	/**
 	 * <p>Compile source FreeMaker template into compiled template. </p>

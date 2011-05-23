@@ -87,6 +87,26 @@ public class FreeMakerEngineManagerImpl implements FreeMakerEngineManager {
 	private boolean whitespaceStripping = false;
 	
 	/**
+	 * all theme templates
+	 */
+	private Map<String, String> themeTemplates = new HashMap<String, String>();
+	
+	/**
+	 * the default theme name
+	 */
+	private String defaultThemeName;
+	
+	/**
+	 * the variable name is used to include child template
+	 */
+	private String themeTemplateVariableName = "template";
+	
+	/**
+	 * the applied theme name to get from request or session by attribute name 
+	 */
+	private String themeRequestAttributeName = "theme";
+	
+	/**
 	 * @return the path
 	 */
 	public String getBasePath() {
@@ -230,6 +250,66 @@ public class FreeMakerEngineManagerImpl implements FreeMakerEngineManager {
 		if (this.configuration != null) {
 			this.setWhitespaceStripping(this.whitespaceStripping);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.servlet.freemaker.FreeMakerEngineManager#getThemeTemplates()
+	 */
+	public Map<String, String> getThemeTemplates() {
+		return themeTemplates;
+	}
+
+	/**
+	 * @param themeTemplates all theme templates
+	 */
+	public void setThemeTemplates(final Map<String, String> themeTemplates) {
+		this.themeTemplates = themeTemplates;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.servlet.freemaker.FreeMakerEngineManager#getDefaultThemeName()
+	 */
+	public String getDefaultThemeName() {
+		return defaultThemeName;
+	}
+	
+	/**
+	 * @param defaultThemeName the default theme name to set
+	 */
+	public void setDefaultThemeName(final String defaultThemeName) {
+		this.defaultThemeName = defaultThemeName;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.servlet.freemaker.FreeMakerEngineManager#getThemeTemplateVariableName()
+	 */
+	public String getThemeTemplateVariableName() {
+		return themeTemplateVariableName;
+	}
+
+	/**
+	 * @param themeTemplateVariableName the variable name is used to include child template to set
+	 */
+	public void setThemeTemplateVariableName(final String themeTemplateVariableName) {
+		this.themeTemplateVariableName = themeTemplateVariableName;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.servlet.freemaker.FreeMakerEngineManager#getThemeRequestAttributeName()
+	 */
+	public String getThemeRequestAttributeName() {
+		return themeRequestAttributeName;
+	}
+	
+	/**
+	 * @param themeRequestAttributeName the applied theme name to get from request or session by attribute name to set
+	 */
+	public void setThemeRequestAttributeName(final String themeRequestAttributeName) {
+		this.themeRequestAttributeName = themeRequestAttributeName;
 	}
 
 	/**

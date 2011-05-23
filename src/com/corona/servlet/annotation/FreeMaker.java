@@ -31,4 +31,9 @@ public @interface FreeMaker {
 	 * the name of FreeMaker template 
 	 */
 	String value();
+	
+	/**
+	 * whether enable theme for produced content 
+	 */
+	boolean theme() default true;
 }
