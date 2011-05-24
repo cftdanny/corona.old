@@ -17,6 +17,11 @@ import java.lang.annotation.Annotation;
 public interface Descriptor<T> {
 	
 	/**
+	 * @return the component alias
+	 */
+	String getAlias();
+	
+	/**
 	 * @return the component version
 	 */
 	int getVersion();

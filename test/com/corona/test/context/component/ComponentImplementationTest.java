@@ -56,4 +56,12 @@ public class ComponentImplementationTest {
 		Substrator substrator = this.contextManager.get(Substrator.class);
 		Assert.assertEquals(3, substrator.substrate(10, 1));
 	}
+	
+	/**
+	 * test alias
+	 */
+	@Test public void testAlias() {
+		Adder adder = (Adder) this.contextManager.get("add");
+		Assert.assertEquals(9, adder.add(1, 2));
+	}
 }

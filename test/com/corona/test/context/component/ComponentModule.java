@@ -27,7 +27,7 @@ public class ComponentModule extends AbstractModule {
 		this.bindConstant(Integer.class).as("second").to(2);
 		this.bindConstant(int.class).as("third").to(3);
 		
-		this.bind(Adder.class).to(AdderImpl.class);
+		this.bind(Adder.class).to(AdderImpl.class).alias("add");
 		this.bindProvider(Substrator.class).to(SubstratorProvider.class).in(Application.class);
 	}
 }

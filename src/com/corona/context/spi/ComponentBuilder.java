@@ -14,6 +14,7 @@ import com.corona.context.annotation.Dependency;
 import com.corona.context.annotation.Name;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
+import com.corona.util.StringUtil;
 
 /**
  * <p>Component builder is used to build component class to component descriptor and register it to context 
@@ -30,6 +31,11 @@ public class ComponentBuilder<T> implements Builder<T> {
 	 * the logger
 	 */
 	private Log logger = LogFactory.getLog(ComponentBuilder.class);
+
+	/**
+	 * the component alias
+	 */
+	private String alias;
 	
 	/**
 	 * the injection type of component
@@ -108,6 +114,15 @@ public class ComponentBuilder<T> implements Builder<T> {
 	}
 	
 	/**
+	 * @param componentAlias the component alias
+	 * @return this builder
+	 */
+	public ComponentBuilder<T> alias(final String componentAlias) {
+		this.alias = componentAlias;
+		return this;
+	}
+	
+	/**
 	 * {@inheritDoc}
 	 * @see com.corona.context.Builder#build(com.corona.context.ContextManagerFactory)
 	 */
@@ -124,9 +139,13 @@ public class ComponentBuilder<T> implements Builder<T> {
 		}
 
 		// install component by its key and descriptor to context manager factory
+		ComponentDescriptor<T> descriptor = new ComponentDescriptor<T>(contextManagerFactory, this.clazz, this.scope);
+		if (!StringUtil.isBlank(this.alias)) {
+			descriptor.setAlias(this.alias);
+		}
+		
 		((ContextManagerFactoryImpl) contextManagerFactory).getDescriptors().put(
-				new Key<T>(this.type, this.name), 
-				new ComponentDescriptor<T>(contextManagerFactory, this.clazz, this.scope)
+				new Key<T>(this.type, this.name), descriptor 
 		);
 	}
 

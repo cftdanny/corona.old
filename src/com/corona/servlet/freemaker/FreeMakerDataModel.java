@@ -94,7 +94,8 @@ public class FreeMakerDataModel extends BeanModel {
 		} else if (this.freeMakerEngineManager.getThemeTemplateVariableName().equals(name)) {
 			return this.wrap(this.childTemplate);
 		} else {
-			return null;
+			Object component = this.contextManager.get(name);
+			return (component != null) ? this.wrap(component) : null;
 		}
 	}
 	

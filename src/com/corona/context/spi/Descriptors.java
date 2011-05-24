@@ -12,6 +12,7 @@ import com.corona.context.Key;
 import com.corona.context.Visitor;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
+import com.corona.util.StringUtil;
 
 /**
  * <p>All registered descriptors in context manager. </p>
@@ -29,9 +30,13 @@ class Descriptors {
 	/**
 	 * all registered descriptors
 	 */
-	@SuppressWarnings("rawtypes")
-	private Map<Key, Descriptor> descriptors = new HashMap<Key, Descriptor>();
+	private Map<Key<?>, Descriptor<?>> descriptors = new HashMap<Key<?>, Descriptor<?>>();
 
+	/**
+	 * component alias, support to get component by string name
+	 */
+	private Map<String, Key<?>> componentAlias = new HashMap<String, Key<?>>();
+	
 	/**
 	 * @return all component keys
 	 */
@@ -53,12 +58,19 @@ class Descriptors {
 	}
 	
 	/**
+	 * @param name the component alias (component name)
+	 * @return the component key about alias
+	 */
+	Key<?> get(final String name) {
+		return this.componentAlias.get(name);
+	}
+	
+	/**
 	 * @param visitor the visitor
 	 */
-	@SuppressWarnings("rawtypes")
 	void inspect(final Visitor visitor) {
 		
-		for (Map.Entry<Key, Descriptor> pair : this.descriptors.entrySet()) {
+		for (Map.Entry<Key<?>, Descriptor<?>> pair : this.descriptors.entrySet()) {
 			visitor.visit(pair.getKey(), pair.getValue());
 		}
 	}
@@ -69,12 +81,10 @@ class Descriptors {
 	 * @param key the element key
 	 * @param descriptor the new element
 	 */
-	@SuppressWarnings("rawtypes")
-	void put(final Key key, final Descriptor descriptor) {
-		
-		Descriptor previous = this.descriptors.get(key);
+	void put(final Key<?> key, final Descriptor<?> descriptor) {
 		
 		// if two components with same key and version, will be configuration error 
+		Descriptor<?> previous = this.descriptors.get(key);
 		if ((previous != null) && (previous.getVersion() == descriptor.getVersion())) {
 			this.logger.error("Component with key [{0}], descriptor [{1}] already exists.", key, descriptor);
 			throw new ConfigurationException(
@@ -86,6 +96,22 @@ class Descriptors {
 		if ((previous == null) || (previous.getVersion() < descriptor.getVersion())) {
 			this.logger.info("Register component with key [{0}], descriptor [{1}]", key, descriptor);
 			this.descriptors.put(key, descriptor);
+		}
+		
+		// try to register component alias
+		if (!StringUtil.isBlank(descriptor.getAlias())) {
+			
+			if (this.componentAlias.containsKey(descriptor.getAlias())) {
+				this.logger.info("Alias [{0}] for component with key [{1}], descriptor [{2}] already exists",
+						descriptor.getAlias(), key, descriptor
+				);
+				throw new ConfigurationException(
+						"Alias [{0}] for component with key [{1}], descriptor [{2}] already exists",
+						descriptor.getAlias(), key, descriptor
+				);
+			} else {
+				this.componentAlias.put(descriptor.getAlias(), key);
+			}
 		}
 	}
 }

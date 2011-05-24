@@ -21,14 +21,21 @@ import com.corona.context.annotation.Application;
 class ConstantDescriptor<T> implements Descriptor<T> {
 
 	/**
+	 * the component alias
+	 */
+	private String alias;
+	
+	/**
 	 * the value of constant
 	 */
 	private T value;
 	
 	/**
+	 * @param alias the component alias
 	 * @param value the value of component
 	 */
-	ConstantDescriptor(final T value) {
+	ConstantDescriptor(final String alias, final T value) {
+		this.alias = alias;
 		this.value = value;
 	}
 	
@@ -57,6 +64,22 @@ class ConstantDescriptor<T> implements Descriptor<T> {
 	@Override
 	public int getVersion() {
 		return 1;
+	}
+
+	/**
+	 * @param alias the component alias
+	 */
+	void setAlias(final String alias) {
+		this.alias = alias;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.context.Descriptor#getAlias()
+	 */
+	@Override
+	public String getAlias() {
+		return this.alias;
 	}
 
 	/**

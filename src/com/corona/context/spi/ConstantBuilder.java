@@ -19,6 +19,11 @@ import com.corona.context.Key;
 public class ConstantBuilder<T> implements Builder<T> {
 
 	/**
+	 * the component alias
+	 */
+	private String alias;
+	
+	/**
 	 * the constant type of component
 	 */
 	private Class<T> type;
@@ -64,6 +69,15 @@ public class ConstantBuilder<T> implements Builder<T> {
 		this.value = componentInstance;
 		return this;
 	}
+
+	/**
+	 * @param componentAlias the component alias
+	 * @return this builder
+	 */
+	public ConstantBuilder<T> alias(final String componentAlias) {
+		this.alias = componentAlias;
+		return this;
+	}
 	
 	/**
 	 * {@inheritDoc}
@@ -73,7 +87,7 @@ public class ConstantBuilder<T> implements Builder<T> {
 	public void build(final ContextManagerFactory contextManagerFactory) {
 		
 		((ContextManagerFactoryImpl) contextManagerFactory).getDescriptors().put(
-				new Key<T>(this.type, this.name), new ConstantDescriptor<T>(value)
+				new Key<T>(this.type, this.name), new ConstantDescriptor<T>(this.alias, value)
 		);
 	}
 

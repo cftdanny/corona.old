@@ -16,6 +16,7 @@ import com.corona.context.ContextManagerFactory;
 import com.corona.context.ContextUtil;
 import com.corona.context.CreationException;
 import com.corona.context.Descriptor;
+import com.corona.context.annotation.Alias;
 import com.corona.context.annotation.Create;
 import com.corona.context.annotation.Inject;
 import com.corona.context.annotation.Version;
@@ -47,6 +48,11 @@ public class ComponentDescriptor<T> implements Descriptor<T> {
 	 * the logger
 	 */
 	private final Log logger = LogFactory.getLog(ComponentDescriptor.class);
+
+	/**
+	 * the component alias
+	 */
+	private String alias = null;
 	
 	/**
 	 * the component version
@@ -94,6 +100,11 @@ public class ComponentDescriptor<T> implements Descriptor<T> {
 		this.clazz = componentClass;
 		this.scope = scope;
 
+		// try to find component alias by Alias annotation
+		if (this.clazz.isAnnotationPresent(Alias.class)) {
+			this.alias = this.clazz.getAnnotation(Alias.class).value();
+		}
+		
 		// try to get component version by component class
 		if (this.clazz.isAnnotationPresent(Version.class)) {
 			this.version = this.clazz.getAnnotation(Version.class).value();
@@ -191,7 +202,23 @@ public class ComponentDescriptor<T> implements Descriptor<T> {
 			}
 		}
 	}
+
+	/**
+	 * @param alias the component alias
+	 */
+	void setAlias(final String alias) {
+		this.alias = alias;
+	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.context.Descriptor#getAlias()
+	 */
+	@Override
+	public String getAlias() {
+		return this.alias;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.context.Descriptor#getVersion()

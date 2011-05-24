@@ -113,6 +113,17 @@ public class ContextManagerImpl implements ContextManager {
 
 	/**
 	 * {@inheritDoc}
+	 * @see com.corona.context.ContextManager#get(java.lang.String)
+	 */
+	@Override
+	public Object get(final String alias) {
+		
+		Key<?> key = this.contextManagerFactory.getDescriptors().get(alias);
+		return (key != null) ? this.get(key) : null;
+	}
+
+	/**
+	 * {@inheritDoc}
 	 * @see com.corona.context.ContextManager#getContextManagerFactory()
 	 */
 	@Override

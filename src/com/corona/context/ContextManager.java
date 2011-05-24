@@ -65,4 +65,12 @@ public interface ContextManager {
 	 * @throws CreationException
 	 */
 	<T> T get(Class<T> type, String name);
+
+	/**
+	 * <p>Resolve component by its alias name. If alias does not exist, just return <code>null</code>. </p>
+	 * 
+	 * @param alias the component alias
+	 * @return the component instance or <code>null</code> if alias does not exist
+	 */
+	Object get(String alias);
 }
