@@ -35,6 +35,11 @@ public class GTalkHandler extends Handler implements ChatManagerListener, Messag
 	private XMPPConnection connection = null;
 
 	/**
+	 * the domain name
+	 */
+	private String domain = "gmail.com";
+	
+	/**
 	 * the user name
 	 */
 	private String username;
@@ -59,6 +64,9 @@ public class GTalkHandler extends Handler implements ChatManagerListener, Messag
 	 */
 	public GTalkHandler() {
 		
+		if (this.getProperty("domain") != null) {
+			this.username = this.getProperty("domain");
+		}
 		if (this.getProperty("username") != null) {
 			this.username = this.getProperty("username");
 		}
@@ -96,9 +104,7 @@ public class GTalkHandler extends Handler implements ChatManagerListener, Messag
 		
 		if (needConnectGTalkService()) {
 			
-			ConnectionConfiguration config = new ConnectionConfiguration(
-					"talk.google.com", 5222, "chengyousoft.com"
-			);
+			ConnectionConfiguration config = new ConnectionConfiguration("talk.google.com", 5222, this.domain);
 			config.setSASLAuthenticationEnabled(false);
 			
 			this.connection = new XMPPConnection(config);
