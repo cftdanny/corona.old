@@ -45,11 +45,6 @@ public class GTalkHandler extends Handler implements ChatManagerListener, Messag
 	private String password;
 	
 	/**
-	 * how many messages has been sent
-	 */
-	private int totalMessages = 0;
-	
-	/**
 	 * the last time try to connect GTalk
 	 */
 	private Date lastTriedTime = new Date(0);
@@ -113,9 +108,8 @@ public class GTalkHandler extends Handler implements ChatManagerListener, Messag
 			} catch (XMPPException e) {
 				this.connection = null;
 			}
-			this.lastTriedTime = new Date();
 			
-			this.totalMessages = 0;
+			this.lastTriedTime = new Date();
 			this.connection.getChatManager().addChatListener(this);
 		}
 		
@@ -212,17 +206,6 @@ public class GTalkHandler extends Handler implements ChatManagerListener, Messag
 		for (Chat chat : closedClients) {
 			this.clients.remove(chat);
 		}
-
-		this.totalMessages = this.totalMessages + 1;
-		// CHECKSTYLE:OFF
-		try {
-			if (totalMessages / 10 * 10 == totalMessages) {
-				Thread.sleep(50);
-			}
-		} catch (Throwable e) {
-			// do nothing
-		}
-		// CHECKSTYLE:ON
 	}
 
 	/**
