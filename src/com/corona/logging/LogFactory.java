@@ -39,10 +39,24 @@ public class LogFactory {
 	private static final String RUNTIME = "/logging.properties";
 	
 	/**
+	 * the flag to start GTalk logging
+	 */
+	private static final String GTALK = GTalkHandler.class.getName() + ".enabled";
+	
+	/**
+	 * the XMPP (Messenger) handler
+	 */
+	private static GTalkHandler defaultHandler = null;
+	
+	/**
 	 * load Java Logging Configuration from properties file
 	 */
 	static { 
+		
 		config(LogManager.getLogManager()); 
+		if (LogManager.getLogManager().getProperty(GTALK) != null) {
+			defaultHandler = new GTalkHandler();
+		}
 	}
 
 	/**
@@ -99,7 +113,7 @@ public class LogFactory {
 	 * @return the new logger
 	 */
 	public static Log getLog(final Class<?> clazz) {
-		return new Log(Logger.getLogger(clazz.getName()));
+		return getLog(Logger.getLogger(clazz.getName()));
 	}
 	
 	/**
@@ -116,6 +130,18 @@ public class LogFactory {
 	 * @return the new logger
 	 */
 	public static Log getLog(final String name) {
-		return new Log(Logger.getLogger(name));
+		return getLog(Logger.getLogger(name));
+	}
+	
+	/**
+	 * @param logger the logger of Java Logging logger
+	 * @return the log
+	 */
+	private static Log getLog(final Logger logger) {
+		
+		if (defaultHandler != null) {
+			logger.addHandler(defaultHandler);
+		}
+		return new Log(logger);
 	}
 }
