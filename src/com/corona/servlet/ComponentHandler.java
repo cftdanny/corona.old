@@ -3,6 +3,7 @@
  */
 package com.corona.servlet;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -134,6 +135,14 @@ class ComponentHandler extends AbstractHandler {
 			Method method = this.producer.getDecoratedMethod().getMethod();
 			this.logger.error("Fail to produce web content by method [{0}]", e, method); 
 			throw new HandleException("Fail to produce web content by method [{0}]", e, method);
+		}
+		
+		// flush produced content to HTTP response stream
+		try {
+			response.getOutputStream().flush();
+		} catch (IOException e) {
+			this.logger.error("Fail to flush produced content to HTTP response", e);
+			throw new HandleException("Fail to flush produced content to HTTP response", e);
 		}
 	}
 }

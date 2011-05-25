@@ -4,6 +4,7 @@
 package com.corona.test.servlet;
 
 import com.corona.servlet.WebStartModule;
+import com.corona.test.servlet.excel.CreateExcelContent;
 import com.corona.test.servlet.json.JsonContent;
 import com.corona.test.servlet.pdf.CreatePdfContent;
 
@@ -25,5 +26,6 @@ public class ServletTestModule extends WebStartModule {
 		
 		this.bind(JsonContent.class).to(JsonContent.class);
 		this.bind(CreatePdfContent.class).to(CreatePdfContent.class);
+		this.bind(CreateExcelContent.class).to(CreateExcelContent.class);
 	}
 }
