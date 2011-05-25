@@ -4,6 +4,7 @@
 package com.corona.servlet;
 
 import com.corona.context.annotation.Application;
+import com.corona.servlet.annotation.Chart;
 import com.corona.servlet.annotation.Excel;
 import com.corona.servlet.annotation.FreeMaker;
 import com.corona.servlet.annotation.Head;
@@ -16,6 +17,7 @@ import com.corona.servlet.annotation.Service;
 import com.corona.servlet.annotation.Tail;
 import com.corona.servlet.annotation.Velocity;
 import com.corona.servlet.annotation.Xml;
+import com.corona.servlet.chart.ChartProducerFactory;
 import com.corona.servlet.excel.ExcelProducerFactory;
 import com.corona.servlet.freemaker.FreeMakerProducerFactory;
 import com.corona.servlet.json.JsonProducerFactory;
@@ -84,5 +86,8 @@ public class ApplicationModule extends WebKernelModule {
 		
 		// configure Microsoft EXCEL producer
 		this.bindExtension(ProducerFactory.class).as(Excel.class).to(new ExcelProducerFactory());
+
+		// configure Microsoft EXCEL producer
+		this.bindExtension(ProducerFactory.class).as(Chart.class).to(new ChartProducerFactory());
 	}
 }
