@@ -128,7 +128,7 @@ class ComponentHandler extends AbstractHandler {
 		// invoke annotated method and produce web content by template and method result 
 		Object outcome = this.producer.getDecoratedMethod().invoke(contextManager, component);
 		try {
-			this.producer.produce(contextManager, outcome, response.getOutputStream());
+			this.producer.produce(contextManager, response, response.getOutputStream(), outcome);
 		} catch (Throwable e) {
 			
 			Method method = this.producer.getDecoratedMethod().getMethod();

@@ -5,6 +5,8 @@ package com.corona.servlet;
 
 import java.io.OutputStream;
 
+import javax.servlet.http.HttpServletResponse;
+
 import com.corona.context.ContextManager;
 import com.corona.context.Key;
 import com.corona.context.extension.DecoratedMethod;
@@ -32,9 +34,12 @@ public interface Producer {
 	 * produce by JSP, Velocity, FreeMaker, etc. </p>
 	 * 
 	 * @param contextManager current context manager
-	 * @param root the root object
+	 * @param response the HTTP response
+	 * @param data the root data object return by producer method
 	 * @param out the HTTP output stream
 	 * @throws ProduceException if fail to produce HTTP response
 	 */
-	void produce(ContextManager contextManager, Object root, OutputStream out) throws ProduceException;
+	void produce(
+			ContextManager contextManager, HttpServletResponse response, OutputStream out, Object data
+	) throws ProduceException;
 }

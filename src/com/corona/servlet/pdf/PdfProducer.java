@@ -6,6 +6,8 @@ package com.corona.servlet.pdf;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 
+import javax.servlet.http.HttpServletResponse;
+
 import com.corona.context.ContextManager;
 import com.corona.context.Key;
 import com.corona.context.extension.DecoratedMethod;
@@ -48,13 +50,21 @@ public class PdfProducer extends AbstractProducer {
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.servlet.Producer#produce(
-	 * 	com.corona.context.ContextManager, java.lang.Object, java.io.OutputStream
+	 * 	com.corona.context.ContextManager, javax.servlet.http.HttpServletResponse, java.io.OutputStream, 
+	 * 	java.lang.Object
 	 * )
 	 */
 	@Override
 	public void produce(
-			final ContextManager contextManager, final Object root, final OutputStream out) throws ProduceException {
+			final ContextManager contextManager, final HttpServletResponse response, final OutputStream out, 
+			final Object data
+	) throws ProduceException {
 		
+		// set content type if it is not set yet
+		if (response.getContentType() == null) {
+			response.setContentType("application/pdf");
+		}
+
 		// create PDF document and initiate its PDF writer
 		Document document = new Document();
 		try {
@@ -70,7 +80,11 @@ public class PdfProducer extends AbstractProducer {
 		Method method = null;
 		Object component = contextManager.get(this.getKey());
 		try {
-			method = component.getClass().getMethod(this.methodName, Document.class, root.getClass());
+			if (data != null) {
+				method = component.getClass().getMethod(this.methodName, Document.class, data.getClass());
+			} else {
+				method = component.getClass().getMethod(this.methodName, Document.class);
+			}
 		} catch (Throwable e) {
 			
 			this.logger.error("Method [{0}] to create PDF in component [{1}] does not exist", 
@@ -83,7 +97,11 @@ public class PdfProducer extends AbstractProducer {
 		
 		// execute method to create PDF document and send to browser by HTTP
 		try {
-			method.invoke(component, document, root);
+			if (data != null) {
+				method.invoke(component, document, data);
+			} else {
+				method.invoke(component, document);
+			}
 		} catch (Throwable e) {
 			
 			this.logger.error("Fail when invoke method [{0}] of component [{1}] to create PDF", 

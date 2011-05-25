@@ -72,12 +72,15 @@ public class VelocityProducer extends AbstractProducer {
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.servlet.Producer#produce(
-	 * 	com.corona.context.ContextManager, java.lang.Object, java.io.OutputStream
+	 * 	com.corona.context.ContextManager, javax.servlet.http.HttpServletResponse, java.io.OutputStream, 
+	 * 	java.lang.Object
 	 * )
 	 */
 	@Override
 	public void produce(
-			final ContextManager contextManager, final Object root, final OutputStream out) throws ProduceException {
+			final ContextManager contextManager, final HttpServletResponse response, final OutputStream out, 
+			final Object data
+	) throws ProduceException {
 		
 		Script running = this.cached ? this.script : null;
 		if (running == null) {
@@ -102,12 +105,11 @@ public class VelocityProducer extends AbstractProducer {
 		}
 		
 		// set content type if it is not set yet
-		HttpServletResponse response = contextManager.get(HttpServletResponse.class);
 		if (response.getContentType() == null) {
 			response.setContentType("text/html");
 		}
 
 		// create HTML response by root object and Velocity template
-		running.execute(contextManager, root, out);
+		running.execute(contextManager, data, out);
 	}
 }

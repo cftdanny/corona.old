@@ -5,6 +5,8 @@ package com.corona.servlet.producing;
 
 import java.io.OutputStream;
 
+import javax.servlet.http.HttpServletResponse;
+
 import com.corona.context.ContextManager;
 import com.corona.context.Key;
 import com.corona.context.extension.DecoratedMethod;
@@ -30,12 +32,14 @@ public class ServiceProducer extends AbstractProducer {
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.servlet.Producer#produce(
-	 * 	com.corona.context.ContextManager, java.lang.Object, java.io.OutputStream
+	 * 	com.corona.context.ContextManager, javax.servlet.http.HttpServletResponse, java.io.OutputStream, 
+	 * 	java.lang.Object
 	 * )
 	 */
 	@Override
 	public void produce(
-			final ContextManager managerManager, final Object root, final OutputStream out
+			final ContextManager contextManager, final HttpServletResponse response, final OutputStream out, 
+			final Object data
 	) throws ProduceException {
 	}
 }

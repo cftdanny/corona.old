@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
+import javax.servlet.http.HttpServletResponse;
+
 import com.corona.context.ContextManager;
 import com.corona.context.Key;
 import com.corona.context.extension.DecoratedMethod;
@@ -67,12 +69,15 @@ public class FreeMakerProducer extends AbstractProducer {
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.servlet.Producer#produce(
-	 * 	com.corona.context.ContextManager, java.lang.Object, java.io.OutputStream
+	 * 	com.corona.context.ContextManager, javax.servlet.http.HttpServletResponse, java.io.OutputStream, 
+	 * 	java.lang.Object
 	 * )
 	 */
 	@Override
 	public void produce(
-			final ContextManager contextManager, final Object root, final OutputStream out) throws ProduceException {
+			final ContextManager contextManager, final HttpServletResponse response, final OutputStream out, 
+			final Object data
+	) throws ProduceException {
 		
 		// find FreeMaker engine is used to compile and process that request
 		FreeMakerEngineManager manager = contextManager.get(FreeMakerEngineManager.class, this.engine);
@@ -82,7 +87,7 @@ public class FreeMakerProducer extends AbstractProducer {
 		}
 		
 		// create FreeMaker data model
-		FreeMakerDataModel dataModel = new FreeMakerDataModel(contextManager, root);
+		FreeMakerDataModel dataModel = new FreeMakerDataModel(contextManager, data);
 		
 		// find template to be processed
 		String forCompiledTemplate = null;
@@ -108,6 +113,11 @@ public class FreeMakerProducer extends AbstractProducer {
 		} catch (IOException e) {
 			this.logger.error("Fail to compile FreeMaker template [{0}]", e, this.template);
 			throw new ProduceException("Fail to compile FreeMaker template [{0}]", e, this.template);
+		}
+		
+		// set content type if it is not set yet
+		if (response.getContentType() == null) {
+			response.setContentType("text/html");
 		}
 		
 		// process compiled template with variable context

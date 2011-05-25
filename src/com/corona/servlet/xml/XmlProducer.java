@@ -56,23 +56,24 @@ public class XmlProducer extends AbstractProducer {
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.servlet.Producer#produce(
-	 * 	com.corona.context.ContextManager, java.lang.Object, java.io.OutputStream
+	 * 	com.corona.context.ContextManager, javax.servlet.http.HttpServletResponse, java.io.OutputStream, 
+	 * 	java.lang.Object
 	 * )
 	 */
 	@Override
 	public void produce(
-			final ContextManager contextManager, final Object root, final OutputStream out
+			final ContextManager contextManager, final HttpServletResponse response, final OutputStream out, 
+			final Object data
 	) throws ProduceException {
 		
 		// set content type if it is not set yet
-		HttpServletResponse response = contextManager.get(HttpServletResponse.class);
 		if (response.getContentType() == null) {
 			response.setContentType("application/xml");
 		}
 
 		// marshal root object into XML
 		try {
-			this.marshaller.marshal(root, out);
+			this.marshaller.marshal(data, out);
 		} catch (JAXBException e) {
 			this.logger.error("Fail to marshal method outcome instance to xml", e);
 			throw new ProduceException("Fail to marshal method outcome instance to xml", e);

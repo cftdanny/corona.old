@@ -39,14 +39,16 @@ public class JsonProducer extends AbstractProducer {
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.servlet.Producer#produce(
-	 * 	com.corona.context.ContextManager, java.lang.Object, java.io.OutputStream
+	 * 	com.corona.context.ContextManager, javax.servlet.http.HttpServletResponse, java.io.OutputStream, 
+	 * 	java.lang.Object
 	 * )
 	 */
 	@Override
 	public void produce(
-			final ContextManager contextManager, final Object root, final OutputStream out
+			final ContextManager contextManager, final HttpServletResponse response, final OutputStream out, 
+			final Object data
 	) throws ProduceException {
-
+		
 		// get JSON content generator from context manager
 		Marshaller generator = contextManager.get(Marshaller.class);
 		if (generator == null) {
@@ -55,12 +57,11 @@ public class JsonProducer extends AbstractProducer {
 		}
 		
 		// set content type if it is not set yet
-		HttpServletResponse response = contextManager.get(HttpServletResponse.class);
 		if (response.getContentType() == null) {
 			response.setContentType("application/json");
 		}
 		
 		// marshal root object from producer method to JSON
-		generator.marshal(out, root);
+		generator.marshal(out, data);
 	}
 }
