@@ -18,6 +18,11 @@ import com.corona.data.DataRuntimeException;
 public class SQLCommand implements Command {
 
 	/**
+	 * the parent connection manager
+	 */
+	private SQLConnectionManager parent;
+	
+	/**
 	 * the prepared and named parameter SQL statement
 	 */
 	private NamingStatement statement;
@@ -28,6 +33,12 @@ public class SQLCommand implements Command {
 	 * @throws SQLException if fail to prepare SQL statement
 	 */
 	protected SQLCommand(final SQLConnectionManager connectionManager, final String sql) throws SQLException {
+		
+		// register this command to connection manager, enable close command when manager is closed
+		this.parent = connectionManager;
+		connectionManager.register(this);
+		
+		// prepare SQL statement
 		this.statement = new NamingStatement(connectionManager.getSource(), sql);
 	}
 
@@ -56,6 +67,7 @@ public class SQLCommand implements Command {
 	@Override
 	public void close() {
 		
+		this.parent.unregister(this);
 		try {
 			this.statement.close();
 		} catch (SQLException e) {

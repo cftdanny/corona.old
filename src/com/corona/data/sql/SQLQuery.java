@@ -23,6 +23,11 @@ import com.corona.data.BeanResultHandler;
 public class SQLQuery<E> implements Query<E> {
 
 	/**
+	 * the parent connection manager
+	 */
+	private SQLConnectionManager parent;
+	
+	/**
 	 * the query request handler
 	 */
 	private ResultHandler<E> resultHandler;
@@ -54,6 +59,11 @@ public class SQLQuery<E> implements Query<E> {
 			final SQLConnectionManager connectionManager, final ResultHandler<E> resultHandler, final String sql
 	) throws DataException {
 		
+		// register this query to connection manager, enable close query if manager is closed
+		this.parent = connectionManager;
+		connectionManager.register(this);
+		
+		// prepare SQL statement
 		try {
 			this.statement = new NamingStatement(connectionManager.getSource(), sql);
 		} catch (SQLException e) {
@@ -87,6 +97,7 @@ public class SQLQuery<E> implements Query<E> {
 	@Override
 	public void close() {
 		
+		this.parent.unregister(this);
 		try {
 			this.statement.close();
 		} catch (SQLException e) {

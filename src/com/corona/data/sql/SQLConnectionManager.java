@@ -5,6 +5,8 @@ package com.corona.data.sql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.corona.data.Command;
 import com.corona.data.ConnectionManager;
@@ -45,6 +47,16 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 	 * the opened JDBC connection
 	 */
 	private Connection connection;
+	
+	/**
+	 * all opened commands, will close them when manager is closed
+	 */
+	private List<SQLCommand> commands = new ArrayList<SQLCommand>();
+	
+	/**
+	 * all opened queries, will close them when manager is closed
+	 */
+	private List<SQLQuery<?>> queries = new ArrayList<SQLQuery<?>>();
 	
 	/**
 	 * @param connectionManagerFactory the SQL connection manager factory
@@ -89,12 +101,60 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 	}
 
 	/**
+	 * @param query the new opened query, register it to connection manager
+	 */
+	void register(final SQLQuery<?> query) {
+		this.queries.add(query);
+	}
+	
+	/**
+	 * @param command the new opened query, register it to connection manager
+	 */
+	void register(final SQLCommand command) {
+		this.commands.add(command);
+	}
+/**
+	 * @param query the query to be closed, unregister from connection manager
+	 */
+	void unregister(final SQLQuery<?> query) {
+		this.queries.remove(query);
+	}
+	
+	/**
+	 * @param command the command to be closed, unregister from connection manager
+	 */
+	void unregister(final SQLCommand command) {
+		this.commands.remove(command);
+	}
+	
+	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.ConnectionManager#close()
 	 */
 	@Override
 	public void close() {
 		
+		// close all commands if it is not closed yet
+		for (SQLCommand command : this.commands.toArray(new SQLCommand[0])) {
+			try {
+				command.close();
+			} catch (Exception e) {
+				this.logger.error("Fail to close command [{0}], ignore this exception", e, command);
+			}
+		}
+		this.commands.clear();
+		
+		// close all queries if it is not closed yet
+		for (SQLQuery<?> query : this.queries.toArray(new SQLQuery<?>[0])) {
+			try {
+				query.close();
+			} catch (Exception e) {
+				this.logger.error("Fail to close query [{0}], ignore this exception", e, query);
+			}
+		}
+		this.queries.clear();
+		
+		// close JDBC connection
 		try {
 			this.connection.close();
 		} catch (Exception e) {
