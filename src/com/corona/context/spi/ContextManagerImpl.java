@@ -44,8 +44,11 @@ public class ContextManagerImpl implements ContextManager {
 	ContextManagerImpl(final ContextManagerFactoryImpl contextManagerFactory) {
 		this.contextManagerFactory = contextManagerFactory;
 		
-		// in order to inject context manager, fast and improve performance
+		// Store context manager and its factory, in order to fast inject and better performance
 		this.components.put(new Key<ContextManager>(ContextManager.class), this);
+		this.components.put(
+				new Key<ContextManagerFactory>(ContextManagerFactory.class), contextManagerFactory
+		);
 	}
 
 	/**
