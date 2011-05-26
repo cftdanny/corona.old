@@ -8,6 +8,7 @@ import java.lang.annotation.Annotation;
 import com.corona.context.spi.ComponentBuilder;
 import com.corona.context.spi.ConstantBuilder;
 import com.corona.context.spi.ExtensionBuilder;
+import com.corona.context.spi.ModuleBuilder;
 import com.corona.context.spi.ProviderBuilder;
 import com.corona.context.spi.ScopeBuilder;
 
@@ -157,5 +158,16 @@ public abstract class AbstractModule implements Module {
 	@SuppressWarnings("unchecked")
 	protected <T> ExtensionBuilder<T> bindExtension(final Class<T> protocolType) {
 		return (ExtensionBuilder<T>) this.binder.bind(new ExtensionBuilder<T>(protocolType));
+	}
+	
+	/**
+	 * <p>Bind a predefined module to context manager factory. For example, bind database supported components in
+	 * predefined module. </p>
+	 * 
+	 * @param module the predefined module
+	 * @return this  the module builder
+	 */
+	protected ModuleBuilder bindModule(final Module module) {
+		return new ModuleBuilder(this.binder, module);
 	}
 }
