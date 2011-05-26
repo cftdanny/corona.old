@@ -34,6 +34,7 @@ public class ModuleBuilder implements Builder<Module> {
 	 * @param module the predefined module
 	 */
 	public ModuleBuilder(final Binder binder, final Module module) {
+		this.binder = binder;
 		this.modules.add(module);
 	}
 	

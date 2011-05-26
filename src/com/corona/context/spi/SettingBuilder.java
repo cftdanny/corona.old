@@ -33,7 +33,7 @@ public class SettingBuilder<T> implements Builder<T> {
 	/**
 	 * the component name
 	 */
-	private String name;
+	private String name = null;
 	
 	/**
 	 * the setting name

@@ -107,7 +107,7 @@ public class ContextManagerFactoryImpl implements ContextManagerFactory {
 			try {
 				builder.build(this);
 			} catch (Throwable e) {
-				this.logger.error("Fail to build configuration with builder [{0}], just discard it", builder);
+				this.logger.error("Fail to build configuration with builder [{0}], just discard it", e, builder);
 			}
 		}
 		

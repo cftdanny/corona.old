@@ -7,6 +7,8 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import com.corona.context.ContextManager;
+import com.corona.context.Initializer;
 import com.corona.data.ConnectionManager;
 import com.corona.data.ConnectionManagerFactory;
 import com.corona.data.DataException;
@@ -46,6 +48,29 @@ public class ConnectionManagerFactoryTest {
 		// create new connection manager with testing database
 		ConnectionManager connectionManager = this.getConnectionManager();
 		
+		// create transaction in order to control resource in database 
+		Transaction transaction = connectionManager.getTransaction();
+		
+		// count an empty test in database between transaction
+		transaction.begin();
+		int count = connectionManager.createQuery(ResultHandler.INTEGER, "SELECT COUNT(*) FROM TEMPTDB").get();
+		transaction.rollback();
+		
+		// close connection manager
+		connectionManager.close();
+		
+		// the row count from empty table should be 0
+		Assert.assertEquals(0, count);
+	}
+	
+	/**
+	 * test resolve connection manager from container
+	 */
+	@Test public void testResolveFromContainer() {
+		
+		ContextManager contextManager = Initializer.build(new DatabaseModule()).create();
+		ConnectionManager connectionManager = contextManager.get(ConnectionManager.class);
+
 		// create transaction in order to control resource in database 
 		Transaction transaction = connectionManager.getTransaction();
 		

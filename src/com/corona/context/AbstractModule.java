@@ -166,10 +166,9 @@ public abstract class AbstractModule implements Module {
 	 * predefined module. </p>
 	 * 
 	 * @param module the predefined module
-	 * @return this  the module builder
 	 */
-	protected ModuleBuilder bindModule(final Module module) {
-		return (ModuleBuilder) this.binder.bind(new ModuleBuilder(this.binder, module));
+	protected void bindModule(final Module module) {
+		module.configure(this.binder);
 	}
 
 	/**

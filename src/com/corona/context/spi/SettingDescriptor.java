@@ -3,6 +3,8 @@
  */
 package com.corona.context.spi;
 
+import static java.util.Locale.ENGLISH;
+
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 
@@ -43,7 +45,9 @@ class SettingDescriptor {
 		// find property by property name and implementation class
 		PropertyDescriptor descriptor = null;
 		try {
-			descriptor = new PropertyDescriptor(setting.getName(), implementationClass);
+			descriptor = new PropertyDescriptor(
+					setting.getName(), implementationClass, null, "set" + this.capitalize(setting.getName())
+			);
 		} catch (Exception e) {
 			
 			this.logger.error("Property [{0}] does not exist in component class [{1}]", 
@@ -69,7 +73,19 @@ class SettingDescriptor {
 		this.method = descriptor.getWriteMethod();
 		this.value = setting.getValue();
 	}
-	
+
+	/**
+	 * @param name the string
+	 * @return the capitalized string
+	 */
+    public String capitalize(final String name) {
+    	
+    	if (name == null || name.length() == 0) {
+    		return name;
+    	}
+    	return name.substring(0, 1).toUpperCase(ENGLISH) + name.substring(1);
+    }
+
 	/**
 	 * @param component the component to set its setting value
 	 */
