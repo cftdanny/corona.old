@@ -17,6 +17,7 @@ import com.corona.context.ContextUtil;
 import com.corona.context.CreationException;
 import com.corona.context.Descriptor;
 import com.corona.context.Provider;
+import com.corona.context.Setting;
 import com.corona.context.annotation.Alias;
 import com.corona.context.annotation.Create;
 import com.corona.context.annotation.Inject;
@@ -90,6 +91,11 @@ public class ProviderDescriptor<T> implements Descriptor<T> {
 	 * the method that will be invoked just after component instance is created
 	 */
 	private DecoratedMethod createMethod = null;
+
+	/**
+	 * the setting
+	 */
+	private List<SettingDescriptor> settingDescriptors = null;
 
 	/**
 	 * @param contextManagerFactory the current context manager to build this component descriptor
@@ -287,6 +293,13 @@ public class ProviderDescriptor<T> implements Descriptor<T> {
 			}
 		}
 		
+		// set setting values to all setting properties
+		if (this.settingDescriptors != null) {
+			for (SettingDescriptor descriptor : this.settingDescriptors) {
+				descriptor.setValue(this);
+			}
+		}
+
 		// inject value from context manager to all annotated fields
 		for (DecoratedField annotatedField : this.annotatedFields) {
 			annotatedField.set(contextManager, provider);
@@ -301,5 +314,18 @@ public class ProviderDescriptor<T> implements Descriptor<T> {
 		}
 
 		return provider.get();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.context.Descriptor#register(com.corona.context.Setting)
+	 */
+	@Override
+	public void register(final Setting setting) {
+		
+		if (this.settingDescriptors == null) {
+			this.settingDescriptors = new ArrayList<SettingDescriptor>();
+		}
+		this.settingDescriptors.add(new SettingDescriptor(this.implementationClass, setting));
 	}
 }

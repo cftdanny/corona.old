@@ -11,6 +11,7 @@ import com.corona.context.spi.ExtensionBuilder;
 import com.corona.context.spi.ModuleBuilder;
 import com.corona.context.spi.ProviderBuilder;
 import com.corona.context.spi.ScopeBuilder;
+import com.corona.context.spi.SettingBuilder;
 
 /**
  * <p>A helper {@link Module} class which helps to reduce repetition and results in a more readable 
@@ -168,6 +169,18 @@ public abstract class AbstractModule implements Module {
 	 * @return this  the module builder
 	 */
 	protected ModuleBuilder bindModule(final Module module) {
-		return new ModuleBuilder(this.binder, module);
+		return (ModuleBuilder) this.binder.bind(new ModuleBuilder(this.binder, module));
+	}
+
+	/**
+	 * <p>This builder is used to set configuration value to component. </p>
+	 * 
+	 * @param <T> the protocol type
+	 * @param protocolType the protocol type of component
+	 * @return the setting builder
+	 */
+	@SuppressWarnings("unchecked")
+	protected <T> SettingBuilder<T> bindSetting(final Class<T> protocolType) {
+		return (SettingBuilder<T>) this.binder.bind(new SettingBuilder<T>(protocolType));
 	}
 }

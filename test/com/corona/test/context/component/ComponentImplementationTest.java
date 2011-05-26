@@ -73,4 +73,13 @@ public class ComponentImplementationTest {
 		InjectContextManager injector = this.contextManager.get(InjectContextManager.class);
 		Assert.assertEquals(this.contextManager, injector.getContextManager());
 	}
+
+	/**
+	 * test setting value to component
+	 */
+	@Test public void testBindSetting() {
+		
+		Adder adder = (Adder) this.contextManager.get("add");
+		Assert.assertEquals(10, ((AdderImpl) adder).getFour().intValue());
+	}
 }

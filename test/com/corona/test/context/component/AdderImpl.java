@@ -33,6 +33,11 @@ public class AdderImpl implements Adder {
 	private Integer third = 0;
 	
 	/**
+	 * the four
+	 */
+	private Integer four = 0;
+	
+	/**
 	 * @param third the third
 	 */
 	@Inject public AdderImpl(@Name("third") final int third) {
@@ -46,6 +51,20 @@ public class AdderImpl implements Adder {
 		this.first = this.first + this.second - this.second;
 	}
 	
+	/**
+	 * @return the four
+	 */
+	public Integer getFour() {
+		return four;
+	}
+	
+	/**
+	 * @param four the four to set
+	 */
+	public void setFour(final Integer four) {
+		this.four = four;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.test.context.component.Adder#add(int, int)

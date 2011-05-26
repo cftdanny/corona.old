@@ -31,5 +31,6 @@ public class ComponentModule extends AbstractModule {
 		this.bindProvider(Substrator.class).to(SubstratorProvider.class).in(Application.class);
 		
 		this.bind(InjectContextManager.class).to(InjectContextManager.class);
+		this.bindSetting(Adder.class).to("four").with(10);
 	}
 }

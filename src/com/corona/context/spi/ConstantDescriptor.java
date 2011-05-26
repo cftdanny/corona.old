@@ -7,6 +7,7 @@ import java.lang.annotation.Annotation;
 
 import com.corona.context.ContextManager;
 import com.corona.context.Descriptor;
+import com.corona.context.Setting;
 import com.corona.context.annotation.Application;
 
 /**
@@ -116,5 +117,13 @@ class ConstantDescriptor<T> implements Descriptor<T> {
 	@Override
 	public T getValue(final ContextManager context) {
 		return this.value;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.context.Descriptor#register(com.corona.context.Setting)
+	 */
+	@Override
+	public void register(final Setting setting) {
 	}
 }

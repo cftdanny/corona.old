@@ -46,4 +46,9 @@ public interface Descriptor<T> {
 	 * @return the component value resolved from current context manager
 	 */
 	T getValue(ContextManager contextManager);
+	
+	/**
+	 * @param setting the setting to set value to component property
+	 */
+	void register(Setting setting);
 }
