@@ -64,4 +64,13 @@ public class ComponentImplementationTest {
 		Adder adder = (Adder) this.contextManager.get("add");
 		Assert.assertEquals(9, adder.add(1, 2));
 	}
+	
+	/**
+	 * test inject context manager
+	 */
+	@Test public void testInjectContextManager() {
+		
+		InjectContextManager injector = this.contextManager.get(InjectContextManager.class);
+		Assert.assertEquals(this.contextManager, injector.getContextManager());
+	}
 }
