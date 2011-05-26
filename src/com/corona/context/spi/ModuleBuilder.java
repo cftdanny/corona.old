@@ -3,9 +3,6 @@
  */
 package com.corona.context.spi;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.corona.context.Binder;
 import com.corona.context.Builder;
 import com.corona.context.ContextManagerFactory;
@@ -25,17 +22,12 @@ public class ModuleBuilder implements Builder<Module> {
 	private Binder binder;
 	
 	/**
-	 * all predefined modules
-	 */
-	private List<Module> modules = new ArrayList<Module>();
-	
-	/**
 	 * @param binder the binder
 	 * @param module the predefined module
 	 */
 	public ModuleBuilder(final Binder binder, final Module module) {
 		this.binder = binder;
-		this.modules.add(module);
+		module.configure(this.binder);
 	}
 	
 	/**
@@ -43,7 +35,7 @@ public class ModuleBuilder implements Builder<Module> {
 	 * @return this module builder
 	 */
 	public ModuleBuilder with(final Module module) {
-		this.modules.add(module);
+		module.configure(this.binder);
 		return this;
 	}
 	
@@ -53,9 +45,6 @@ public class ModuleBuilder implements Builder<Module> {
 	 */
 	@Override
 	public void build(final ContextManagerFactory contextManagerFactory) {
-		
-		for (Module module : this.modules) {
-			module.configure(this.binder);
-		}
+		// do nothing, have configured before
 	}
 }

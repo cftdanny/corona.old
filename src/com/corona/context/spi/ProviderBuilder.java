@@ -95,7 +95,7 @@ public class ProviderBuilder<T> implements Builder<T> {
 		// try to find component scope annotation and set its scope if it present
 		Annotation annotation = ContextUtil.findScopeAnnotation(this.clazz);
 		if (annotation != null) {
-			this.scope = annotation.getClass();
+			this.scope = annotation.annotationType();
 		}
 		
 		return this;

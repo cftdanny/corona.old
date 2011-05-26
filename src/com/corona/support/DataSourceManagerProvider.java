@@ -35,14 +35,6 @@ public class DataSourceManagerProvider {
 	 * the connection manager
 	 */
 	private ConnectionManagerFactory connectionManagerFactory;
-	
-	
-	/**
-	 * @return the family
-	 */
-	public String getFamily() {
-		return family;
-	}
 
 	/**
 	 * @param family the data source family to set

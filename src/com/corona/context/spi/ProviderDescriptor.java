@@ -296,7 +296,7 @@ public class ProviderDescriptor<T> implements Descriptor<T> {
 		// set setting values to all setting properties
 		if (this.settingDescriptors != null) {
 			for (SettingDescriptor descriptor : this.settingDescriptors) {
-				descriptor.setValue(this);
+				descriptor.setValue(provider);
 			}
 		}
 
