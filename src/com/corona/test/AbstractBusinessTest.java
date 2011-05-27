@@ -3,15 +3,12 @@
  */
 package com.corona.test;
 
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
 
-import com.corona.context.ContextManager;
-import com.corona.context.ContextManagerFactory;
+import com.corona.context.Key;
 import com.corona.data.ConnectionManager;
 import com.corona.data.Transaction;
+import com.corona.data.TransactionManager;
 
 /**
  * <p>This test is used to test business object. </p>
@@ -19,52 +16,74 @@ import com.corona.data.Transaction;
  * @author $Author$
  * @version $Id$
  */
-public class AbstractBusinessTest {
+public class AbstractBusinessTest extends AbstractComponentTest {
 
 	/**
-	 * the context manager factory
-	 */
-	private ContextManagerFactory contextManagerFactory;
-	
-	/**
-	 * the current context manager
-	 */
-	private ContextManager contextManager;
-	
-	/**
-	 * the connection manager
+	 * the current connection manager
 	 */
 	private ConnectionManager connectionManager;
 	
 	/**
-	 * the transaction
+	 * the current transaction
 	 */
 	private Transaction transaction;
-	
-	@BeforeClass
-	public void startup() {
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.test.AbstractComponentTest#before()
+	 */
+	@Override
+	@BeforeClass public void before() {
+		super.before();
 		
-	}
-	
-	@AfterClass
-	public void shutdown() {
+		// open connection manager
+		this.connectionManager = this.get(ConnectionManager.class);
 		
-	}
-	
-	@BeforeTest public void begin() {
+		// try to find transaction and start it
+		TransactionManager transactionManager = this.getContextManager().get(
+				new Key<TransactionManager>(TransactionManager.class), false
+		);
+		if (transactionManager != null) {
+			this.transaction = transactionManager.getTransaction();
+		} else {
+			this.transaction = this.connectionManager.getTransaction();
+		}
 		
-	}
-	
-	@AfterTest public void end() {
-		
+		// start transaction in order to control data source
+		this.transaction.begin();
 	}
 
 	/**
-	 * @return the context manager factory
+	 * {@inheritDoc}
+	 * @see com.corona.test.AbstractComponentTest#after()
 	 */
-	public ContextManagerFactory getContextManagerFactory() {
-		return this.contextManagerFactory;
+	@Override
+	public void after() {
+		super.after();
+		
+		// commit transaction
+		if (this.transaction.getRollbackOnly()) {
+			this.transaction.rollback();
+		} else {
+			this.transaction.commit();
+		}
+		this.transaction = null;
+		
+		// close connection manager
+		this.connectionManager.close();
+		this.connectionManager = null;
 	}
 	
-	
+	/**
+	 * @return the current connection manager
+	 */
+	public ConnectionManager getConnectionManager() {
+		return connectionManager;
+	}
+	/**
+	 * @return the current transaction
+	 */
+	public Transaction getTransaction() {
+		return transaction;
+	}
 }

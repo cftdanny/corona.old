@@ -80,9 +80,18 @@ public class ContextManagerImpl implements ContextManager {
 	 * {@inheritDoc}
 	 * @see com.corona.context.ContextManager#get(com.corona.context.Key)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T get(final Key<T> key) {
+		return this.get(key, true);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.context.ContextManager#get(com.corona.context.Key, boolean)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T get(final Key<T> key, final boolean required) {
 		
 		// try to find predefined component by key in context. If exists, return it 
 		if (this.components.containsKey(key)) {
@@ -91,21 +100,24 @@ public class ContextManagerImpl implements ContextManager {
 		
 		// get component descriptor from context manager factory
 		Descriptor<T> descriptor = this.contextManagerFactory.getDescriptors().get(key);
-		if (descriptor == null) {
+		if (descriptor != null) {
+			
+			// find scope about component, will use this scope to resolve component instance
+			Scope scope = this.contextManagerFactory.getScopes().get(descriptor.getScopeType());
+			if (scope == null) {
+				this.logger.error("Scope with annotation type [{0}] does not exists", descriptor.getScopeType());
+				throw new ConfigurationException(
+						"Scope with annotation type [{0}] does not exists", descriptor.getScopeType()
+				);
+			}
+			
+			return scope.get(this, key);
+		} else if (required) {
 			this.logger.error("Component with key [{0}] does not exists", key.toString());
 			throw new ConfigurationException("Component with key [{0}] does not exists", key.toString());
+		} else {
+			return null;
 		}
-		
-		// find scope about component, will use this scope to resolve component instance
-		Scope scope = this.contextManagerFactory.getScopes().get(descriptor.getScopeType());
-		if (scope == null) {
-			this.logger.error("Scope with annotation type [{0}] does not exists", descriptor.getScopeType());
-			throw new ConfigurationException(
-					"Scope with annotation type [{0}] does not exists", descriptor.getScopeType()
-			);
-		}
-		
-		return scope.get(this, key);
 	}
 
 	/**

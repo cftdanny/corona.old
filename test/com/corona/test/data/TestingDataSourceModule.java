@@ -16,7 +16,7 @@ import com.corona.support.DataSourceModule;
  * @author $Author$
  * @version $Id$
  */
-public class DatabaseModule extends AbstractModule {
+public class TestingDataSourceModule extends AbstractModule {
 
 	/**
 	 * {@inheritDoc}

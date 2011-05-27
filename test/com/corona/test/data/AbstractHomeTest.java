@@ -5,15 +5,13 @@ package com.corona.test.data;
 
 import java.util.List;
 
+import org.testng.annotations.Test;
+
 import junit.framework.Assert;
 
-import org.junit.Test;
-
+import com.corona.context.Module;
 import com.corona.data.ConnectionManager;
-import com.corona.data.ConnectionManagerFactory;
-import com.corona.data.DataException;
-import com.corona.data.DataSourceManager;
-import com.corona.data.Transaction;
+import com.corona.test.AbstractBusinessTest;
 
 /**
  * <p>This test is used to test{@link AbstractHome} </p>
@@ -21,22 +19,15 @@ import com.corona.data.Transaction;
  * @author $Author$
  * @version $Id$
  */
-public class AbstractHomeTest {
+public class AbstractHomeTest extends AbstractBusinessTest {
 
 	/**
-	 * @return the new connection manager factory
-	 * @throws DataException if fail
+	 * {@inheritDoc}
+	 * @see com.corona.test.AbstractComponentTest#getModules()
 	 */
-	private ConnectionManagerFactory getConnectionManagerFactory() throws DataException {
-		return new DataSourceManager().create("HSQL", "jdbc:hsqldb:res:/test", "sa", "");
-	}
-	
-	/**
-	 * @return the new connection manager
-	 * @throws DataException if fail
-	 */
-	private ConnectionManager getConnectionManager() throws DataException {
-		return this.getConnectionManagerFactory().open();
+	@Override
+	protected Module[] getModules() {
+		return new Module[] {new TestingDataSourceModule()};
 	}
 
 	/**
@@ -46,9 +37,6 @@ public class AbstractHomeTest {
 		
 		ConnectionManager connectionManager = this.getConnectionManager();
 		HORDMST hordmst = new HORDMST(connectionManager);
-		
-		Transaction transaction = connectionManager.getTransaction();
-		transaction.begin();
 		
 		TORDMST tordmst = new TORDMST();
 		tordmst.setORDRNO("0001");
@@ -64,22 +52,22 @@ public class AbstractHomeTest {
 		tordmst.setORDRNO("0003");
 		hordmst.insert(tordmst);
 
-		transaction.commit();
+		this.getTransaction().commit();
 		
-		transaction.begin();
+		this.getTransaction().begin();
 		Assert.assertEquals(3, hordmst.count());
 		Assert.assertEquals(1, hordmst.count("ORDRNO = ?", "0001"));
 		
 		TORDMST other = hordmst.get(tordmst.getORDRID());
 		Assert.assertEquals(tordmst.getORDRNO(), other.getORDRNO());
-		transaction.commit();
+		this.getTransaction().commit();
 
-		transaction.begin();
+		this.getTransaction().begin();
 		hordmst.delete(other.getORDRID());
 		Assert.assertEquals(2, hordmst.count());
-		transaction.commit();
+		this.getTransaction().commit();
 
-		transaction.begin();
+		this.getTransaction().begin();
 		List<TORDMST> orders = hordmst.list();
 		Assert.assertEquals(2, orders.size());
 		
@@ -92,11 +80,7 @@ public class AbstractHomeTest {
 		orders = hordmst.list("ORDRNO = ?", "0003");
 		Assert.assertEquals(0, orders.size());
 
-		transaction.commit();
-		
 		hordmst.close();
-		
-		connectionManager.close();
 	}
 	
 	/**
@@ -105,16 +89,9 @@ public class AbstractHomeTest {
 	 */
 	@Test public void testCount() throws Exception {
 		
-		ConnectionManager connectionManager = this.getConnectionManager();
-		HORDMST hordmst = new HORDMST(connectionManager);
-		
-		Transaction transaction = connectionManager.getTransaction();
-		transaction.begin();
+		HORDMST hordmst = new HORDMST(this.getConnectionManager());
 		
 		long count = hordmst.count();
 		Assert.assertEquals(0, count);
-		
-		transaction.commit();
-		connectionManager.close();
 	}
 }

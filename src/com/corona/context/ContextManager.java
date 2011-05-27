@@ -43,6 +43,18 @@ public interface ContextManager {
 	 * 
 	 * @param <T> the injection type
 	 * @param key the component key
+	 * @param required whether descriptor of component must be registered 
+	 * @return the component instance
+	 * @throws CreationException
+	 */
+	<T> T get(Key<T> key, boolean required);
+	
+	/**
+	 * <p>Resolve component instance by the given key from current context manager. If component key is not
+	 * registered, it throw {@link CreationException}. </p>
+	 * 
+	 * @param <T> the injection type
+	 * @param key the component key
 	 * @return the component instance
 	 * @throws CreationException
 	 */

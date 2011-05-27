@@ -68,7 +68,7 @@ public class ConnectionManagerFactoryTest {
 	 */
 	@Test public void testResolveFromContainer() {
 		
-		ContextManager contextManager = Initializer.build(new DatabaseModule()).create();
+		ContextManager contextManager = Initializer.build(new TestingDataSourceModule()).create();
 		ConnectionManager connectionManager = contextManager.get(ConnectionManager.class);
 
 		// create transaction in order to control resource in database 
