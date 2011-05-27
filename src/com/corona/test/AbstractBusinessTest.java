@@ -11,7 +11,7 @@ import com.corona.data.Transaction;
 import com.corona.data.TransactionManager;
 
 /**
- * <p>This test is used to test business object. </p>
+ * <p>This test is used to test business object that control data source information. </p>
  *
  * @author $Author$
  * @version $Id$

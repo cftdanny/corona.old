@@ -82,7 +82,7 @@ public class AbstractComponentTest {
 	 * before test, will try to create context manager
 	 */
 	@BeforeMethod public void before() {
-		this.contextManager = this.contextManagerFactory.create(this.getVariables());
+		this.contextManager = this.contextManagerFactory.create(this.getContext());
 	}
 	
 	/**
@@ -108,10 +108,10 @@ public class AbstractComponentTest {
 	}
 	
 	/**
-	 * @return the predefined variables that will merge to new created context manager
+	 * @return the predefined variables or context that will merge to new created context manager
 	 */
 	@SuppressWarnings("rawtypes")
-	protected Map<Key, Object> getVariables() {
+	protected Map<Key, Object> getContext() {
 		return new HashMap<Key, Object>();
 	}
 	
