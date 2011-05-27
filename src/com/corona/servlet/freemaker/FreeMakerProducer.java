@@ -98,7 +98,7 @@ public class FreeMakerProducer extends AbstractProducer {
 			dataModel.setChildTemplate(this.template);
 			
 			// find theme template. If not exist, use child template
-			forCompiledTemplate = dataModel.getThemeTemplate();
+			forCompiledTemplate = dataModel.getThemeName();
 			if (StringUtil.isBlank(forCompiledTemplate)) {
 				forCompiledTemplate = this.template;
 			}

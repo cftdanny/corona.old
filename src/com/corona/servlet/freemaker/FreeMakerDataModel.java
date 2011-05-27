@@ -8,6 +8,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.corona.context.ContextManager;
+import com.corona.util.CookieUtil;
 
 import freemarker.ext.beans.BeanModel;
 import freemarker.ext.beans.BeansWrapper;
@@ -150,21 +151,28 @@ public class FreeMakerDataModel extends BeanModel {
 	/**
 	 * @return the theme template
 	 */
-	String getThemeTemplate() {
+	String getThemeName() {
 		
-		// find theme name from request parameter, and then session attribute
-		String themeName = this.getRequest().getParameter(this.getThemeAttributeName());
+		// find theme name from cookie first. If can't find, try other way
+		String themeName = CookieUtil.getValue(this.getRequest(), this.getThemeAttributeName());
 		if (themeName == null) {
-			Object value = this.getSession().getAttribute(this.getThemeAttributeName());
-			if (value != null) {
-				themeName = value.toString();
+			// if theme name is defined as request parameter, will store it to cookie   
+			themeName = this.getRequest().getParameter(this.getThemeAttributeName());
+			if (themeName != null) {
+				CookieUtil.setValue(this.getResponse(), this.getThemeAttributeName(), themeName);
 			}
 		}
 		
 		// find theme template by theme name from FreeMaker engine
 		String themeTemplate = this.getThemeTemplate(themeName);
 		if (themeTemplate == null) {
+			// theme name is wrong or does not exist, will uses default theme name
 			themeTemplate = this.getThemeTemplate(this.freeMakerEngineManager.getDefaultThemeName());
+			
+			// store default theme name to cookie for later usage
+			CookieUtil.setValue(this.getResponse(), 
+					this.getThemeAttributeName(), this.freeMakerEngineManager.getDefaultThemeName()
+			);
 		}
 		
 		return themeTemplate;
