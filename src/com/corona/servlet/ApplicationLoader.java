@@ -15,6 +15,7 @@ import com.corona.context.AbstractModule;
 import com.corona.context.ContextManagerFactory;
 import com.corona.context.Initializer;
 import com.corona.context.Module;
+import com.corona.util.StringUtil;
 
 /**
  * <p>This context listener is used to load context manager factory. Before use it, it can be configured
@@ -31,6 +32,11 @@ import com.corona.context.Module;
 public class ApplicationLoader implements ServletContextListener {
 
 	/**
+	 * the SERVLET context parameter key in order to load application modules
+	 */
+	public static final String MODULES = "com.corona.servlet.modules";
+	
+	/**
 	 * the key that store context manager factory in context
 	 */
 	public static final String CONTEXT = "com.corona.servlet.context";
@@ -39,6 +45,31 @@ public class ApplicationLoader implements ServletContextListener {
 	 * the key that store all HTTP response handlers
 	 */
 	public static final String HANDLERS = "com.corona.servlet.handlers";
+	
+	/**
+	 * @param event the SERVLET context
+	 * @return all modules that are defined by init parameter
+	 */
+	private List<Module> getInitParameterModules(final ServletContextEvent event) {
+		
+		String classNames = event.getServletContext().getInitParameter(MODULES);
+		List<Module> modules = new ArrayList<Module>();
+		if (!StringUtil.isBlank(classNames)) {
+			
+			for (String className : classNames.split(",")) {
+				if (!StringUtil.isBlank(className)) {
+					try {
+						modules.add((Module) Class.forName(className).newInstance());
+					} catch (Exception e) {
+						event.getServletContext().log(
+								"Fail to load module [" + className + "], just skip it", e
+						);
+					}
+				}
+			}
+		}
+		return modules;
+	}
 	
 	/**
 	 * @param event the SERVLET context event
@@ -57,6 +88,10 @@ public class ApplicationLoader implements ServletContextListener {
 		
 		// install all web kernel modules that are defined by framework
 		for (Module module : ServiceLoader.load(WebKernelModule.class)) {
+			modules.add(module);
+		}
+		// install all modules that are defined by SERVLET context init parameter
+		for (Module module : this.getInitParameterModules(event)) {
 			modules.add(module);
 		}
 		// install all web start modules that are defined by application
