@@ -50,5 +50,5 @@ public interface Descriptor<T> {
 	/**
 	 * @param setting the setting to set value to component property
 	 */
-	void register(Setting setting);
+	void configure(Setting setting);
 }

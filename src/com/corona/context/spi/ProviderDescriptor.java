@@ -95,7 +95,7 @@ public class ProviderDescriptor<T> implements Descriptor<T> {
 	/**
 	 * the setting
 	 */
-	private List<SettingDescriptor> settingDescriptors = null;
+	private List<SettingDescriptor> configurationDescriptors = null;
 
 	/**
 	 * @param contextManagerFactory the current context manager to build this component descriptor
@@ -294,8 +294,8 @@ public class ProviderDescriptor<T> implements Descriptor<T> {
 		}
 		
 		// set setting values to all setting properties
-		if (this.settingDescriptors != null) {
-			for (SettingDescriptor descriptor : this.settingDescriptors) {
+		if (this.configurationDescriptors != null) {
+			for (SettingDescriptor descriptor : this.configurationDescriptors) {
 				descriptor.setValue(provider);
 			}
 		}
@@ -318,14 +318,14 @@ public class ProviderDescriptor<T> implements Descriptor<T> {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.context.Descriptor#register(com.corona.context.Setting)
+	 * @see com.corona.context.Descriptor#configure(com.corona.context.Setting)
 	 */
 	@Override
-	public void register(final Setting setting) {
+	public void configure(final Setting setting) {
 		
-		if (this.settingDescriptors == null) {
-			this.settingDescriptors = new ArrayList<SettingDescriptor>();
+		if (this.configurationDescriptors == null) {
+			this.configurationDescriptors = new ArrayList<SettingDescriptor>();
 		}
-		this.settingDescriptors.add(new SettingDescriptor(this.implementationClass, setting));
+		this.configurationDescriptors.add(new SettingDescriptor(this.implementationClass, setting));
 	}
 }

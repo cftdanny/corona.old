@@ -11,7 +11,7 @@ import com.corona.context.spi.ExtensionBuilder;
 import com.corona.context.spi.ModuleBuilder;
 import com.corona.context.spi.ProviderBuilder;
 import com.corona.context.spi.ScopeBuilder;
-import com.corona.context.spi.SettingBuilder;
+import com.corona.context.spi.ConfigurationBuilder;
 
 /**
  * <p>A helper {@link Module} class which helps to reduce repetition and results in a more readable 
@@ -180,7 +180,7 @@ public abstract class AbstractModule implements Module {
 	 * @return the setting builder
 	 */
 	@SuppressWarnings("unchecked")
-	protected <T> SettingBuilder<T> bindSetting(final Class<T> protocolType) {
-		return (SettingBuilder<T>) this.binder.bind(new SettingBuilder<T>(protocolType));
+	protected <T> ConfigurationBuilder<T> bindConfiguration(final Class<T> protocolType) {
+		return (ConfigurationBuilder<T>) this.binder.bind(new ConfigurationBuilder<T>(protocolType));
 	}
 }

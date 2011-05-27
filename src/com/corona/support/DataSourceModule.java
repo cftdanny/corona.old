@@ -48,7 +48,7 @@ public class DataSourceModule extends AbstractModule {
 		this.bindProvider(ConnectionManager.class).to(ConnectionManagerProvider.class).as(this.name);
 		
 		// bind component name to connection manager provider and connection manager factory provider
-		this.bindSetting(ConnectionManagerFactory.class).as(this.name).to("name").with(this.name);
-		this.bindSetting(ConnectionManager.class).as(this.name).to("name").with(this.name);
+		this.bindConfiguration(ConnectionManagerFactory.class).as(this.name).to("name").with(this.name);
+		this.bindConfiguration(ConnectionManager.class).as(this.name).to("name").with(this.name);
 	}
 }

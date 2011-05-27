@@ -42,9 +42,9 @@ public class ContextManagerImpl implements ContextManager {
 	 * @param contextManagerFactory the parent context manager factory
 	 */
 	ContextManagerImpl(final ContextManagerFactoryImpl contextManagerFactory) {
-		this.contextManagerFactory = contextManagerFactory;
 		
 		// Store context manager and its factory, in order to fast inject and better performance
+		this.contextManagerFactory = contextManagerFactory;
 		this.components.put(new Key<ContextManager>(ContextManager.class), this);
 		this.components.put(
 				new Key<ContextManagerFactory>(ContextManagerFactory.class), contextManagerFactory
@@ -73,7 +73,8 @@ public class ContextManagerImpl implements ContextManager {
 	 */
 	@Override
 	public void close() {
-		// TODO: XXX
+		this.components = null;
+		this.contextManagerFactory = null;
 	}
 
 	/**

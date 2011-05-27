@@ -121,9 +121,9 @@ class ConstantDescriptor<T> implements Descriptor<T> {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.context.Descriptor#register(com.corona.context.Setting)
+	 * @see com.corona.context.Descriptor#configure(com.corona.context.Setting)
 	 */
 	@Override
-	public void register(final Setting setting) {
+	public void configure(final Setting setting) {
 	}
 }

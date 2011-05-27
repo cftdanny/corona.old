@@ -12,18 +12,18 @@ import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 
 /**
- * <p> </p>
+ * <p>This builder is used to set constant value to component by setter method. </p>
  *
  * @author $Author$
  * @version $Id$
  * @param <T> the injection type of component
  */
-public class SettingBuilder<T> implements Builder<T> {
+public class ConfigurationBuilder<T> implements Builder<T> {
 
 	/**
 	 * the logger
 	 */
-	private final Log logger = LogFactory.getLog(SettingBuilder.class);
+	private final Log logger = LogFactory.getLog(ConfigurationBuilder.class);
 	
 	/**
 	 * the protocol type of component
@@ -48,7 +48,7 @@ public class SettingBuilder<T> implements Builder<T> {
 	/**
 	 * @param protocolType the injection type of component
 	 */
-	public SettingBuilder(final Class<T> protocolType) {
+	public ConfigurationBuilder(final Class<T> protocolType) {
 		this.type = protocolType;
 	}
 
@@ -56,7 +56,7 @@ public class SettingBuilder<T> implements Builder<T> {
 	 * @param componentName the component name
 	 * @return this builder
 	 */
-	public SettingBuilder<T> as(final String componentName) {
+	public ConfigurationBuilder<T> as(final String componentName) {
 		this.name = componentName;
 		return this;
 	}
@@ -65,7 +65,7 @@ public class SettingBuilder<T> implements Builder<T> {
 	 * @param settingName the name of setting
 	 * @return this builder
 	 */
-	public SettingBuilder<T> to(final String settingName) {
+	public ConfigurationBuilder<T> to(final String settingName) {
 		this.setting = settingName;
 		return this;
 	}
@@ -74,7 +74,7 @@ public class SettingBuilder<T> implements Builder<T> {
 	 * @param settingValue the value of setting
 	 * @return this builder
 	 */
-	public SettingBuilder<T> with(final Object settingValue) {
+	public ConfigurationBuilder<T> with(final Object settingValue) {
 		this.value = settingValue;
 		return this;
 	}
@@ -88,7 +88,7 @@ public class SettingBuilder<T> implements Builder<T> {
 
 		Descriptor<T> descriptor = contextManagerFactory.getComponentDescriptor(new Key<T>(this.type, this.name));
 		if (descriptor != null) {
-			descriptor.register(new Setting(this.setting, this.value));
+			descriptor.configure(new Setting(this.setting, this.value));
 		} else {
 			this.logger.warn(
 					"Component with key [{0}] and name [{1}] does not exist, skip it", this.type, this.name
