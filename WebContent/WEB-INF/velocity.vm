@@ -1,6 +1,0 @@
-<html>
-	<title>$this.name</title>
-	<body>
-		$this.password
-	</body>
-</html>

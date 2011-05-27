@@ -15,10 +15,11 @@ import com.corona.servlet.annotation.Regex;
 import com.corona.servlet.annotation.Same;
 import com.corona.servlet.annotation.Service;
 import com.corona.servlet.annotation.Tail;
-import com.corona.servlet.annotation.Velocity;
 import com.corona.servlet.annotation.Xml;
 import com.corona.servlet.chart.ChartProducerFactory;
 import com.corona.servlet.excel.ExcelProducerFactory;
+import com.corona.servlet.freemaker.FreeMakerEngineManager;
+import com.corona.servlet.freemaker.FreeMakerEngineManagerImpl;
 import com.corona.servlet.freemaker.FreeMakerProducerFactory;
 import com.corona.servlet.json.JsonProducerFactory;
 import com.corona.servlet.matching.HeadMatcherFactory;
@@ -28,7 +29,6 @@ import com.corona.servlet.matching.SameMatcherFactory;
 import com.corona.servlet.matching.TailMatcherFactory;
 import com.corona.servlet.pdf.PdfProducerFactory;
 import com.corona.servlet.producing.ServiceProducerFactory;
-import com.corona.servlet.velocity.VelocityProducerFactory;
 import com.corona.servlet.xml.XmlProducerFactory;
 
 /**
@@ -65,20 +65,8 @@ public class ApplicationModule extends WebKernelModule {
 		).in(Application.class);
 		this.bindExtension(ProducerFactory.class).as(Json.class).to(new JsonProducerFactory());
 		
-		// configure default velocity producer environment with dependency component and extension
-		this.bind(
-				com.corona.servlet.velocity.ScriptEngine.class
-		).to(
-				com.corona.servlet.velocity.ScriptEngineImpl.class
-		).in(Application.class);
-		this.bindExtension(ProducerFactory.class).as(Velocity.class).to(new VelocityProducerFactory());
-
 		// configure default FreeMaker producer environment with dependency component and extension
-		this.bind(
-				com.corona.servlet.freemaker.FreeMakerEngineManager.class
-		).to(
-				com.corona.servlet.freemaker.FreeMakerEngineManagerImpl.class
-		).in(Application.class);
+		this.bind(FreeMakerEngineManager.class).to(FreeMakerEngineManagerImpl.class).in(Application.class);
 		this.bindExtension(ProducerFactory.class).as(FreeMaker.class).to(new FreeMakerProducerFactory());
 		
 		// configure PDF producer

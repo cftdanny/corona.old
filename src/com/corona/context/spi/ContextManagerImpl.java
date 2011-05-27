@@ -69,6 +69,15 @@ public class ContextManagerImpl implements ContextManager {
 	
 	/**
 	 * {@inheritDoc}
+	 * @see com.corona.context.ContextManager#close()
+	 */
+	@Override
+	public void close() {
+		// TODO: XXX
+	}
+
+	/**
+	 * {@inheritDoc}
 	 * @see com.corona.context.ContextManager#get(com.corona.context.Key)
 	 */
 	@SuppressWarnings("unchecked")

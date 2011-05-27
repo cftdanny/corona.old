@@ -33,6 +33,11 @@ public interface ContextManager {
 	ContextManagerFactory getContextManagerFactory();
 	
 	/**
+	 * release resources allocated for this context manager
+	 */
+	void close();
+	
+	/**
 	 * <p>Resolve component instance by the given key from current context manager. If component key is not
 	 * registered, it throw {@link CreationException}. </p>
 	 * 

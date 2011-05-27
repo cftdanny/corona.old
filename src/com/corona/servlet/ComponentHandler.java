@@ -157,6 +157,14 @@ class ComponentHandler extends AbstractHandler {
 			this.logger.error("Fail to flush produced content to HTTP response", e);
 			throw new HandleException("Fail to flush produced content to HTTP response", e);
 		}
+		
+		// close context manager in order to release resources that is allocated by it
+		try {
+			contextManager.close();
+		} catch (Exception e) {
+			this.logger.error("Fail to close context manager", e);
+			throw new HandleException("Fail to close context manager", e);
+		}
 	}
 	
 	/**
