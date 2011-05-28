@@ -8,19 +8,19 @@ import java.io.OutputStream;
 import com.corona.servlet.ProduceException;
 
 /**
- * <p>This generator is used to generate JSON content with object. </p>
+ * <p>The JSON marshaller is used to generate JSON content with an object. </p>
  *
  * @author $Author$
  * @version $Id$
  */
-public interface Marshaller {
+public interface JsonMarshaller {
 
 	/**
-	 * <p>Marshal root object to JSON content. </p>
+	 * <p>Marshal an object to JSON content. The object to be marshalled can not be null. </p>
 	 * 
 	 * @param out the output stream that JSON content will write to
-	 * @param root the object to be marshaled to JSON
+	 * @param instance the object to be marshaled to JSON
 	 * @exception ProduceException if fail to marshal root to JSON
 	 */
-	void marshal(final OutputStream out, final Object root) throws ProduceException;
+	void marshal(final OutputStream out, final Object instance) throws ProduceException;
 }

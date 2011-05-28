@@ -61,9 +61,9 @@ public class ApplicationModule extends WebKernelModule {
 		
 		// configure default JSON producer environment with dependency component and extension
 		this.bind(
-				com.corona.servlet.json.Marshaller.class
+				com.corona.servlet.json.JsonMarshaller.class
 		).to(
-				com.corona.servlet.json.MarshallerImpl.class
+				com.corona.servlet.json.JsonMarshallerImpl.class
 		).in(Application.class);
 		this.bindExtension(ProducerFactory.class).as(Json.class).to(new JsonProducerFactory());
 		

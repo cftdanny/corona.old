@@ -50,10 +50,12 @@ public class JsonProducer extends AbstractProducer {
 	) throws ProduceException {
 		
 		// get JSON content generator from context manager
-		Marshaller generator = contextManager.get(Marshaller.class);
+		JsonMarshaller generator = contextManager.get(JsonMarshaller.class);
 		if (generator == null) {
-			this.logger.error("JSON generator is not installed, please check module configuration");
-			throw new ProduceException("JSON generator is not installed, please check module configuration");
+			this.logger.error("JSON Marshaller does not exist, please install and configure it in module");
+			throw new ProduceException(
+					"JSON Marshaller does not exist, please install and configure it in module"
+			);
 		}
 		
 		// set content type if it is not set yet
