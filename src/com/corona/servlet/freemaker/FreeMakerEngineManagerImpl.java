@@ -13,7 +13,7 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 
 import com.corona.context.annotation.Create;
-import com.corona.context.annotation.Dependency;
+import com.corona.context.annotation.Install;
 import com.corona.context.annotation.Inject;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
@@ -28,7 +28,7 @@ import freemarker.template.Template;
  * @author $Author$
  * @version $Id$
  */
-@Dependency("freemarker.template.Configuration")
+@Install(dependencies = "freemarker.template.Configuration")
 public class FreeMakerEngineManagerImpl implements FreeMakerEngineManager {
 
 	/**

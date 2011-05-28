@@ -9,7 +9,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 
 import com.corona.context.annotation.Create;
-import com.corona.context.annotation.Dependency;
+import com.corona.context.annotation.Install;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 import com.corona.servlet.ProduceException;
@@ -20,7 +20,7 @@ import com.corona.servlet.ProduceException;
  * @author $Author$
  * @version $Id$
  */
-@Dependency("org.codehaus.jackson.map.ObjectMapper")
+@Install(dependencies = "org.codehaus.jackson.map.ObjectMapper")
 public class JsonMarshallerImpl implements JsonMarshaller {
 
 	/**

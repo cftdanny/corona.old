@@ -21,10 +21,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Inherited
-public @interface Dependency {
+public @interface Install {
 
 	/**
-	 * the classes that should be loabable in order to install component 
+	 * the classes can be loaded in order to install component 
 	 */
-	String[] value();
+	String[] dependencies();
 }

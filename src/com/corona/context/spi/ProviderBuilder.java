@@ -11,7 +11,7 @@ import com.corona.context.ContextUtil;
 import com.corona.context.Key;
 import com.corona.context.Provider;
 import com.corona.context.annotation.Context;
-import com.corona.context.annotation.Dependency;
+import com.corona.context.annotation.Install;
 import com.corona.context.annotation.Name;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
@@ -129,8 +129,8 @@ public class ProviderBuilder<T> implements Builder<T> {
 	public void build(final ContextManagerFactory contextManagerFactory) {
 		
 		// check whether this component can be installed or not
-		if (this.clazz.isAnnotationPresent(Dependency.class)) {
-			for (String dependency : this.clazz.getAnnotation(Dependency.class).value()) {
+		if (this.clazz.isAnnotationPresent(Install.class)) {
+			for (String dependency : this.clazz.getAnnotation(Install.class).dependencies()) {
 				if (!this.isClassLoadable(dependency)) {
 					return;
 				}

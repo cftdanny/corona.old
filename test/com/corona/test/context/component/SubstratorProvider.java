@@ -5,7 +5,7 @@ package com.corona.test.context.component;
 
 import com.corona.context.Provider;
 import com.corona.context.annotation.Create;
-import com.corona.context.annotation.Dependency;
+import com.corona.context.annotation.Install;
 import com.corona.context.annotation.Inject;
 import com.corona.context.annotation.Name;
 import com.corona.context.annotation.Startup;
@@ -17,7 +17,7 @@ import com.corona.context.annotation.Startup;
  * @version $Id$
  */
 @Startup
-@Dependency("java.lang.String")
+@Install(dependencies = "java.lang.String")
 public class SubstratorProvider implements Provider<Substrator> {
 
 	/**
