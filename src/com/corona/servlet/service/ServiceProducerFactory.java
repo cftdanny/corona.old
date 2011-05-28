@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.servlet.producing;
+package com.corona.servlet.service;
 
 import com.corona.context.Key;
 import com.corona.context.extension.DecoratedMethod;
@@ -10,7 +10,7 @@ import com.corona.servlet.ProducerFactory;
 import com.corona.servlet.annotation.Service;
 
 /**
- * <p> </p>
+ * <p>This factory is used to create {@link ServiceProducer} by method that is annotated with {@link Service}. </p>
  *
  * @author $Author$
  * @version $Id$

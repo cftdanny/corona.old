@@ -23,6 +23,7 @@ import com.corona.servlet.freemaker.FreeMakerEngineManager;
 import com.corona.servlet.freemaker.FreeMakerEngineManagerImpl;
 import com.corona.servlet.freemaker.FreeMakerProducerFactory;
 import com.corona.servlet.resource.ResourceProducerFactory;
+import com.corona.servlet.service.ServiceProducerFactory;
 import com.corona.servlet.json.JsonProducerFactory;
 import com.corona.servlet.matching.HeadMatcherFactory;
 import com.corona.servlet.matching.PathMatcherFactory;
@@ -30,7 +31,6 @@ import com.corona.servlet.matching.RegexMatcherFactory;
 import com.corona.servlet.matching.SameMatcherFactory;
 import com.corona.servlet.matching.TailMatcherFactory;
 import com.corona.servlet.pdf.PdfProducerFactory;
-import com.corona.servlet.producing.ServiceProducerFactory;
 import com.corona.servlet.xml.XmlProducerFactory;
 
 /**
