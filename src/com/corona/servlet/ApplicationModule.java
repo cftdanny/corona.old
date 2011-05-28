@@ -12,6 +12,7 @@ import com.corona.servlet.annotation.Json;
 import com.corona.servlet.annotation.Path;
 import com.corona.servlet.annotation.Pdf;
 import com.corona.servlet.annotation.Regex;
+import com.corona.servlet.annotation.Resource;
 import com.corona.servlet.annotation.Same;
 import com.corona.servlet.annotation.Service;
 import com.corona.servlet.annotation.Tail;
@@ -21,6 +22,7 @@ import com.corona.servlet.excel.ExcelProducerFactory;
 import com.corona.servlet.freemaker.FreeMakerEngineManager;
 import com.corona.servlet.freemaker.FreeMakerEngineManagerImpl;
 import com.corona.servlet.freemaker.FreeMakerProducerFactory;
+import com.corona.servlet.resource.ResourceProducerFactory;
 import com.corona.servlet.json.JsonProducerFactory;
 import com.corona.servlet.matching.HeadMatcherFactory;
 import com.corona.servlet.matching.PathMatcherFactory;
@@ -75,7 +77,10 @@ public class ApplicationModule extends WebKernelModule {
 		// configure Microsoft EXCEL producer
 		this.bindExtension(ProducerFactory.class).as(Excel.class).to(new ExcelProducerFactory());
 
-		// configure Microsoft EXCEL producer
+		// configure Microsoft CHART producer
 		this.bindExtension(ProducerFactory.class).as(Chart.class).to(new ChartProducerFactory());
+
+		// configure Resource producer
+		this.bindExtension(ProducerFactory.class).as(Resource.class).to(new ResourceProducerFactory());
 	}
 }
