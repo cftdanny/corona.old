@@ -108,6 +108,10 @@ class ComponentHandler extends AbstractHandler {
 		for (String name : result) {
 			request.setAttribute(name, result.get(name));
 		}
+		
+		// create ProduceHint in order to set producer runtime information later
+		ProduceHint hint = new ProduceHint();
+		context.put(new Key<ProduceHint>(ProduceHint.class), hint);
 
 		// set HTTP expires by Expires annotation in producer method of component
 		if ((this.expiration == null) || (this.expiration.value() < 0)) {
@@ -131,6 +135,7 @@ class ComponentHandler extends AbstractHandler {
 		// create context manager and resolve component from context manager factory
 		ContextManager contextManager = this.getContextManagerFactory(request).create(context);
 		Object component = contextManager.get(this.producer.getKey());
+		hint.setComponent(component);
 		
 		// invoke annotated method and produce web content by template and method result 
 		Object outcome = null;
@@ -139,6 +144,7 @@ class ComponentHandler extends AbstractHandler {
 		} else {
 			outcome = this.producer.getDecoratedMethod().invoke(contextManager, component);
 		}
+		hint.setOutcome(outcome);
 		
 		// create response output by producer's outcome
 		try {
