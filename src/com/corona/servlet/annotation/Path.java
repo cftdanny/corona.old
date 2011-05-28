@@ -22,6 +22,11 @@ import java.lang.annotation.Target;
 public @interface Path {
 
 	/**
+	 * the match priority
+	 */
+	int priority() default 1000;
+	
+	/**
 	 * the HTTP request URI pattern 
 	 */
 	String value();

@@ -22,13 +22,17 @@ import java.lang.annotation.Target;
 public @interface Head {
 
 	/**
+	 * the matching priority
+	 */
+	int priority() default 1000;
+	
+	/**
 	 * The head pattern of URI
 	 */
 	String value();
 	
 	/**
 	 * the name of tail after strips head from URI
-	 * @return
 	 */
 	String name() default "suffix";
 }

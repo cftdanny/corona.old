@@ -3,6 +3,8 @@
  */
 package com.corona.test.servlet;
 
+import com.corona.servlet.Handler;
+import com.corona.servlet.ResourceHandler;
 import com.corona.servlet.WebStartModule;
 import com.corona.test.servlet.chart.CreateChartContent;
 import com.corona.test.servlet.excel.CreateExcelContent;
@@ -23,6 +25,16 @@ public class ServletTestModule extends WebStartModule {
 	 */
 	@Override
 	protected void configure() {
+
+		// match /script with first priority
+		this.bind(Handler.class).to(ResourceHandler.class).as("script");
+		this.bindConfiguration(Handler.class).as("script").setting("head").value("/script");
+		this.bindConfiguration(Handler.class).as("script").setting("priority").value(1);
+
+		// match other resource if have
+		this.bind(Handler.class).to(ResourceHandler.class);
+
+		// producer
 		this.bind(Index.class).to(Index.class);
 		
 		this.bind(JsonContent.class).to(JsonContent.class);

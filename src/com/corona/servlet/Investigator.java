@@ -6,14 +6,18 @@ package com.corona.servlet;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.corona.context.ConfigurationException;
+import com.corona.context.ContextManager;
 import com.corona.context.ContextManagerFactory;
 import com.corona.context.ContextUtil;
 import com.corona.context.Descriptor;
 import com.corona.context.Key;
 import com.corona.context.Visitor;
+import com.corona.context.annotation.Application;
 import com.corona.context.annotation.Inject;
 import com.corona.context.extension.DecoratedMethod;
 import com.corona.context.extension.DecoratedMethodFactory;
@@ -31,7 +35,7 @@ import com.corona.servlet.annotation.WebResource;
  * @author $Author$
  * @version $Id$
  */
-class Investigator {
+class Investigator implements Visitor {
 	
 	/**
 	 * the logger
@@ -46,7 +50,12 @@ class Investigator {
 	/**
 	 * all handlers that are defined in context manager factory
 	 */
-	private List<Handler> handlers = new ArrayList<Handler>();
+	private List<Handler> handlers;
+	
+	/**
+	 * all component handler keys
+	 */
+	private List<Key<?>> handlerKeys;
 	
 	/**
 	 * @param contextManagerFactory the current context manager factory
@@ -56,19 +65,55 @@ class Investigator {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 * @see com.corona.context.Visitor#visit(com.corona.context.Key, com.corona.context.Descriptor)
+	 */
+	@Override
+	public void visit(final Key<?> key, final Descriptor<?> descriptor) {
+		
+		logger.info("Searching handler with component key [{0}]", key);
+		Class<?> componentClass = descriptor.getComponentClass();
+		if (componentClass == null) {
+			return;
+		}
+		
+		if (Handler.class.isAssignableFrom(componentClass)) {
+			// component key handler, should application scope
+			if (descriptor.getScopeType().equals(Application.class)) {
+				this.handlerKeys.add(key);
+			}
+		} else if (componentClass.isAnnotationPresent(WebResource.class)) {
+			// producer method handler
+			add(key, componentClass);
+		}
+	}
+
+	/**
 	 * @return all handlers that are defined in context manager factory
 	 */
 	Handlers getHandlers() {
 		
-		this.contextManagerFactory.inspect(new Visitor() {
-			public void visit(final Key<?> key, final Descriptor<?> descriptor) {
-				
-				logger.info("Searching HTTP request handler in component [{0}]", key);
-				
-				Class<?> componentClass = descriptor.getComponentClass();
-				if ((componentClass != null) && componentClass.isAnnotationPresent(WebResource.class)) {
-					add(key, componentClass);
-				}
+		// create empty producer handlers and component handlers
+		this.handlers = new ArrayList<Handler>();
+		this.handlerKeys = new ArrayList<Key<?>>();
+		
+		// inspect all components in context manager factory to find all handlers
+		this.contextManagerFactory.inspect(this);
+		
+		// if there are defined component handlers, will resolve from context manager
+		if (this.handlerKeys.size() > 0) {
+			
+			ContextManager contextManager = this.contextManagerFactory.create();
+			for (Key<?> key : this.handlerKeys) {
+				this.handlers.add((Handler) contextManager.get(key)); 
+			}
+			contextManager.close();
+		}
+		
+		// sort all handlers by their match priority
+		Collections.sort(this.handlers, new Comparator<Handler>() {
+			public int compare(final Handler o1, final Handler o2) {
+				return o1.getMatcher().getPriority() - o2.getMatcher().getPriority();
 			}
 		});
 		return new Handlers(this.handlers);
@@ -87,7 +132,7 @@ class Investigator {
 				
 				this.logger.info("Create HTTP request handler with method [{0}]", method);
 				try {
-					this.handlers.add(new ComponentHandler(
+					this.handlers.add(new ProducerHandler(
 							this.getMatcher(method, annotation), this.getProducer(key, method)
 					));
 				} catch (Throwable e) {

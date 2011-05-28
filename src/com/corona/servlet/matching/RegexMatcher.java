@@ -19,6 +19,11 @@ import com.corona.servlet.MatchResult;
 class RegexMatcher extends AbstractMatcher {
 
 	/**
+	 * the match priority
+	 */
+	private int priority;
+
+	/**
 	 * the head pattern
 	 */
 	private Pattern pattern;
@@ -30,14 +35,25 @@ class RegexMatcher extends AbstractMatcher {
 	
 	/**
 	 * @param method the method that is annotated with matcher annotation
+	 * @param priority the match priority
 	 * @param pattern the head pattern
 	 * @param name the prefix of group name
 	 */
-	RegexMatcher(final Method method, final String pattern, final String name) {
+	RegexMatcher(final Method method, final int priority, final String pattern, final String name) {
 		super(method);
 		
+		this.priority = priority;
 		this.pattern = Pattern.compile(pattern);
 		this.name = name;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.servlet.Matcher#getPriority()
+	 */
+	@Override
+	public int getPriority() {
+		return this.priority;
 	}
 
 	/**

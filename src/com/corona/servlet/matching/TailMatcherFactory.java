@@ -31,7 +31,7 @@ public class TailMatcherFactory implements MatcherFactory<Tail> {
 	 * @see com.corona.servlet.MatcherFactory#create(java.lang.reflect.Method, java.lang.annotation.Annotation)
 	 */
 	@Override
-	public Matcher create(final Method method, final Tail pattern) {
-		return new TailMatcher(method, pattern.value(), pattern.name());
+	public Matcher create(final Method method, final Tail tail) {
+		return new TailMatcher(method, tail.priority(), tail.value(), tail.name());
 	}
 }

@@ -31,7 +31,7 @@ public class HeadMatcherFactory implements MatcherFactory<Head> {
 	 * @see com.corona.servlet.MatcherFactory#create(java.lang.reflect.Method, java.lang.annotation.Annotation)
 	 */
 	@Override
-	public Matcher create(final Method method, final Head pattern) {
-		return new HeadMatcher(method, pattern.value(), pattern.name());
+	public Matcher create(final Method method, final Head head) {
+		return new HeadMatcher(method, head.priority(), head.value(), head.name());
 	}
 }

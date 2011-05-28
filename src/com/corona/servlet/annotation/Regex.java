@@ -23,6 +23,11 @@ import java.lang.annotation.Target;
 public @interface Regex {
 
 	/**
+	 * the match priority
+	 */
+	int priority() default 1000;
+
+	/**
 	 * the REGEX expression to match request URI 
 	 */
 	String value();

@@ -14,6 +14,11 @@ import javax.servlet.http.HttpServletRequest;
 public interface Matcher {
 
 	/**
+	 * @return the match priority
+	 */
+	int getPriority();
+	
+	/**
 	 * <p>Match HTTP request URI and return matched result. </p>
 	 * 
 	 * @param request the HTTP request

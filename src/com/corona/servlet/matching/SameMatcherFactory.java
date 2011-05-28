@@ -31,7 +31,7 @@ public class SameMatcherFactory implements MatcherFactory<Same> {
 	 * @see com.corona.servlet.MatcherFactory#create(java.lang.reflect.Method, java.lang.annotation.Annotation)
 	 */
 	@Override
-	public Matcher create(final Method method, final Same pattern) {
-		return new SameMatcher(method, pattern.value());
+	public Matcher create(final Method method, final Same same) {
+		return new SameMatcher(method, same.priority(), same.value());
 	}
 }

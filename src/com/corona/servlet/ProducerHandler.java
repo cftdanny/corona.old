@@ -34,12 +34,12 @@ import com.corona.servlet.annotation.Transactional;
  * @author $Author$
  * @version $Id$
  */
-class ComponentHandler extends AbstractHandler {
+class ProducerHandler extends AbstractHandler {
 
 	/**
 	 * the logger
 	 */
-	private Log logger = LogFactory.getLog(ComponentHandler.class);
+	private Log logger = LogFactory.getLog(ProducerHandler.class);
 	
 	/**
 	 * the producer to create HTTP response
@@ -60,7 +60,7 @@ class ComponentHandler extends AbstractHandler {
 	 * @param matcher the matcher
 	 * @param producer the producer to create HTTP response
 	 */
-	ComponentHandler(final Matcher matcher, final Producer producer) {
+	ProducerHandler(final Matcher matcher, final Producer producer) {
 		super(matcher);
 		
 		this.producer = producer;

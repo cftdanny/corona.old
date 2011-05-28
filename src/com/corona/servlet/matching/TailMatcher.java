@@ -17,6 +17,11 @@ import com.corona.servlet.MatchResult;
 class TailMatcher extends AbstractMatcher {
 
 	/**
+	 * the match priority
+	 */
+	private int priority;
+
+	/**
 	 * the head pattern
 	 */
 	private String pattern;
@@ -28,14 +33,25 @@ class TailMatcher extends AbstractMatcher {
 	
 	/**
 	 * @param method the method that is annotated with matcher annotation
+	 * @param priority the match priority
 	 * @param pattern the head pattern
 	 * @param name the tail name
 	 */
-	TailMatcher(final Method method, final String pattern, final String name) {
+	TailMatcher(final Method method, final int priority, final String pattern, final String name) {
 		super(method);
 		
+		this.priority = priority;
 		this.pattern = pattern;
 		this.name = name;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.servlet.Matcher#getPriority()
+	 */
+	@Override
+	public int getPriority() {
+		return this.priority;
 	}
 
 	/**

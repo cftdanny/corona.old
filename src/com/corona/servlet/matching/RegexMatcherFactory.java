@@ -32,6 +32,6 @@ public class RegexMatcherFactory implements MatcherFactory<Regex> {
 	 */
 	@Override
 	public Matcher create(final Method method, final Regex pattern) {
-		return new RegexMatcher(method, pattern.value(), pattern.name());
+		return new RegexMatcher(method, pattern.priority(), pattern.value(), pattern.name());
 	}
 }

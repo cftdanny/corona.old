@@ -65,7 +65,7 @@ public class ConfigurationBuilder<T> implements Builder<T> {
 	 * @param settingName the name of setting
 	 * @return this builder
 	 */
-	public ConfigurationBuilder<T> to(final String settingName) {
+	public ConfigurationBuilder<T> setting(final String settingName) {
 		this.setting = settingName;
 		return this;
 	}
@@ -74,7 +74,7 @@ public class ConfigurationBuilder<T> implements Builder<T> {
 	 * @param settingValue the value of setting
 	 * @return this builder
 	 */
-	public ConfigurationBuilder<T> with(final Object settingValue) {
+	public ConfigurationBuilder<T> value(final Object settingValue) {
 		this.value = settingValue;
 		return this;
 	}

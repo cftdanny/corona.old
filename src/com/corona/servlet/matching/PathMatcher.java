@@ -22,6 +22,11 @@ import com.corona.servlet.MatchResult;
 class PathMatcher extends AbstractMatcher {
 
 	/**
+	 * the match priority
+	 */
+	private int priority;
+
+	/**
 	 * the path pattern
 	 */
 	private Pattern pattern;
@@ -33,9 +38,10 @@ class PathMatcher extends AbstractMatcher {
 	
 	/**
 	 * @param method the method that is annotated with matcher annotation
+	 * @param priority the match priority
 	 * @param pattern the path pattern
 	 */
-	PathMatcher(final Method method, final String pattern) {
+	PathMatcher(final Method method, final int priority, final String pattern) {
 		super(method);
 		
 		// the state of parsing machine
@@ -101,6 +107,15 @@ class PathMatcher extends AbstractMatcher {
 		this.pattern = Pattern.compile(builder.toString());
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.servlet.Matcher#getPriority()
+	 */
+	@Override
+	public int getPriority() {
+		return this.priority;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.servlet.AbstractMatcher#match(java.lang.String)

@@ -32,6 +32,6 @@ public class PathMatcherFactory implements MatcherFactory<Path> {
 	 */
 	@Override
 	public Matcher create(final Method method, final Path pattern) {
-		return new PathMatcher(method, pattern.value());
+		return new PathMatcher(method, pattern.priority(), pattern.value());
 	}
 }

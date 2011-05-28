@@ -22,6 +22,11 @@ import java.lang.annotation.Target;
 public @interface Same {
 
 	/**
+	 * the match priority
+	 */
+	int priority() default 1000;
+
+	/**
 	 * the request HTTP URI 
 	 */
 	String value();

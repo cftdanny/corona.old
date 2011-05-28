@@ -22,6 +22,11 @@ import java.lang.annotation.Target;
 public @interface Tail {
 
 	/**
+	 * the match priority
+	 */
+	int priority() default 1000;
+
+	/**
 	 * The head pattern of URI
 	 */
 	String value();

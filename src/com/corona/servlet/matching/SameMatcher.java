@@ -17,17 +17,33 @@ import com.corona.servlet.MatchResult;
 class SameMatcher extends AbstractMatcher {
 
 	/**
+	 * the match priority
+	 */
+	private int priority;
+
+	/**
 	 * the matching pattern
 	 */
 	private String pattern;
 	
 	/**
 	 * @param method the method that is annotated with matcher annotation
+	 * @param priority the match priority
 	 * @param pattern the matching pattern
 	 */
-	SameMatcher(final Method method, final String pattern) {
+	SameMatcher(final Method method, final int priority, final String pattern) {
 		super(method);
+		this.priority = priority;
 		this.pattern = pattern;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.servlet.Matcher#getPriority()
+	 */
+	@Override
+	public int getPriority() {
+		return this.priority;
 	}
 
 	/**
