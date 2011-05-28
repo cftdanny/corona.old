@@ -35,11 +35,13 @@ public interface Producer {
 	 * 
 	 * @param contextManager current context manager
 	 * @param response the HTTP response
+	 * @param component the component of producer
 	 * @param data the root data object return by producer method
 	 * @param out the HTTP output stream
 	 * @throws ProduceException if fail to produce HTTP response
 	 */
 	void produce(
-			ContextManager contextManager, HttpServletResponse response, OutputStream out, Object data
+			ContextManager contextManager, HttpServletResponse response, OutputStream out, 
+			Object component, Object data
 	) throws ProduceException;
 }

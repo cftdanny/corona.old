@@ -9,7 +9,7 @@ package com.corona.servlet;
  * @author $Author$
  * @version $Id$
  */
-public class ProduceHint {
+public class ProducerHint {
 
 	/**
 	 * the producer component
@@ -24,14 +24,14 @@ public class ProduceHint {
 	/**
 	 * default constructor
 	 */
-	public ProduceHint() {
+	public ProducerHint() {
 		// do nothing
 	}
 	
 	/**
 	 * @param component the producer component
 	 */
-	public ProduceHint(final Object component) {
+	public ProducerHint(final Object component) {
 		this.component = component;
 	}
 	

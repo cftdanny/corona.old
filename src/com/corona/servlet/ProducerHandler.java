@@ -110,8 +110,8 @@ class ProducerHandler extends AbstractHandler {
 		}
 		
 		// create ProduceHint in order to set producer runtime information later
-		ProduceHint hint = new ProduceHint();
-		context.put(new Key<ProduceHint>(ProduceHint.class), hint);
+		ProducerHint hint = new ProducerHint();
+		context.put(new Key<ProducerHint>(ProducerHint.class), hint);
 
 		// set HTTP expires by Expires annotation in producer method of component
 		if ((this.expiration == null) || (this.expiration.value() < 0)) {
@@ -148,7 +148,7 @@ class ProducerHandler extends AbstractHandler {
 		
 		// create response output by producer's outcome
 		try {
-			this.producer.produce(contextManager, response, response.getOutputStream(), outcome);
+			this.producer.produce(contextManager, response, response.getOutputStream(), component, outcome);
 		} catch (Throwable e) {
 			
 			Method method = this.producer.getDecoratedMethod().getMethod();

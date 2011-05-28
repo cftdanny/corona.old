@@ -52,18 +52,16 @@ public class ChartProducer extends AbstractProducer {
 	 * {@inheritDoc}
 	 * @see com.corona.servlet.Producer#produce(
 	 * 	com.corona.context.ContextManager, javax.servlet.http.HttpServletResponse, java.io.OutputStream, 
-	 * 	java.lang.Object
+	 * 	java.lang.Object, java.lang.Object
 	 * )
 	 */
 	@Override
 	public void produce(
-			final ContextManager contextManager, final HttpServletResponse response, final OutputStream out, 
-			final Object data
-	) throws ProduceException {
+			final ContextManager contextManager, final HttpServletResponse response, final OutputStream out,
+			final Object component, final Object data) throws ProduceException {
 		
 		// find component and the method that is used to create PDF document
 		Method method = null;
-		Object component = contextManager.get(this.getKey());
 		try {
 			if (data != null) {
 				method = component.getClass().getMethod(this.chart.value(), data.getClass());
