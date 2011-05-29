@@ -1,5 +1,5 @@
-Just head
+Just head <p/>
 
-<#include "${template}">		
+<#include "${template}"> <p/>		
 
 Just foot

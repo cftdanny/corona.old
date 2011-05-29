@@ -1,4 +1,4 @@
-AA - ${name}
-BB - ${password}
-CC - ${request.locale} 
+AA - ${name} <p/>
+BB - ${password} <p/>
+CC - ${request.locale} <p/> 
 DD - ${session.id}
