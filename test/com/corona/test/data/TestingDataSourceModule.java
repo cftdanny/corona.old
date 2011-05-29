@@ -32,7 +32,7 @@ public class TestingDataSourceModule extends AbstractModule {
 		settings.setProperty(DataSourceProvider.USER, "sa");
 		settings.setProperty(DataSourceProvider.PASSWORD, "");
 		
-		this.bindConfiguration(DataSourceManagerProvider.class).setting("family").value("HSQL");
-		this.bindConfiguration(DataSourceManagerProvider.class).setting("settings").value(settings);
+		this.bindConfiguration(DataSourceManagerProvider.class).property("family").value("HSQL");
+		this.bindConfiguration(DataSourceManagerProvider.class).property("settings").value(settings);
 	}
 }

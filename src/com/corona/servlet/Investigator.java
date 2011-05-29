@@ -77,7 +77,7 @@ class Investigator implements Visitor {
 			return;
 		}
 		
-		if (Handler.class.isAssignableFrom(componentClass)) {
+		if (Handler.class.isAssignableFrom(key.getProtocolType())) {
 			// component key handler, should application scope
 			if (descriptor.getScopeType().equals(Application.class)) {
 				this.handlerKeys.add(key);

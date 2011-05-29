@@ -28,8 +28,8 @@ public class ServletTestModule extends WebStartModule {
 
 		// match /script with first priority
 		this.bind(Handler.class).to(ResourceHandler.class).as("script");
-		this.bindConfiguration(Handler.class).as("script").setting("head").value("/script");
-		this.bindConfiguration(Handler.class).as("script").setting("priority").value(1);
+		this.bindConfiguration(Handler.class).as("script").property("head").value("/script");
+		this.bindConfiguration(Handler.class).as("script").property("priority").value(1);
 
 		// match other resource if have
 		this.bind(Handler.class).to(ResourceHandler.class);
