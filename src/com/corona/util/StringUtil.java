@@ -121,4 +121,36 @@ public final class StringUtil {
 			return "";
 		}
 	}
+
+	/**
+	 * @param str the string
+	 * @param type the type class that converts str to
+	 * @return the converted value
+	 */
+	public static Object to(final String str, final Class<?> type) {
+		
+		if (str == null) {
+			return null;
+		}
+		
+		if (String.class.equals(type)) {
+			return str;
+		} else if (Integer.class.equals(type) || int.class.equals(type)) {
+			return Integer.parseInt(str);
+		} else if (Long.class.equals(type) || long.class.equals(type)) {
+			return Long.parseLong(str);
+		} else if (Short.class.equals(type) || short.class.equals(type)) {
+			return Short.parseShort(str);
+		} else if (Byte.class.equals(type) || byte.class.equals(type)) {
+			return Byte.parseByte(str);
+		} else if (Float.class.equals(type) || float.class.equals(type)) {
+			return Float.parseFloat(str);
+		} else if (Double.class.equals(type) || double.class.equals(type)) {
+			return Float.parseFloat(str);
+		} else if (Boolean.class.equals(type) || boolean.class.equals(type)) {
+			return Boolean.parseBoolean(str);
+		} else {
+			throw new IllegalArgumentException("Do not support type [" + type.toString() + "]"); 
+		}
+	}
 }

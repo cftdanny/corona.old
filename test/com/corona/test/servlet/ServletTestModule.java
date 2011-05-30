@@ -9,6 +9,7 @@ import com.corona.servlet.WebStartModule;
 import com.corona.test.servlet.chart.CreateChartContent;
 import com.corona.test.servlet.excel.CreateExcelContent;
 import com.corona.test.servlet.json.JsonContent;
+import com.corona.test.servlet.param.ParamStringBean;
 import com.corona.test.servlet.pdf.CreatePdfContent;
 
 /**
@@ -26,6 +27,9 @@ public class ServletTestModule extends WebStartModule {
 	@Override
 	protected void configure() {
 
+		// Test inject by @Param
+		this.bind(ParamStringBean.class).to(ParamStringBean.class);
+		
 		// match /script with first priority
 		this.bind(Handler.class).to(ResourceHandler.class).as("script");
 		this.bindConfiguration(Handler.class).as("script").property("head").value("/script");

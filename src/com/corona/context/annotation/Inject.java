@@ -46,7 +46,7 @@ import java.lang.annotation.Target;
 public @interface Inject {
 
 	/**
-	 * whether injection value is optional or not. If true, value can be <code>null</code>
+	 * the component name
 	 */
-	boolean value() default false;
+	String value() default "";
 }

@@ -4,11 +4,13 @@
 package com.corona.servlet;
 
 import com.corona.context.annotation.Application;
+import com.corona.context.extension.DecoratedFieldFactory;
 import com.corona.servlet.annotation.Chart;
 import com.corona.servlet.annotation.Excel;
 import com.corona.servlet.annotation.FreeMaker;
 import com.corona.servlet.annotation.Head;
 import com.corona.servlet.annotation.Json;
+import com.corona.servlet.annotation.Param;
 import com.corona.servlet.annotation.Path;
 import com.corona.servlet.annotation.Pdf;
 import com.corona.servlet.annotation.Regex;
@@ -30,6 +32,7 @@ import com.corona.servlet.matching.PathMatcherFactory;
 import com.corona.servlet.matching.RegexMatcherFactory;
 import com.corona.servlet.matching.SameMatcherFactory;
 import com.corona.servlet.matching.TailMatcherFactory;
+import com.corona.servlet.param.ParamDecoratedFieldFactory;
 import com.corona.servlet.pdf.PdfProducerFactory;
 import com.corona.servlet.xml.XmlProducerFactory;
 
@@ -47,6 +50,11 @@ public class ApplicationModule extends WebKernelModule {
 	 */
 	@Override
 	protected void configure() {
+		
+		// configure @Param injection
+		this.bindExtension(DecoratedFieldFactory.class).as(Param.class).to(
+				new ParamDecoratedFieldFactory()
+		);
 		
 		// configure built-in matcher factory for SERVLET
 		this.bindExtension(MatcherFactory.class).as(Head.class).to(new HeadMatcherFactory());
