@@ -3,20 +3,18 @@
  */
 package com.corona.context.spi;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-import com.corona.context.AnnotatedParameter;
-import com.corona.context.AnnotatedParameterFactory;
-import com.corona.context.ConfigurationException;
 import com.corona.context.ContextManager;
 import com.corona.context.ContextManagerFactory;
-import com.corona.context.ContextUtil;
 import com.corona.context.CreationException;
 import com.corona.context.InjectProperty;
+import com.corona.context.ValueException;
 import com.corona.context.annotation.Inject;
+import com.corona.context.annotation.Optional;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
+import com.corona.util.StringUtil;
 
 /**
  * <p>This class is used to register a setter method that is annotated with injection annotation. 
@@ -25,7 +23,7 @@ import com.corona.logging.LogFactory;
  * @author $Author$
  * @version $Id$
  */
-public class DefaultInjectProperty implements InjectProperty {
+class DefaultInjectProperty implements InjectProperty {
 
 	/**
 	 * the logger
@@ -38,9 +36,19 @@ public class DefaultInjectProperty implements InjectProperty {
 	private Method property;
 
 	/**
-	 * the annotated parameters
+	 * the protocol type
 	 */
-	private AnnotatedParameter prameter;
+	private Class<?> protocolType;
+	
+	/**
+	 * the name
+	 */
+	private String name = null;
+
+	/**
+	 * whether value to be injected can be null
+	 */
+	private boolean optional = false;
  
 	/**
 	 * @param contextManagerFactory the context manager factory
@@ -51,32 +59,14 @@ public class DefaultInjectProperty implements InjectProperty {
 		// store this property in order to set component property later
 		this.property = property;
 		
-		// check the parameter of property and create its injection configuration
-		Class<?> parameterType = this.property.getParameterTypes()[0];
-		
-		// find annotation in setter method that can be injected
-		Class<? extends Annotation> annotationType = Inject.class;
-		Annotation annotation = ContextUtil.findInjectAnnotation(this.property.getParameterAnnotations()[0]);
-		if (annotation != null) {
-			annotationType = annotation.annotationType();
+		if (this.protocolType.isAnnotationPresent(Optional.class)) {
+			this.optional = true;
 		}
-		
-		// create annotated parameter factory by annotated parameter in property
-		AnnotatedParameterFactory factory = contextManagerFactory.getExtension(
-				AnnotatedParameterFactory.class, annotationType
-		);
-		if (factory == null) {
-			this.logger.error("Annotated parameter factory [{0}] for [{1}] does not exists",
-					annotationType, property
-			);
-			throw new ConfigurationException("Annotated parameter factory [{0}] for [{1}] does not exists",
-					annotationType, property
-			);
+		this.protocolType = this.property.getParameterTypes()[0];
+		this.name = this.property.getAnnotation(Inject.class).value();
+		if (StringUtil.isBlank(this.name)) {
+			this.name = null;
 		}
-		
-		this.prameter = factory.create(
-				contextManagerFactory, parameterType, this.property.getParameterAnnotations()[0]
-		);
 	}
 	
 	/**
@@ -95,8 +85,14 @@ public class DefaultInjectProperty implements InjectProperty {
 	@Override
 	public void set(final ContextManager contextManager, final Object component) {
 		
+		Object value = contextManager.get(this.protocolType, this.name);
+		if ((value == null) && (!this.optional)) {
+			this.logger.error("Resolved value is null, but property [{0}] is mandatory.", this.property);
+			throw new ValueException("Resolved value is null, but property [{0}] is mandatory.", this.property);
+		}
+
 		try {
-			this.property.invoke(component, this.prameter.get(contextManager));
+			this.property.invoke(component, value);
 		} catch (Throwable e) {
 			this.logger.error("Fail set value to property [{0}]", e, this.property);
 			throw new CreationException("Fail set value to property [{0}]", e, this.property);
