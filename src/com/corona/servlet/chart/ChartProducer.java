@@ -13,8 +13,8 @@ import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 
 import com.corona.context.ContextManager;
+import com.corona.context.InjectMethod;
 import com.corona.context.Key;
-import com.corona.context.extension.DecoratedMethod;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 import com.corona.servlet.AbstractProducer;
@@ -43,7 +43,7 @@ public class ChartProducer extends AbstractProducer {
 	 * @param key the component key
 	 * @param method the method that is annotated with {@link FreeMaker}
 	 */
-	public ChartProducer(final Key<?> key, final DecoratedMethod method) {
+	public ChartProducer(final Key<?> key, final InjectMethod method) {
 		super(key, method);
 		this.chart = method.getMethod().getAnnotation(Chart.class);
 	}

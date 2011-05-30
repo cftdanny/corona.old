@@ -6,15 +6,15 @@ package com.corona.context.spi;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
+import com.corona.context.AnnotatedParameter;
+import com.corona.context.AnnotatedParameterFactory;
 import com.corona.context.ConfigurationException;
 import com.corona.context.ContextManager;
 import com.corona.context.ContextManagerFactory;
 import com.corona.context.ContextUtil;
 import com.corona.context.CreationException;
+import com.corona.context.InjectProperty;
 import com.corona.context.annotation.Inject;
-import com.corona.context.extension.DecoratedParameter;
-import com.corona.context.extension.DecoratedParameterFactory;
-import com.corona.context.extension.DecoratedProperty;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 
@@ -25,12 +25,12 @@ import com.corona.logging.LogFactory;
  * @author $Author$
  * @version $Id$
  */
-public class InjectDecoratedProperty implements DecoratedProperty {
+public class DefaultInjectProperty implements InjectProperty {
 
 	/**
 	 * the logger
 	 */
-	private Log logger = LogFactory.getLog(InjectDecoratedProperty.class);
+	private Log logger = LogFactory.getLog(DefaultInjectProperty.class);
 	
 	/**
 	 * the annotated property
@@ -40,13 +40,13 @@ public class InjectDecoratedProperty implements DecoratedProperty {
 	/**
 	 * the annotated parameters
 	 */
-	private DecoratedParameter prameter;
+	private AnnotatedParameter prameter;
  
 	/**
 	 * @param contextManagerFactory the context manager factory
 	 * @param property the property that is annotated with {@link Inject}
 	 */
-	InjectDecoratedProperty(final ContextManagerFactory contextManagerFactory, final Method property) {
+	DefaultInjectProperty(final ContextManagerFactory contextManagerFactory, final Method property) {
 		
 		// store this property in order to set component property later
 		this.property = property;
@@ -62,8 +62,8 @@ public class InjectDecoratedProperty implements DecoratedProperty {
 		}
 		
 		// create annotated parameter factory by annotated parameter in property
-		DecoratedParameterFactory factory = contextManagerFactory.getExtension(
-				DecoratedParameterFactory.class, annotationType
+		AnnotatedParameterFactory factory = contextManagerFactory.getExtension(
+				AnnotatedParameterFactory.class, annotationType
 		);
 		if (factory == null) {
 			this.logger.error("Annotated parameter factory [{0}] for [{1}] does not exists",
@@ -81,7 +81,7 @@ public class InjectDecoratedProperty implements DecoratedProperty {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.context.extension.DecoratedProperty#getMethod()
+	 * @see com.corona.context.InjectProperty#getMethod()
 	 */
 	@Override
 	public Method getMethod() {
@@ -90,7 +90,7 @@ public class InjectDecoratedProperty implements DecoratedProperty {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.context.extension.DecoratedProperty#set(com.corona.context.ContextManager, java.lang.Object)
+	 * @see com.corona.context.InjectProperty#set(com.corona.context.ContextManager, java.lang.Object)
 	 */
 	@Override
 	public void set(final ContextManager contextManager, final Object component) {
@@ -98,8 +98,8 @@ public class InjectDecoratedProperty implements DecoratedProperty {
 		try {
 			this.property.invoke(component, this.prameter.get(contextManager));
 		} catch (Throwable e) {
-			this.logger.error("Fail set value to property [{0}]", this.property);
-			throw new CreationException("Fail set value to property [{0}]", this.property);
+			this.logger.error("Fail set value to property [{0}]", e, this.property);
+			throw new CreationException("Fail set value to property [{0}]", e, this.property);
 		}
 	}
 }

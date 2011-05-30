@@ -3,6 +3,9 @@
  */
 package com.corona.test.servlet.param;
 
+import java.util.List;
+
+import com.corona.context.annotation.Inject;
 import com.corona.context.annotation.Optional;
 import com.corona.servlet.annotation.FreeMaker;
 import com.corona.servlet.annotation.Param;
@@ -24,6 +27,31 @@ public class ParamStringBean {
 	@Param @Optional private String a;
 
 	/**
+	 * the b
+	 */
+	@Param @Optional private Integer b;
+	
+	/**
+	 * the c
+	 */
+	private Long c;
+	
+	/**
+	 * the d
+	 */
+	private List<String> d;
+	
+	/**
+	 * the e
+	 */
+	@Param private List<Integer> e;
+	
+	/**
+	 * the f
+	 */
+	@Param private Integer[] f;
+	
+	/**
 	 * @return the a
 	 */
 	public String getA() {
@@ -38,10 +66,83 @@ public class ParamStringBean {
 	}
 	
 	/**
+	 * @return the b
+	 */
+	public Integer getB() {
+		return b;
+	}
+
+	/**
+	 * @param b the b to set
+	 */
+	public void setB(final Integer b) {
+		this.b = b;
+	}
+	
+	/**
+	 * @return the c
+	 */
+	public Long getC() {
+		return c;
+	}
+	
+	/**
+	 * @param c the c to set
+	 */
+	public void setC(final Long c) {
+		this.c = c;
+	}
+	
+	/**
+	 * @return the d
+	 */
+	public List<String> getD() {
+		return d;
+	}
+	
+	/**
+	 * @param d the d to set
+	 */
+	@Inject public void setD(@Param("d") final List<String> d) {
+		this.d = d;
+	}
+	
+	/**
+	 * @return the e
+	 */
+	public List<Integer> getE() {
+		return e;
+	}
+	
+	/**
+	 * @param e the e to set
+	 */
+	public void setE(final List<Integer> e) {
+		this.e = e;
+	}
+	
+	/**
+	 * @return the f
+	 */
+	public Integer[] getF() {
+		return f;
+	}
+
+	/**
+	 * @param f the f to set
+	 */
+	public void setF(final Integer[] f) {
+		this.f = f;
+	}
+
+	/**
+	 * @param ac the c
 	 * @return this object
 	 */
 	@Same("/param/string.html")
-	@FreeMaker("/param/string.ftl") public ParamStringBean html() {
+	@FreeMaker("/param/string.ftl") 
+	public ParamStringBean html(@Param("c") @Optional final Long ac) {
+		this.c = ac;
 		return this;
 	}
 }

@@ -8,8 +8,8 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import com.corona.context.ContextManager;
+import com.corona.context.InjectMethod;
 import com.corona.context.Key;
-import com.corona.context.extension.DecoratedMethod;
 import com.corona.servlet.AbstractProducer;
 import com.corona.servlet.ProduceException;
 
@@ -25,7 +25,7 @@ public class ServiceProducer extends AbstractProducer {
 	 * @param key the component key
 	 * @param method the annotated producer method
 	 */
-	public ServiceProducer(final Key<?> key, final DecoratedMethod method) {
+	public ServiceProducer(final Key<?> key, final InjectMethod method) {
 		super(key, method);
 	}
 

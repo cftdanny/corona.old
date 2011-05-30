@@ -8,8 +8,8 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import com.corona.context.ContextManager;
+import com.corona.context.InjectMethod;
 import com.corona.context.Key;
-import com.corona.context.extension.DecoratedMethod;
 
 /**
  * <p>The producer is used to create HTTP response output stream by an annotated method in component. </p>
@@ -27,7 +27,7 @@ public interface Producer {
 	/**
 	 * @return the injection method that can be invoked in context manager 
 	 */
-	DecoratedMethod getDecoratedMethod();
+	InjectMethod getDecoratedMethod();
 	
 	/**
 	 * <p>Create HTTP response output by current context manager, root object. Usually, HTML output can be

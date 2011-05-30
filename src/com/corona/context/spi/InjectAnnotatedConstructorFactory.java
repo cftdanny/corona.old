@@ -5,31 +5,31 @@ package com.corona.context.spi;
 
 import java.lang.reflect.Constructor;
 
+import com.corona.context.AnnotatedConstructor;
+import com.corona.context.AnnotatedConstructorFactory;
 import com.corona.context.ContextManagerFactory;
-import com.corona.context.extension.DecoratedConstructor;
-import com.corona.context.extension.DecoratedConstructorFactory;
 
 /**
- * <p>This factory is used to create {@link InjectDecoratedConstructor} for a constructor that is 
+ * <p>This factory is used to create {@link InjectAnnotatedConstructor} for a constructor that is 
  * annotated with {@link Inject}.  
  * </p>
  *
  * @author $Author$
  * @version $Id$
  */
-class InjectDecoratedConstructorFactory implements DecoratedConstructorFactory {
+class InjectAnnotatedConstructorFactory implements AnnotatedConstructorFactory {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.context.extension.DecoratedConstructorFactory#create(
+	 * @see com.corona.context.AnnotatedConstructorFactory#create(
 	 * 	com.corona.context.ContextManagerFactory, java.lang.reflect.Constructor
 	 * )
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public DecoratedConstructor create(
+	public AnnotatedConstructor create(
 			final ContextManagerFactory contextManagerFactory, final Constructor constructor
 	) {
-		return new InjectDecoratedConstructor(contextManagerFactory, constructor);
+		return new InjectAnnotatedConstructor(contextManagerFactory, constructor);
 	}
 }

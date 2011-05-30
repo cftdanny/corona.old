@@ -10,25 +10,25 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.corona.context.AnnotatedConstructor;
+import com.corona.context.AnnotatedConstructorFactory;
+import com.corona.context.AnnotatedField;
+import com.corona.context.AnnotatedFieldFactory;
 import com.corona.context.ConfigurationException;
 import com.corona.context.ContextManager;
 import com.corona.context.ContextManagerFactory;
 import com.corona.context.ContextUtil;
 import com.corona.context.CreationException;
 import com.corona.context.Descriptor;
+import com.corona.context.InjectMethod;
+import com.corona.context.InjectMethodFactory;
+import com.corona.context.InjectProperty;
+import com.corona.context.InjectPropertyFactory;
 import com.corona.context.Setting;
 import com.corona.context.annotation.Alias;
 import com.corona.context.annotation.Create;
 import com.corona.context.annotation.Inject;
 import com.corona.context.annotation.Version;
-import com.corona.context.extension.DecoratedConstructor;
-import com.corona.context.extension.DecoratedConstructorFactory;
-import com.corona.context.extension.DecoratedFieldFactory;
-import com.corona.context.extension.DecoratedMethod;
-import com.corona.context.extension.DecoratedMethodFactory;
-import com.corona.context.extension.DecoratedProperty;
-import com.corona.context.extension.DecoratedPropertyFactory;
-import com.corona.context.extension.DecoratedField;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 
@@ -73,22 +73,22 @@ public class ComponentDescriptor<T> implements Descriptor<T> {
 	/**
 	 * the constructor with injection annotation to create component instance
 	 */
-	private DecoratedConstructor annotatedConstructor = null;
+	private AnnotatedConstructor annotatedConstructor = null;
 	
 	/**
 	 * all annotated fields for inject value just component is created
 	 */
-	private List<DecoratedField> annotatedFields = new ArrayList<DecoratedField>();
+	private List<AnnotatedField> annotatedFields = new ArrayList<AnnotatedField>();
 	
 	/**
 	 * all annotated properties for inject value just component is created
 	 */
-	private List<DecoratedProperty> annotatedProperties = new ArrayList<DecoratedProperty>();
+	private List<InjectProperty> annotatedProperties = new ArrayList<InjectProperty>();
 	
 	/**
 	 * the method that will be invoked just after component instance is created
 	 */
-	private DecoratedMethod createMethod = null;
+	private InjectMethod createMethod = null;
 	
 	/**
 	 * the setting
@@ -130,8 +130,8 @@ public class ComponentDescriptor<T> implements Descriptor<T> {
 			
 			Annotation annotation = ContextUtil.findInjectAnnotation(constructor);
 			if (annotation != null) {
-				DecoratedConstructorFactory factory = contextManagerFactory.getExtension(
-						DecoratedConstructorFactory.class, annotation.annotationType()
+				AnnotatedConstructorFactory factory = contextManagerFactory.getExtension(
+						AnnotatedConstructorFactory.class, annotation.annotationType()
 				); 
 				if (factory == null) {
 					this.logger.error("Annotated constructor factory for [{0}] does not exists", constructor);
@@ -150,8 +150,8 @@ public class ComponentDescriptor<T> implements Descriptor<T> {
 			
 			Annotation annotation = ContextUtil.findInjectAnnotation(field);
 			if (annotation != null) {
-				DecoratedFieldFactory factory = contextManagerFactory.getExtension(
-						DecoratedFieldFactory.class, annotation.annotationType()
+				AnnotatedFieldFactory factory = contextManagerFactory.getExtension(
+						AnnotatedFieldFactory.class, annotation.annotationType()
 				); 
 				if (factory == null) {
 					this.logger.error("Field annotation factory for [{0}] does not exists", field);
@@ -171,8 +171,8 @@ public class ComponentDescriptor<T> implements Descriptor<T> {
 			if (ContextUtil.isSetterMethod(method)) {
 				Annotation annotation = ContextUtil.findInjectAnnotation(method);
 				if (annotation != null) {
-					DecoratedPropertyFactory factory = contextManagerFactory.getExtension(
-							DecoratedPropertyFactory.class, annotation.annotationType()
+					InjectPropertyFactory factory = contextManagerFactory.getExtension(
+							InjectPropertyFactory.class, annotation.annotationType()
 					); 
 					if (factory == null) {
 						this.logger.error("Property annotation factory for [{0}] does not exists", annotation);
@@ -194,8 +194,8 @@ public class ComponentDescriptor<T> implements Descriptor<T> {
 					annotationType = annotation.annotationType();
 				}
 				
-				DecoratedMethodFactory factory = contextManagerFactory.getExtension(
-						DecoratedMethodFactory.class, annotationType
+				InjectMethodFactory factory = contextManagerFactory.getExtension(
+						InjectMethodFactory.class, annotationType
 				); 
 				if (factory == null) {
 					this.logger.error("Property method factory for [{0}] does not exists", annotationType);
@@ -291,10 +291,10 @@ public class ComponentDescriptor<T> implements Descriptor<T> {
 		}
 		
 		// inject value from context manager to all annotated fields
-		for (DecoratedField annotatedField : this.annotatedFields) {
+		for (AnnotatedField annotatedField : this.annotatedFields) {
 			annotatedField.set(contextManager, component);
 		}
-		for (DecoratedProperty annotatedProperty : this.annotatedProperties) {
+		for (InjectProperty annotatedProperty : this.annotatedProperties) {
 			annotatedProperty.set(contextManager, component);
 		}
 		

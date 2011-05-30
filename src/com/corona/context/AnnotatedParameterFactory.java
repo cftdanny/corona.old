@@ -1,18 +1,17 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.context.extension;
+package com.corona.context;
 
 import java.lang.annotation.Annotation;
 
-import com.corona.context.ContextManagerFactory;
 
 /**
- * <p>This factory is used to create {@link DecoratedParameter} for an annotated parameter of in constructor 
- * or method. An {@link DecoratedParameterFactory} is associated with an injection annotation in 
- * {@link ContextManagerFactory}, for example, {@link com.corona.context.spi.InjectDecoratedParameterFactory} 
+ * <p>This factory is used to create {@link AnnotatedParameter} for an annotated parameter of in constructor 
+ * or method. An {@link AnnotatedParameterFactory} is associated with an injection annotation in 
+ * {@link ContextManagerFactory}, for example, {@link com.corona.context.spi.InjectAnnotatedParameterFactory} 
  * is associated with {@link com.corona.context.annotation.Inject}, and creates 
- * {@link com.corona.context.spi.InjectDecoratedParameter} for a parameter that is annotated by 
+ * {@link com.corona.context.spi.InjectAnnotatedParameter} for a parameter that is annotated by 
  * {@link com.corona.context.annotation.Inject}.
  * </p>
  * 
@@ -20,12 +19,12 @@ import com.corona.context.ContextManagerFactory;
  * <ol>
  * 	<li>Create an annotation, this annotation must annotated with {@link com.corona.context.annotation.InjectType}. 
  * 	</li>
- * 	<li>Create subclass {@link DecoratedParameter}, it will get value from context manager by parameter annotation. 
+ * 	<li>Create subclass {@link AnnotatedParameter}, it will get value from context manager by parameter annotation. 
  * 	</li>
- * 	<li>Create subclass {@link DecoratedParameterFactory}, it will create {@link DecoratedParameter} according to 
+ * 	<li>Create subclass {@link AnnotatedParameterFactory}, it will create {@link AnnotatedParameter} according to 
  * context manager factory and annotated parameter.
  * 	</li>
- * 	<li>Register new injection annotation and {@link DecoratedParameterFactory} to context manager factory
+ * 	<li>Register new injection annotation and {@link AnnotatedParameterFactory} to context manager factory
  * 	in {@link Module} or {@link AbstractModule}. 
  * 	</li>
  * </ol>
@@ -33,18 +32,18 @@ import com.corona.context.ContextManagerFactory;
  * @author $Author$
  * @version $Id$
  * @see com.corona.context.AbstractModule
- * @see com.corona.context.extension.DecoratedParameter
+ * @see com.corona.context.AnnotatedParameter
  * @see com.corona.context.spi.ContextManagerFactoryImpl
  */
-public interface DecoratedParameterFactory {
+public interface AnnotatedParameterFactory {
 
 	/**
 	 * @param contextManagerFactory the context manager factory
 	 * @param parameterType the parameter type
 	 * @param annotations all annotations for parameter
-	 * @return the new {@link DecoratedParameter}
+	 * @return the new {@link AnnotatedParameter}
 	 */
-	DecoratedParameter create(
+	AnnotatedParameter create(
 			ContextManagerFactory contextManagerFactory, Class<?> parameterType, Annotation[] annotations
 	);
 }

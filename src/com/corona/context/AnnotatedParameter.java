@@ -1,9 +1,8 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.context.extension;
+package com.corona.context;
 
-import com.corona.context.ContextManager;
 
 /**
  * <p>This handler is used to get injection value for parameter of constructor or method when invoke them. 
@@ -26,9 +25,9 @@ import com.corona.context.ContextManager;
  *
  * @author $Author$
  * @version $Id$
- * @see com.corona.context.extension.DecoratedParameterFactory
+ * @see com.corona.context.AnnotatedParameterFactory
  */
-public interface DecoratedParameter {
+public interface AnnotatedParameter {
 
 	/**
 	 * <p>Get value from current context manager by injection annotation configuration of parameter. The value will be

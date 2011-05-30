@@ -8,8 +8,8 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import com.corona.context.ContextManager;
+import com.corona.context.InjectMethod;
 import com.corona.context.Key;
-import com.corona.context.extension.DecoratedMethod;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 import com.corona.servlet.AbstractProducer;
@@ -32,7 +32,7 @@ public class JsonProducer extends AbstractProducer {
 	 * @param key the component key
 	 * @param method the annotated producer method
 	 */
-	public JsonProducer(final Key<?> key, final DecoratedMethod method) {
+	public JsonProducer(final Key<?> key, final InjectMethod method) {
 		super(key, method);
 	}
 

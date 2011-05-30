@@ -12,8 +12,8 @@ import javax.xml.bind.Marshaller;
 
 import com.corona.context.ContextManager;
 import com.corona.context.CreationException;
+import com.corona.context.InjectMethod;
 import com.corona.context.Key;
-import com.corona.context.extension.DecoratedMethod;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 import com.corona.servlet.AbstractProducer;
@@ -41,7 +41,7 @@ public class XmlProducer extends AbstractProducer {
 	 * @param key the component key
 	 * @param method the annotated producer method
 	 */
-	public XmlProducer(final Key<?> key, final DecoratedMethod method) {
+	public XmlProducer(final Key<?> key, final InjectMethod method) {
 		
 		super(key, method);
 		try {

@@ -3,8 +3,9 @@
  */
 package com.corona.servlet;
 
+import com.corona.context.AnnotatedFieldFactory;
+import com.corona.context.AnnotatedParameterFactory;
 import com.corona.context.annotation.Application;
-import com.corona.context.extension.DecoratedFieldFactory;
 import com.corona.servlet.annotation.Chart;
 import com.corona.servlet.annotation.Excel;
 import com.corona.servlet.annotation.FreeMaker;
@@ -32,7 +33,8 @@ import com.corona.servlet.matching.PathMatcherFactory;
 import com.corona.servlet.matching.RegexMatcherFactory;
 import com.corona.servlet.matching.SameMatcherFactory;
 import com.corona.servlet.matching.TailMatcherFactory;
-import com.corona.servlet.param.ParamDecoratedFieldFactory;
+import com.corona.servlet.param.ParamAnnotatedFieldFactory;
+import com.corona.servlet.param.ParamAnnotatedParameterFactory;
 import com.corona.servlet.pdf.PdfProducerFactory;
 import com.corona.servlet.xml.XmlProducerFactory;
 
@@ -51,9 +53,12 @@ public class ApplicationModule extends WebKernelModule {
 	@Override
 	protected void configure() {
 		
-		// configure @Param injection
-		this.bindExtension(DecoratedFieldFactory.class).as(Param.class).to(
-				new ParamDecoratedFieldFactory()
+		// configure @Param injection for field and parameter
+		this.bindExtension(AnnotatedFieldFactory.class).as(Param.class).to(
+				new ParamAnnotatedFieldFactory()
+		);
+		this.bindExtension(AnnotatedParameterFactory.class).as(Param.class).to(
+				new ParamAnnotatedParameterFactory()
 		);
 		
 		// configure built-in matcher factory for SERVLET

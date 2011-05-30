@@ -23,7 +23,7 @@ public class SubstratorProvider implements Provider<Substrator> {
 	/**
 	 * the first
 	 */
-	@Inject @Name("first") private Integer first;
+	@Inject("first") private Integer first;
 	
 	/**
 	 * the second

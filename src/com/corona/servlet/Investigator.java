@@ -15,12 +15,12 @@ import com.corona.context.ContextManager;
 import com.corona.context.ContextManagerFactory;
 import com.corona.context.ContextUtil;
 import com.corona.context.Descriptor;
+import com.corona.context.InjectMethod;
+import com.corona.context.InjectMethodFactory;
 import com.corona.context.Key;
 import com.corona.context.Visitor;
 import com.corona.context.annotation.Application;
 import com.corona.context.annotation.Inject;
-import com.corona.context.extension.DecoratedMethod;
-import com.corona.context.extension.DecoratedMethodFactory;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 import com.corona.servlet.annotation.Match;
@@ -166,15 +166,15 @@ class Investigator implements Visitor {
 	 * @param method the method
 	 * @return the annotated method
 	 */
-	DecoratedMethod getMethod(final Method method) {
+	InjectMethod getMethod(final Method method) {
 		
 		Class<? extends Annotation> annotationType = Inject.class;
 		Annotation annotation = ContextUtil.findInjectAnnotation(method);
 		if (annotation != null) {
 			annotationType = annotation.annotationType();
 		}
-		DecoratedMethodFactory factory = this.contextManagerFactory.getExtension(
-				DecoratedMethodFactory.class, annotationType
+		InjectMethodFactory factory = this.contextManagerFactory.getExtension(
+				InjectMethodFactory.class, annotationType
 		);
 		
 		if (factory == null) {

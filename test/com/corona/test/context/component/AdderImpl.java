@@ -20,7 +20,7 @@ public class AdderImpl implements Adder {
 	/**
 	 * the first
 	 */
-	@Inject @Name("first") private Integer first = 0;
+	@Inject("first") private Integer first = 0;
 	
 	/**
 	 * the second

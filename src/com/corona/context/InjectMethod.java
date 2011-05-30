@@ -1,11 +1,9 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.context.extension;
+package com.corona.context;
 
 import java.lang.reflect.Method;
-
-import com.corona.context.ContextManager;
 
 /**
  * <p>This handler is used to invoke a method of component. The argument of method will be resolved
@@ -23,7 +21,7 @@ import com.corona.context.ContextManager;
  * @author $Author$
  * @version $Id$
  */
-public interface DecoratedMethod {
+public interface InjectMethod {
 
 	/**
 	 * @return the method that is annotated with annotation, for example, injection {@link Inject} annotation

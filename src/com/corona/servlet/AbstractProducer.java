@@ -3,8 +3,8 @@
  */
 package com.corona.servlet;
 
+import com.corona.context.InjectMethod;
 import com.corona.context.Key;
-import com.corona.context.extension.DecoratedMethod;
 
 /**
  * <p>The helper {@link Producer} that store key and annotated method. </p>
@@ -22,13 +22,13 @@ public abstract class AbstractProducer implements Producer {
 	/**
 	 * the annotated producer method
 	 */
-	private DecoratedMethod method;
+	private InjectMethod method;
 	
 	/**
 	 * @param key the component key
 	 * @param method the annotated producer method
 	 */
-	public AbstractProducer(final Key<?> key, final DecoratedMethod method) {
+	public AbstractProducer(final Key<?> key, final InjectMethod method) {
 		this.key = key;
 		this.method = method;
 	}
@@ -47,7 +47,7 @@ public abstract class AbstractProducer implements Producer {
 	 * @see com.corona.servlet.Producer#getDecoratedMethod()
 	 */
 	@Override
-	public DecoratedMethod getDecoratedMethod() {
+	public InjectMethod getDecoratedMethod() {
 		return this.method;
 	}
 }

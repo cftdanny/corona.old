@@ -1,11 +1,9 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.context.extension;
+package com.corona.context;
 
 import java.lang.reflect.Constructor;
-
-import com.corona.context.ContextManager;
 
 /**
  * <p>The handler is used to create new component instance with an annotated constructor when it
@@ -34,9 +32,9 @@ import com.corona.context.ContextManager;
  *
  * @author $Author$
  * @version $Id$
- * @see com.corona.context.extension.DecoratedConstructorFactory
+ * @see com.corona.context.AnnotatedConstructorFactory
  */
-public interface DecoratedConstructor {
+public interface AnnotatedConstructor {
 
 	/**
 	 * @return the constructor that is annotated with annotation, for example, injection {@link Inject} annotation

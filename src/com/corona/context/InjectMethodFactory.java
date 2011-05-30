@@ -1,24 +1,23 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.context.extension;
+package com.corona.context;
 
 import java.lang.reflect.Method;
 
-import com.corona.context.ContextManagerFactory;
 
 /**
- * <p>This factory is used to create {@link DecoratedMethod} for an annotated method (setter) of in a 
+ * <p>This factory is used to create {@link InjectMethod} for an annotated method (setter) of in a 
  * component. 
  * </p>
  *
  * @author $Author$
  * @version $Id$
  * @see com.corona.context.AbstractModule
- * @see com.corona.context.extension.DecoratedMethod
+ * @see com.corona.context.InjectMethod
  * @see com.corona.context.spi.ContextManagerFactoryImpl
  */
-public interface DecoratedMethodFactory {
+public interface InjectMethodFactory {
 
 	/**
 	 * <p>Create configuration for a property in component that is annotated with injection annotation. The
@@ -30,5 +29,5 @@ public interface DecoratedMethodFactory {
 	 * @return the annotated method
 	 * @throws com.corona.context.ConfigurationException
 	 */
-	DecoratedMethod create(ContextManagerFactory contextManagerFactory, Method method);
+	InjectMethod create(ContextManagerFactory contextManagerFactory, Method method);
 }

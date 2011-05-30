@@ -1,11 +1,10 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.context.extension;
+package com.corona.context;
 
 import java.lang.reflect.Field;
 
-import com.corona.context.ContextManager;
 
 /**
  * <p>This handler is used to set value to field of component by resolving value from current 
@@ -26,9 +25,9 @@ import com.corona.context.ContextManager;
  *
  * @author $Author$
  * @version $Id$
- * @see com.corona.context.extension.DecoratedFieldFactory
+ * @see com.corona.context.AnnotatedFieldFactory
  */
-public interface DecoratedField {
+public interface AnnotatedField {
 
 	/**
 	 * @return the field that is annotated with annotation, for example, injection {@link Inject} annotation

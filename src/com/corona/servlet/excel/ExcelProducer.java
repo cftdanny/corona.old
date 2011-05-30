@@ -13,8 +13,8 @@ import jxl.Workbook;
 import jxl.write.WritableWorkbook;
 
 import com.corona.context.ContextManager;
+import com.corona.context.InjectMethod;
 import com.corona.context.Key;
-import com.corona.context.extension.DecoratedMethod;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 import com.corona.servlet.AbstractProducer;
@@ -43,7 +43,7 @@ public class ExcelProducer extends AbstractProducer {
 	 * @param key the component key
 	 * @param method the method that is annotated with {@link FreeMaker}
 	 */
-	public ExcelProducer(final Key<?> key, final DecoratedMethod method) {
+	public ExcelProducer(final Key<?> key, final InjectMethod method) {
 		super(key, method);
 		this.methodName = method.getMethod().getAnnotation(Excel.class).value();
 	}

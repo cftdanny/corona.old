@@ -1,17 +1,16 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.context.extension;
+package com.corona.context;
 
 import java.lang.reflect.Field;
 
-import com.corona.context.ContextManagerFactory;
 
 /**
- * <p>This factory is used to create {@link DecoratedField} for an annotated field of in a component. An
- * {@link DecoratedFieldFactory} is associated with an injection annotation in {@link ContextManagerFactory}, 
- * for example, {@link com.corona.context.spi.InjectDecoratedFieldFactory} is associated with 
- * {@link com.corona.context.annotation.Inject}, and creates {@link com.corona.context.spi.InjectDecoratedField} 
+ * <p>This factory is used to create {@link AnnotatedField} for an annotated field of in a component. An
+ * {@link AnnotatedFieldFactory} is associated with an injection annotation in {@link ContextManagerFactory}, 
+ * for example, {@link com.corona.context.spi.InjectAnnotatedFieldFactory} is associated with 
+ * {@link com.corona.context.annotation.Inject}, and creates {@link com.corona.context.spi.InjectAnnotatedField} 
  * for a field that is annotated by {@link com.corona.context.annotation.Inject}.
  * </p>
  * 
@@ -19,12 +18,12 @@ import com.corona.context.ContextManagerFactory;
  * <ol>
  * 	<li>Create an annotation, this annotation must annotated with {@link com.corona.context.annotation.InjectType}. 
  * 	</li>
- * 	<li>Create subclass {@link DecoratedField}, it will set value of field that is resolved from context manager. 
+ * 	<li>Create subclass {@link AnnotatedField}, it will set value of field that is resolved from context manager. 
  * 	</li>
- * 	<li>Create subclass {@link DecoratedFieldFactory}, it will create {@link DecoratedField} according to 
+ * 	<li>Create subclass {@link AnnotatedFieldFactory}, it will create {@link AnnotatedField} according to 
  * context manager factory and annotated field.
  * 	</li>
- * 	<li>Register new injection annotation and {@link DecoratedFieldFactory} to context manager factory
+ * 	<li>Register new injection annotation and {@link AnnotatedFieldFactory} to context manager factory
  * 	in {@link Module} or {@link AbstractModule}. 
  * 	</li>
  * </ol>
@@ -32,10 +31,10 @@ import com.corona.context.ContextManagerFactory;
  * @author $Author$
  * @version $Id$
  * @see com.corona.context.AbstractModule
- * @see com.corona.context.extension.DecoratedField
+ * @see com.corona.context.AnnotatedField
  * @see com.corona.context.spi.ContextManagerFactoryImpl
  */
-public interface DecoratedFieldFactory {
+public interface AnnotatedFieldFactory {
 
 	/**
 	 * <p>Create configuration for a field of component that is annotated with injection annotation. The
@@ -47,5 +46,5 @@ public interface DecoratedFieldFactory {
 	 * @return the annotated field
 	 * @throws com.corona.context.ConfigurationException
 	 */
-	DecoratedField create(ContextManagerFactory contextManagerFactory, Field field);
+	AnnotatedField create(ContextManagerFactory contextManagerFactory, Field field);
 }

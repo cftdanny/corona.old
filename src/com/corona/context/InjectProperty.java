@@ -1,11 +1,10 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.context.extension;
+package com.corona.context;
 
 import java.lang.reflect.Method;
 
-import com.corona.context.ContextManager;
 
 /**
  * <p>This notation is used to store a setter method that are annotated for injection values from container. </p>
@@ -35,9 +34,9 @@ import com.corona.context.ContextManager;
  *
  * @author $Author$
  * @version $Id$
- * @see com.corona.context.extension.DecoratedPropertyFactory
+ * @see com.corona.context.InjectPropertyFactory
  */
-public interface DecoratedProperty {
+public interface InjectProperty {
 
 	/**
 	 * @return the setter method that is annotated with annotation, for example, injection {@link Inject} annotation

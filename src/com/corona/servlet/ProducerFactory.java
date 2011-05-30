@@ -5,8 +5,8 @@ package com.corona.servlet;
 
 import java.lang.annotation.Annotation;
 
+import com.corona.context.InjectMethod;
 import com.corona.context.Key;
-import com.corona.context.extension.DecoratedMethod;
 
 /**
  * <p>This factory is used to create {@link Producer} by an annotation type. </p>
@@ -26,5 +26,5 @@ public interface ProducerFactory<T extends Annotation> {
 	 * @param method the method that produce HTTP SERVLET response
 	 * @return the producer
 	 */
-	Producer create(Key<?> key, DecoratedMethod method);
+	Producer create(Key<?> key, InjectMethod method);
 }

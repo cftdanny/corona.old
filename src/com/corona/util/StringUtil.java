@@ -3,6 +3,7 @@
  */
 package com.corona.util;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 
 /**
@@ -124,33 +125,77 @@ public final class StringUtil {
 
 	/**
 	 * @param str the string
-	 * @param type the type class that converts str to
+	 * @param type the type class that converts string to
 	 * @return the converted value
 	 */
-	public static Object to(final String str, final Class<?> type) {
+	public static Object to(final String str, final Type type) {
 		
-		if (str == null) {
-			return null;
-		}
-		
-		if (String.class.equals(type)) {
-			return str;
-		} else if (Integer.class.equals(type) || int.class.equals(type)) {
-			return Integer.parseInt(str);
-		} else if (Long.class.equals(type) || long.class.equals(type)) {
-			return Long.parseLong(str);
-		} else if (Short.class.equals(type) || short.class.equals(type)) {
-			return Short.parseShort(str);
-		} else if (Byte.class.equals(type) || byte.class.equals(type)) {
-			return Byte.parseByte(str);
-		} else if (Float.class.equals(type) || float.class.equals(type)) {
-			return Float.parseFloat(str);
-		} else if (Double.class.equals(type) || double.class.equals(type)) {
-			return Float.parseFloat(str);
-		} else if (Boolean.class.equals(type) || boolean.class.equals(type)) {
-			return Boolean.parseBoolean(str);
+		if (str != null) {
+			
+			// TO STRING
+			if (String.class.equals(type)) {
+				return str;
+			} 
+			
+			// TO INTEGER
+			if (Integer.class.equals(type)) {
+				return new Integer(str);
+			} 
+			if (int.class.equals(type)) {
+				return Integer.parseInt(str);
+			} 
+			
+			// TO LONG
+			if (Long.class.equals(type)) {
+				return new Long(str);
+			} 
+			if (long.class.equals(type)) {
+				return Long.parseLong(str);
+			} 
+			
+			// TO FLOAT
+			if (Float.class.equals(type)) {
+				return new Float(str);
+			} 
+			if (float.class.equals(type)) {
+				return Float.parseFloat(str);
+			}
+			
+			// TO DOUBLE
+			if (Double.class.equals(type)) {
+				return new Double(str);
+			} 
+			if (double.class.equals(type)) {
+				return Double.parseDouble(str);
+			} 
+			
+			// TO BOOLEAN
+			if (Boolean.class.equals(type)) {
+				return new Boolean(str);
+			} 
+			if (boolean.class.equals(type)) {
+				return Boolean.parseBoolean(str);
+			} 
+			
+			// TO SHORT
+			if (Short.class.equals(type)) {
+				return new Short(str);
+			} 
+			if (short.class.equals(type)) {
+				return Short.parseShort(str);
+			} 
+			
+			// TO BYTE
+			if (Byte.class.equals(type)) {
+				return new Byte(str);
+			} 
+			if (byte.class.equals(type)) {
+				return Byte.parseByte(str);
+			} 
+			
+			throw new IllegalArgumentException("Can not convert String to [" + type.toString() + "]"); 
 		} else {
-			throw new IllegalArgumentException("Do not support type [" + type.toString() + "]"); 
+			return null;
 		}
 	}
 }

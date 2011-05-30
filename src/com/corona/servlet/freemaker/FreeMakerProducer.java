@@ -10,8 +10,8 @@ import java.io.OutputStreamWriter;
 import javax.servlet.http.HttpServletResponse;
 
 import com.corona.context.ContextManager;
+import com.corona.context.InjectMethod;
 import com.corona.context.Key;
-import com.corona.context.extension.DecoratedMethod;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 import com.corona.servlet.AbstractProducer;
@@ -53,7 +53,7 @@ public class FreeMakerProducer extends AbstractProducer {
 	 * @param key the component key
 	 * @param method the method that is annotated with {@link FreeMaker}
 	 */
-	public FreeMakerProducer(final Key<?> key, final DecoratedMethod method) {
+	public FreeMakerProducer(final Key<?> key, final InjectMethod method) {
 		super(key, method);
 
 		FreeMaker freemaker = method.getMethod().getAnnotation(FreeMaker.class);

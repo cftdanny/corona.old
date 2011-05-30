@@ -16,8 +16,8 @@ import javax.servlet.http.HttpSession;
 
 import com.corona.context.ContextManager;
 import com.corona.context.ContextManagerFactory;
+import com.corona.context.InjectMethod;
 import com.corona.context.Key;
-import com.corona.context.extension.DecoratedMethod;
 import com.corona.data.ConnectionManager;
 import com.corona.data.ConnectionManagerFactory;
 import com.corona.data.Transaction;
@@ -181,7 +181,7 @@ class ProducerHandler extends AbstractHandler {
 	 * @throws HandleException if fail to invoke method in transaction
 	 */
 	private Object execute(
-			final ContextManager contextManager, final Object component, final DecoratedMethod method
+			final ContextManager contextManager, final Object component, final InjectMethod method
 	) throws HandleException {
 
 		// open default connection manager from context container

@@ -6,22 +6,21 @@ package com.corona.context;
 import java.lang.reflect.Field;
 
 import com.corona.context.annotation.Optional;
-import com.corona.context.extension.DecoratedField;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 
 /**
- * <p>The helper class of {@link DecoratedField}. </p>
+ * <p>The helper class of {@link AnnotatedField}. </p>
  *
  * @author $Author$
  * @version $Id$
  */
-public abstract class AbstractDecoratedField implements DecoratedField {
+public abstract class AbstractAnnotatedField implements AnnotatedField {
 
 	/**
 	 * the logger
 	 */
-	private Log logger = LogFactory.getLog(AbstractDecoratedField.class);
+	private Log logger = LogFactory.getLog(AbstractAnnotatedField.class);
 	
 	/**
 	 * the field
@@ -36,7 +35,7 @@ public abstract class AbstractDecoratedField implements DecoratedField {
 	/**
 	 * @param field the annotated field
 	 */
-	protected AbstractDecoratedField(final Field field) {
+	protected AbstractAnnotatedField(final Field field) {
 		
 		this.field = field;
 		if (this.field.isAnnotationPresent(Optional.class)) {
@@ -47,7 +46,7 @@ public abstract class AbstractDecoratedField implements DecoratedField {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.context.extension.DecoratedField#getField()
+	 * @see com.corona.context.AnnotatedField#getField()
 	 */
 	@Override
 	public Field getField() {
@@ -77,7 +76,7 @@ public abstract class AbstractDecoratedField implements DecoratedField {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.context.extension.DecoratedField#set(com.corona.context.ContextManager, java.lang.Object)
+	 * @see com.corona.context.AnnotatedField#set(com.corona.context.ContextManager, java.lang.Object)
 	 */
 	@Override
 	public void set(final ContextManager contextManager, final Object component) {

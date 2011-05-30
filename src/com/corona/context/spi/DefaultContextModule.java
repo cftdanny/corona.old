@@ -3,16 +3,16 @@
  */
 package com.corona.context.spi;
 
+import com.corona.context.AnnotatedConstructorFactory;
+import com.corona.context.AnnotatedFieldFactory;
+import com.corona.context.AnnotatedParameterFactory;
+import com.corona.context.InjectMethodFactory;
+import com.corona.context.InjectPropertyFactory;
 import com.corona.context.KernelModule;
 import com.corona.context.annotation.Application;
 import com.corona.context.annotation.Context;
 import com.corona.context.annotation.Inject;
 import com.corona.context.annotation.Transition;
-import com.corona.context.extension.DecoratedConstructorFactory;
-import com.corona.context.extension.DecoratedFieldFactory;
-import com.corona.context.extension.DecoratedMethodFactory;
-import com.corona.context.extension.DecoratedParameterFactory;
-import com.corona.context.extension.DecoratedPropertyFactory;
 
 /**
  * <p>The internal module. It is used to register all internal scope, injection, etc. When initial
@@ -36,20 +36,20 @@ public class DefaultContextModule extends KernelModule {
 		this.bindScope(Transition.class).to(new TransitionScope());
 
 		// register all built-in extensions that are defined in framework
-		this.bindExtension(DecoratedMethodFactory.class).as(Inject.class).to(
-				new InjectDecoratedMethodFactory()
+		this.bindExtension(InjectMethodFactory.class).as(Inject.class).to(
+				new DefaultInjectMethodFactory()
 		);
-		this.bindExtension(DecoratedFieldFactory.class).as(Inject.class).to(
-				new InjectDecoratedFieldFactory()
+		this.bindExtension(AnnotatedFieldFactory.class).as(Inject.class).to(
+				new InjectAnnotatedFieldFactory()
 		);
-		this.bindExtension(DecoratedParameterFactory.class).as(Inject.class).to(
-				new InjectDecoratedParameterFactory()
+		this.bindExtension(AnnotatedParameterFactory.class).as(Inject.class).to(
+				new InjectAnnotatedParameterFactory()
 		);
-		this.bindExtension(DecoratedPropertyFactory.class).as(Inject.class).to(
-				new InjectDecoratedPropertyFactory()
+		this.bindExtension(InjectPropertyFactory.class).as(Inject.class).to(
+				new DefaultInjectPropertyFactory()
 		);
-		this.bindExtension(DecoratedConstructorFactory.class).as(Inject.class).to(
-				new InjectDecoratedConstructorFactory()
+		this.bindExtension(AnnotatedConstructorFactory.class).as(Inject.class).to(
+				new InjectAnnotatedConstructorFactory()
 		);
 	}
 }
