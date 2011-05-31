@@ -3,12 +3,12 @@
  */
 package com.corona.servlet.freemaker;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.corona.context.ContextManager;
-import com.corona.util.CookieUtil;
 
 import freemarker.ext.beans.BeanModel;
 import freemarker.ext.beans.BeansWrapper;
@@ -41,7 +41,7 @@ public class FreeMakerDataModel extends BeanModel {
 	/**
 	 * the current HTTP request
 	 */
-	private ServletRequest request;
+	private HttpServletRequest request;
 	
 	/**
 	 * the current HTTP session
@@ -51,7 +51,7 @@ public class FreeMakerDataModel extends BeanModel {
 	/**
 	 * the current HTTP response
 	 */
-	private ServletResponse response;
+	private HttpServletResponse response;
 	
 	/**
 	 * @param contextManager the current context manager
@@ -103,10 +103,10 @@ public class FreeMakerDataModel extends BeanModel {
 	/**
 	 * @return the current HTTP request
 	 */
-	ServletRequest getRequest() {
+	HttpServletRequest getRequest() {
 		
 		if (this.request == null) {
-			this.request = this.contextManager.get(ServletRequest.class);
+			this.request = this.contextManager.get(HttpServletRequest.class);
 		}
 		return this.request;
 	}
@@ -125,10 +125,10 @@ public class FreeMakerDataModel extends BeanModel {
 	/**
 	 * @return the current HTTP response
 	 */
-	ServletResponse getResponse() {
+	HttpServletResponse getResponse() {
 		
 		if (this.response == null) {
-			this.response = this.contextManager.get(ServletResponse.class);
+			this.response = this.contextManager.get(HttpServletResponse.class);
 		}
 		return response;
 	}
@@ -149,32 +149,63 @@ public class FreeMakerDataModel extends BeanModel {
 	}
 	
 	/**
+	 * @return the theme name that is defined by cookie
+	 */
+	private String getCookieThemeName() {
+		
+		Cookie[] cookies = this.getRequest().getCookies();
+		if (cookies != null) {
+			String contextPath = this.getSession().getServletContext().getContextPath();
+			for (Cookie cookie : cookies) {
+				if (contextPath.equals(cookie.getPath())) {
+					return cookie.getValue();
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * @param themeName the theme name
+	 */
+	private void setCookieThemeName(final String themeName) {
+		
+		Cookie cookie = new Cookie(this.getThemeAttributeName(), themeName);
+		cookie.setPath(this.getSession().getServletContext().getContextPath());
+		this.getResponse().addCookie(cookie);
+	}
+	
+	/**
 	 * @return the theme template
 	 */
 	String getThemeName() {
 		
-		// find theme name from cookie first. If can't find, try other way
-		String themeName = CookieUtil.getValue(this.getRequest(), this.getThemeAttributeName());
+		// find theme name from request parameter first. If can't find, try other way
+		String themeName = this.getRequest().getParameter(this.getThemeAttributeName());
 		if (themeName == null) {
-			// if theme name is defined as request parameter, will store it to cookie   
-			themeName = this.getRequest().getParameter(this.getThemeAttributeName());
-			if (themeName != null) {
-				CookieUtil.setValue(this.getResponse(), this.getThemeAttributeName(), themeName);
-			}
+			// if theme name is defined in cookie, will store it to cookie   
+			themeName = this.getCookieThemeName();
+		} else {
+			// store request theme name to cookie for later usage 
+			this.setCookieThemeName(themeName);
 		}
 		
 		// find theme template by theme name from FreeMaker engine
-		String themeTemplate = this.getThemeTemplate(themeName);
-		if (themeTemplate == null) {
-			// theme name is wrong or does not exist, will uses default theme name
-			themeTemplate = this.getThemeTemplate(this.freeMakerEngineManager.getDefaultThemeName());
+		if (themeName != null) {
 			
-			// store default theme name to cookie for later usage
-			CookieUtil.setValue(this.getResponse(), 
-					this.getThemeAttributeName(), this.freeMakerEngineManager.getDefaultThemeName()
-			);
+			String themeTemplate = this.getThemeTemplate(themeName);
+			if (themeTemplate != null) {
+				return themeTemplate;
+			}
 		}
 		
-		return themeTemplate;
+		// find theme template by default theme name
+		themeName = this.freeMakerEngineManager.getDefaultThemeName();
+		if (themeName != null) {
+			// store default theme name to cookie for later usage
+			this.setCookieThemeName(themeName);
+		}
+		
+		return this.getThemeTemplate(themeName);
 	}
 }
