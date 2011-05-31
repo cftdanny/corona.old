@@ -10,10 +10,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.corona.context.AnnotatedConstructor;
-import com.corona.context.AnnotatedConstructorFactory;
-import com.corona.context.AnnotatedField;
-import com.corona.context.AnnotatedFieldFactory;
+import com.corona.context.InjectConstructor;
+import com.corona.context.InjectConstructorFactory;
+import com.corona.context.InjectField;
+import com.corona.context.InjectFieldFactory;
 import com.corona.context.ConfigurationException;
 import com.corona.context.ContextManager;
 import com.corona.context.ContextManagerFactory;
@@ -73,12 +73,12 @@ public class ComponentDescriptor<T> implements Descriptor<T> {
 	/**
 	 * the constructor with injection annotation to create component instance
 	 */
-	private AnnotatedConstructor annotatedConstructor = null;
+	private InjectConstructor annotatedConstructor = null;
 	
 	/**
 	 * all annotated fields for inject value just component is created
 	 */
-	private List<AnnotatedField> annotatedFields = new ArrayList<AnnotatedField>();
+	private List<InjectField> annotatedFields = new ArrayList<InjectField>();
 	
 	/**
 	 * all annotated properties for inject value just component is created
@@ -130,8 +130,8 @@ public class ComponentDescriptor<T> implements Descriptor<T> {
 			
 			Annotation annotation = ContextUtil.findInjectAnnotation(constructor);
 			if (annotation != null) {
-				AnnotatedConstructorFactory factory = contextManagerFactory.getExtension(
-						AnnotatedConstructorFactory.class, annotation.annotationType()
+				InjectConstructorFactory factory = contextManagerFactory.getExtension(
+						InjectConstructorFactory.class, annotation.annotationType()
 				); 
 				if (factory == null) {
 					this.logger.error("Annotated constructor factory for [{0}] does not exists", constructor);
@@ -150,8 +150,8 @@ public class ComponentDescriptor<T> implements Descriptor<T> {
 			
 			Annotation annotation = ContextUtil.findInjectAnnotation(field);
 			if (annotation != null) {
-				AnnotatedFieldFactory factory = contextManagerFactory.getExtension(
-						AnnotatedFieldFactory.class, annotation.annotationType()
+				InjectFieldFactory factory = contextManagerFactory.getExtension(
+						InjectFieldFactory.class, annotation.annotationType()
 				); 
 				if (factory == null) {
 					this.logger.error("Field annotation factory for [{0}] does not exists", field);
@@ -291,7 +291,7 @@ public class ComponentDescriptor<T> implements Descriptor<T> {
 		}
 		
 		// inject value from context manager to all annotated fields
-		for (AnnotatedField annotatedField : this.annotatedFields) {
+		for (InjectField annotatedField : this.annotatedFields) {
 			annotatedField.set(contextManager, component);
 		}
 		for (InjectProperty annotatedProperty : this.annotatedProperties) {

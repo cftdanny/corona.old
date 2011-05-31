@@ -5,13 +5,12 @@ package com.corona.context;
 
 import java.lang.annotation.Annotation;
 
-
 /**
- * <p>This factory is used to create {@link AnnotatedParameter} for an annotated parameter of in constructor 
- * or method. An {@link AnnotatedParameterFactory} is associated with an injection annotation in 
- * {@link ContextManagerFactory}, for example, {@link com.corona.context.spi.InjectAnnotatedParameterFactory} 
+ * <p>This factory is used to create {@link InjectParameter} for an annotated parameter of in constructor 
+ * or method. An {@link InjectParameterFactory} is associated with an injection annotation in 
+ * {@link ContextManagerFactory}, for example, {@link com.corona.context.spi.DefaultInjectParameterFactory} 
  * is associated with {@link com.corona.context.annotation.Inject}, and creates 
- * {@link com.corona.context.spi.InjectAnnotatedParameter} for a parameter that is annotated by 
+ * {@link com.corona.context.spi.DefaultInjectParameter} for a parameter that is annotated by 
  * {@link com.corona.context.annotation.Inject}.
  * </p>
  * 
@@ -19,12 +18,12 @@ import java.lang.annotation.Annotation;
  * <ol>
  * 	<li>Create an annotation, this annotation must annotated with {@link com.corona.context.annotation.InjectType}. 
  * 	</li>
- * 	<li>Create subclass {@link AnnotatedParameter}, it will get value from context manager by parameter annotation. 
+ * 	<li>Create subclass {@link InjectParameter}, it will get value from context manager by parameter annotation. 
  * 	</li>
- * 	<li>Create subclass {@link AnnotatedParameterFactory}, it will create {@link AnnotatedParameter} according to 
+ * 	<li>Create subclass {@link InjectParameterFactory}, it will create {@link InjectParameter} according to 
  * context manager factory and annotated parameter.
  * 	</li>
- * 	<li>Register new injection annotation and {@link AnnotatedParameterFactory} to context manager factory
+ * 	<li>Register new injection annotation and {@link InjectParameterFactory} to context manager factory
  * 	in {@link Module} or {@link AbstractModule}. 
  * 	</li>
  * </ol>
@@ -32,18 +31,18 @@ import java.lang.annotation.Annotation;
  * @author $Author$
  * @version $Id$
  * @see com.corona.context.AbstractModule
- * @see com.corona.context.AnnotatedParameter
+ * @see com.corona.context.InjectParameter
  * @see com.corona.context.spi.ContextManagerFactoryImpl
  */
-public interface AnnotatedParameterFactory {
+public interface InjectParameterFactory {
 
 	/**
 	 * @param contextManagerFactory the context manager factory
 	 * @param parameterType the parameter type
 	 * @param annotations all annotations for parameter
-	 * @return the new {@link AnnotatedParameter}
+	 * @return the new {@link InjectParameter}
 	 */
-	AnnotatedParameter create(
+	InjectParameter create(
 			ContextManagerFactory contextManagerFactory, Class<?> parameterType, Annotation[] annotations
 	);
 }

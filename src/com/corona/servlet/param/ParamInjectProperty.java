@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.context.spi;
+package com.corona.servlet.param;
 
 import java.lang.reflect.Method;
 
@@ -18,7 +18,7 @@ import com.corona.util.StringUtil;
  * @author $Author$
  * @version $Id$
  */
-class DefaultInjectProperty extends AbstractInjectProperty {
+class ParamInjectProperty extends AbstractInjectProperty {
 	
 	/**
 	 * the annotated property
@@ -34,7 +34,7 @@ class DefaultInjectProperty extends AbstractInjectProperty {
 	 * @param contextManagerFactory the context manager factory
 	 * @param property the property that is annotated with {@link Inject}
 	 */
-	DefaultInjectProperty(final ContextManagerFactory contextManagerFactory, final Method property) {
+	ParamInjectProperty(final ContextManagerFactory contextManagerFactory, final Method property) {
 		super(contextManagerFactory, property);
 		this.name = this.property.getAnnotation(Inject.class).value();
 		if (StringUtil.isBlank(this.name)) {

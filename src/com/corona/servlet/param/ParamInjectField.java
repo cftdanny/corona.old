@@ -12,7 +12,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.corona.context.AbstractAnnotatedField;
+import com.corona.context.AbstractInjectField;
 import com.corona.context.ContextManager;
 import com.corona.context.ValueException;
 import com.corona.logging.Log;
@@ -27,12 +27,12 @@ import com.corona.util.StringUtil;
  * @author $Author$
  * @version $Id$
  */
-public class ParamAnnotatedField extends AbstractAnnotatedField {
+class ParamInjectField extends AbstractInjectField {
 
 	/**
 	 * the logger
 	 */
-	private Log logger = LogFactory.getLog(ParamAnnotatedField.class);
+	private Log logger = LogFactory.getLog(ParamInjectField.class);
 	
 	/**
 	 * the component name
@@ -42,7 +42,7 @@ public class ParamAnnotatedField extends AbstractAnnotatedField {
 	/**
 	 * @param field the field that is annotated with an annotation type
 	 */
-	ParamAnnotatedField(final Field field) {
+	ParamInjectField(final Field field) {
 		
 		// construct super class and get parameter name
 		super(field);
@@ -54,7 +54,7 @@ public class ParamAnnotatedField extends AbstractAnnotatedField {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.context.AbstractAnnotatedField#get(com.corona.context.ContextManager)
+	 * @see com.corona.context.AbstractInjectField#get(com.corona.context.ContextManager)
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override

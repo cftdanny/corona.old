@@ -7,10 +7,10 @@ import java.lang.reflect.Field;
 
 
 /**
- * <p>This factory is used to create {@link AnnotatedField} for an annotated field of in a component. An
- * {@link AnnotatedFieldFactory} is associated with an injection annotation in {@link ContextManagerFactory}, 
- * for example, {@link com.corona.context.spi.InjectAnnotatedFieldFactory} is associated with 
- * {@link com.corona.context.annotation.Inject}, and creates {@link com.corona.context.spi.InjectAnnotatedField} 
+ * <p>This factory is used to create {@link InjectField} for an annotated field of in a component. An
+ * {@link InjectFieldFactory} is associated with an injection annotation in {@link ContextManagerFactory}, 
+ * for example, {@link com.corona.context.spi.DefaultInjectFieldFactory} is associated with 
+ * {@link com.corona.context.annotation.Inject}, and creates {@link com.corona.context.spi.DefaultInjectField} 
  * for a field that is annotated by {@link com.corona.context.annotation.Inject}.
  * </p>
  * 
@@ -18,12 +18,12 @@ import java.lang.reflect.Field;
  * <ol>
  * 	<li>Create an annotation, this annotation must annotated with {@link com.corona.context.annotation.InjectType}. 
  * 	</li>
- * 	<li>Create subclass {@link AnnotatedField}, it will set value of field that is resolved from context manager. 
+ * 	<li>Create subclass {@link InjectField}, it will set value of field that is resolved from context manager. 
  * 	</li>
- * 	<li>Create subclass {@link AnnotatedFieldFactory}, it will create {@link AnnotatedField} according to 
+ * 	<li>Create subclass {@link InjectFieldFactory}, it will create {@link InjectField} according to 
  * context manager factory and annotated field.
  * 	</li>
- * 	<li>Register new injection annotation and {@link AnnotatedFieldFactory} to context manager factory
+ * 	<li>Register new injection annotation and {@link InjectFieldFactory} to context manager factory
  * 	in {@link Module} or {@link AbstractModule}. 
  * 	</li>
  * </ol>
@@ -31,10 +31,10 @@ import java.lang.reflect.Field;
  * @author $Author$
  * @version $Id$
  * @see com.corona.context.AbstractModule
- * @see com.corona.context.AnnotatedField
+ * @see com.corona.context.InjectField
  * @see com.corona.context.spi.ContextManagerFactoryImpl
  */
-public interface AnnotatedFieldFactory {
+public interface InjectFieldFactory {
 
 	/**
 	 * <p>Create configuration for a field of component that is annotated with injection annotation. The
@@ -46,5 +46,5 @@ public interface AnnotatedFieldFactory {
 	 * @return the annotated field
 	 * @throws com.corona.context.ConfigurationException
 	 */
-	AnnotatedField create(ContextManagerFactory contextManagerFactory, Field field);
+	InjectField create(ContextManagerFactory contextManagerFactory, Field field);
 }

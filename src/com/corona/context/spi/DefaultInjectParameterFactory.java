@@ -5,30 +5,30 @@ package com.corona.context.spi;
 
 import java.lang.annotation.Annotation;
 
-import com.corona.context.AnnotatedParameter;
-import com.corona.context.AnnotatedParameterFactory;
+import com.corona.context.InjectParameter;
+import com.corona.context.InjectParameterFactory;
 import com.corona.context.ContextManagerFactory;
 
 /**
- * <p>This factory is used to create {@link InjectAnnotatedParameter} for a parameter that is annotated with 
+ * <p>This factory is used to create {@link DefaultInjectParameter} for a parameter that is annotated with 
  * {@link Inject}. </p>
  *
  * @author $Author$
  * @version $Id$
  */
-public class InjectAnnotatedParameterFactory implements AnnotatedParameterFactory {
+public class DefaultInjectParameterFactory implements InjectParameterFactory {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.context.AnnotatedParameterFactory#create(
+	 * @see com.corona.context.InjectParameterFactory#create(
 	 * com.corona.context.ContextManagerFactory, java.lang.Class, java.lang.annotation.Annotation[]
 	 * )
 	 */
 	@Override
-	public AnnotatedParameter create(
+	public InjectParameter create(
 			final ContextManagerFactory contextManagerFactory, 
 			final Class<?> parameterType, final Annotation[] annotations
 	) {
-		return new InjectAnnotatedParameter(parameterType, annotations);
+		return new DefaultInjectParameter(parameterType, annotations);
 	}
 }

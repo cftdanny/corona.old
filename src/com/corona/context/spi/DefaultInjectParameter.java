@@ -5,7 +5,7 @@ package com.corona.context.spi;
 
 import java.lang.annotation.Annotation;
 
-import com.corona.context.AbstractAnnotatedParameter;
+import com.corona.context.AbstractInjectParameter;
 import com.corona.context.ContextManager;
 import com.corona.context.CreationException;
 import com.corona.context.annotation.Name;
@@ -19,12 +19,12 @@ import com.corona.logging.LogFactory;
  * @author $Author$
  * @version $Id$
  */
-public class InjectAnnotatedParameter extends AbstractAnnotatedParameter {
+class DefaultInjectParameter extends AbstractInjectParameter {
 
 	/**
 	 * the logger
 	 */
-	private Log logger = LogFactory.getLog(InjectAnnotatedParameter.class);
+	private Log logger = LogFactory.getLog(DefaultInjectParameter.class);
 
 	/**
 	 * the component name
@@ -35,7 +35,7 @@ public class InjectAnnotatedParameter extends AbstractAnnotatedParameter {
 	 * @param parameterType the class type of annotated parameter
 	 * @param annotations all annotations for parameter
 	 */
-	InjectAnnotatedParameter(final Class<?> parameterType, final Annotation[] annotations) {
+	DefaultInjectParameter(final Class<?> parameterType, final Annotation[] annotations) {
 
 		super(parameterType, annotations);
 		for (Annotation annotation : annotations) {
@@ -47,7 +47,7 @@ public class InjectAnnotatedParameter extends AbstractAnnotatedParameter {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.context.AnnotatedParameter#get(com.corona.context.ContextManager)
+	 * @see com.corona.context.InjectParameter#get(com.corona.context.ContextManager)
 	 */
 	@Override
 	public Object get(final ContextManager contextManager) {

@@ -15,7 +15,7 @@ import com.corona.context.ContextManagerFactory;
  * @author $Author$
  * @version $Id$
  */
-public class DefaultInjectMethod extends AbstractInjectMethod {
+class DefaultInjectMethod extends AbstractInjectMethod {
 
 	/**
 	 * @param contextManagerFactory the context manager factory

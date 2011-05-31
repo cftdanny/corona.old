@@ -6,9 +6,9 @@ package com.corona.test.data;
 import java.util.Properties;
 
 import com.corona.context.AbstractModule;
+import com.corona.data.DataSourceManagerProvider;
 import com.corona.data.DataSourceProvider;
-import com.corona.support.DataSourceManagerProvider;
-import com.corona.support.DataSourceModule;
+import com.corona.data.DataSourceSupportModule;
 
 /**
  * <p> </p>
@@ -25,7 +25,7 @@ public class TestingDataSourceModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		
-		this.bindModule(new DataSourceModule());
+		this.bindModule(new DataSourceSupportModule());
 		
 		Properties settings = new Properties();
 		settings.setProperty(DataSourceProvider.URL, "jdbc:hsqldb:res:/test");

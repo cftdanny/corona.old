@@ -3,9 +3,9 @@
  */
 package com.corona.context.spi;
 
-import com.corona.context.AnnotatedConstructorFactory;
-import com.corona.context.AnnotatedFieldFactory;
-import com.corona.context.AnnotatedParameterFactory;
+import com.corona.context.InjectConstructorFactory;
+import com.corona.context.InjectFieldFactory;
+import com.corona.context.InjectParameterFactory;
 import com.corona.context.InjectMethodFactory;
 import com.corona.context.InjectPropertyFactory;
 import com.corona.context.KernelModule;
@@ -39,17 +39,17 @@ public class DefaultContextModule extends KernelModule {
 		this.bindExtension(InjectMethodFactory.class).as(Inject.class).to(
 				new DefaultInjectMethodFactory()
 		);
-		this.bindExtension(AnnotatedFieldFactory.class).as(Inject.class).to(
-				new InjectAnnotatedFieldFactory()
+		this.bindExtension(InjectFieldFactory.class).as(Inject.class).to(
+				new DefaultInjectFieldFactory()
 		);
-		this.bindExtension(AnnotatedParameterFactory.class).as(Inject.class).to(
-				new InjectAnnotatedParameterFactory()
+		this.bindExtension(InjectParameterFactory.class).as(Inject.class).to(
+				new DefaultInjectParameterFactory()
 		);
 		this.bindExtension(InjectPropertyFactory.class).as(Inject.class).to(
 				new DefaultInjectPropertyFactory()
 		);
-		this.bindExtension(AnnotatedConstructorFactory.class).as(Inject.class).to(
-				new InjectAnnotatedConstructorFactory()
+		this.bindExtension(InjectConstructorFactory.class).as(Inject.class).to(
+				new DefaultInjectConstructorFactory()
 		);
 	}
 }

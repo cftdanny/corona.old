@@ -10,17 +10,17 @@ import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 
 /**
- * <p>The helper class of {@link AnnotatedField}. </p>
+ * <p>The helper class of {@link InjectField}. </p>
  *
  * @author $Author$
  * @version $Id$
  */
-public abstract class AbstractAnnotatedField implements AnnotatedField {
+public abstract class AbstractInjectField implements InjectField {
 
 	/**
 	 * the logger
 	 */
-	private Log logger = LogFactory.getLog(AbstractAnnotatedField.class);
+	private Log logger = LogFactory.getLog(AbstractInjectField.class);
 	
 	/**
 	 * the field
@@ -35,7 +35,7 @@ public abstract class AbstractAnnotatedField implements AnnotatedField {
 	/**
 	 * @param field the annotated field
 	 */
-	protected AbstractAnnotatedField(final Field field) {
+	protected AbstractInjectField(final Field field) {
 		
 		this.field = field;
 		if (this.field.isAnnotationPresent(Optional.class)) {
@@ -46,7 +46,7 @@ public abstract class AbstractAnnotatedField implements AnnotatedField {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.context.AnnotatedField#getField()
+	 * @see com.corona.context.InjectField#getField()
 	 */
 	@Override
 	public Field getField() {
@@ -76,7 +76,7 @@ public abstract class AbstractAnnotatedField implements AnnotatedField {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.context.AnnotatedField#set(com.corona.context.ContextManager, java.lang.Object)
+	 * @see com.corona.context.InjectField#set(com.corona.context.ContextManager, java.lang.Object)
 	 */
 	@Override
 	public void set(final ContextManager contextManager, final Object component) {

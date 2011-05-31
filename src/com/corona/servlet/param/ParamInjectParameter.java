@@ -10,7 +10,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.corona.context.AbstractAnnotatedParameter;
+import com.corona.context.AbstractInjectParameter;
 import com.corona.context.ConfigurationException;
 import com.corona.context.ContextManager;
 import com.corona.context.ValueException;
@@ -26,12 +26,12 @@ import com.corona.util.StringUtil;
  * @author $Author$
  * @version $Id$
  */
-public class ParamAnnotatedParameter extends AbstractAnnotatedParameter {
+class ParamInjectParameter extends AbstractInjectParameter {
 
 	/**
 	 * the logger
 	 */
-	private Log logger = LogFactory.getLog(ParamAnnotatedParameter.class);
+	private Log logger = LogFactory.getLog(ParamInjectParameter.class);
 
 	/**
 	 * the component name
@@ -42,7 +42,7 @@ public class ParamAnnotatedParameter extends AbstractAnnotatedParameter {
 	 * @param parameterType the class type of annotated parameter
 	 * @param annotations all annotations for parameter
 	 */
-	ParamAnnotatedParameter(final Class<?> parameterType, final Annotation[] annotations) {
+	ParamInjectParameter(final Class<?> parameterType, final Annotation[] annotations) {
 		
 		super(parameterType, annotations);
 		for (Annotation annotation : annotations) {
@@ -62,7 +62,7 @@ public class ParamAnnotatedParameter extends AbstractAnnotatedParameter {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.context.AnnotatedParameter#get(com.corona.context.ContextManager)
+	 * @see com.corona.context.InjectParameter#get(com.corona.context.ContextManager)
 	 */
 	@Override
 	public Object get(final ContextManager contextManager) {

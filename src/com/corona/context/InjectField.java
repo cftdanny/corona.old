@@ -25,9 +25,9 @@ import java.lang.reflect.Field;
  *
  * @author $Author$
  * @version $Id$
- * @see com.corona.context.AnnotatedFieldFactory
+ * @see com.corona.context.InjectFieldFactory
  */
-public interface AnnotatedField {
+public interface InjectField {
 
 	/**
 	 * @return the field that is annotated with annotation, for example, injection {@link Inject} annotation

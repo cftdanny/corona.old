@@ -1,16 +1,12 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.support;
+package com.corona.data;
 
 import java.util.Properties;
 
 import com.corona.context.annotation.Application;
 import com.corona.context.annotation.Create;
-import com.corona.data.ConnectionManager;
-import com.corona.data.ConnectionManagerFactory;
-import com.corona.data.DataException;
-import com.corona.data.DataSourceManager;
 
 /**
  * <p>This component is used to create connection manager factory by configuration. </p>

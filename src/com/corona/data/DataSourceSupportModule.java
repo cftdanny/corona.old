@@ -1,11 +1,9 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.support;
+package com.corona.data;
 
 import com.corona.context.AbstractModule;
-import com.corona.data.ConnectionManager;
-import com.corona.data.ConnectionManagerFactory;
 
 /**
  * <p>This module is used to register database support component (ConnectionManager, ConnectionManagerFactory) to
@@ -14,7 +12,7 @@ import com.corona.data.ConnectionManagerFactory;
  * @author $Author$
  * @version $Id$
  */
-public class DataSourceModule extends AbstractModule {
+public class DataSourceSupportModule extends AbstractModule {
 
 	/**
 	 * the component name
@@ -24,14 +22,14 @@ public class DataSourceModule extends AbstractModule {
 	/**
 	 * default constructor with empty component name
 	 */
-	public DataSourceModule() {
+	public DataSourceSupportModule() {
 		this(null);
 	}
 	
 	/**
 	 * @param name the component name
 	 */
-	public DataSourceModule(final String name) {
+	public DataSourceSupportModule(final String name) {
 		this.name = name;
 	}
 	

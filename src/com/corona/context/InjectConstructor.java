@@ -32,9 +32,9 @@ import java.lang.reflect.Constructor;
  *
  * @author $Author$
  * @version $Id$
- * @see com.corona.context.AnnotatedConstructorFactory
+ * @see com.corona.context.InjectConstructorFactory
  */
-public interface AnnotatedConstructor {
+public interface InjectConstructor {
 
 	/**
 	 * @return the constructor that is annotated with annotation, for example, injection {@link Inject} annotation

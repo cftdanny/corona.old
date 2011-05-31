@@ -25,9 +25,9 @@ package com.corona.context;
  *
  * @author $Author$
  * @version $Id$
- * @see com.corona.context.AnnotatedParameterFactory
+ * @see com.corona.context.InjectParameterFactory
  */
-public interface AnnotatedParameter {
+public interface InjectParameter {
 
 	/**
 	 * <p>Get value from current context manager by injection annotation configuration of parameter. The value will be

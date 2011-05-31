@@ -1,14 +1,13 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.support;
+package com.corona.data;
 
 import com.corona.context.ConfigurationException;
 import com.corona.context.ContextManager;
 import com.corona.context.Provider;
 import com.corona.context.annotation.Context;
 import com.corona.context.annotation.Inject;
-import com.corona.data.ConnectionManager;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 

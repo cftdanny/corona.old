@@ -5,7 +5,7 @@ package com.corona.context.spi;
 
 import java.lang.reflect.Constructor;
 
-import com.corona.context.AbstractAnnotatedConstructor;
+import com.corona.context.AbstractInjectConstructor;
 import com.corona.context.ContextManagerFactory;
 
 /**
@@ -15,13 +15,13 @@ import com.corona.context.ContextManagerFactory;
  * @author $Author$
  * @version $Id$
  */
-class InjectAnnotatedConstructor extends AbstractAnnotatedConstructor {
+class DefaultInjectConstructor extends AbstractInjectConstructor {
 
 	/**
 	 * @param contextManagerFactory the current context manager factory
 	 * @param constructor the constructor
 	 */
-	InjectAnnotatedConstructor(final ContextManagerFactory contextManagerFactory, final Constructor<?> constructor) {
+	DefaultInjectConstructor(final ContextManagerFactory contextManagerFactory, final Constructor<?> constructor) {
 		super(contextManagerFactory, constructor);
 	}
 }

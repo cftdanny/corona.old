@@ -5,30 +5,30 @@ package com.corona.servlet.param;
 
 import java.lang.annotation.Annotation;
 
-import com.corona.context.AnnotatedParameter;
-import com.corona.context.AnnotatedParameterFactory;
+import com.corona.context.InjectParameter;
+import com.corona.context.InjectParameterFactory;
 import com.corona.context.ContextManagerFactory;
 
 /**
- * <p>This factory is used to create {@link ParamAnnotatedParameter} for a parameter that is annotated with 
+ * <p>This factory is used to create {@link ParamInjectParameter} for a parameter that is annotated with 
  * {@link Inject}. </p>
  *
  * @author $Author$
  * @version $Id$
  */
-public class ParamAnnotatedParameterFactory implements AnnotatedParameterFactory {
+public class ParamInjectParameterFactory implements InjectParameterFactory {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.context.AnnotatedParameterFactory#create(
+	 * @see com.corona.context.InjectParameterFactory#create(
 	 * com.corona.context.ContextManagerFactory, java.lang.Class, java.lang.annotation.Annotation[]
 	 * )
 	 */
 	@Override
-	public AnnotatedParameter create(
+	public InjectParameter create(
 			final ContextManagerFactory contextManagerFactory, 
 			final Class<?> parameterType, final Annotation[] annotations
 	) {
-		return new ParamAnnotatedParameter(parameterType, annotations);
+		return new ParamInjectParameter(parameterType, annotations);
 	}
 }

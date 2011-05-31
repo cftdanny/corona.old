@@ -5,7 +5,7 @@ package com.corona.context.spi;
 
 import java.lang.reflect.Field;
 
-import com.corona.context.AbstractAnnotatedField;
+import com.corona.context.AbstractInjectField;
 import com.corona.context.ContextManager;
 import com.corona.context.annotation.Inject;
 import com.corona.util.StringUtil;
@@ -17,7 +17,7 @@ import com.corona.util.StringUtil;
  * @author $Author$
  * @version $Id$
  */
-class InjectAnnotatedField extends AbstractAnnotatedField {
+class DefaultInjectField extends AbstractInjectField {
 
 	/**
 	 * the component name
@@ -27,7 +27,7 @@ class InjectAnnotatedField extends AbstractAnnotatedField {
 	/**
 	 * @param annotatedField the field that is annotated with an annotation type
 	 */
-	InjectAnnotatedField(final Field annotatedField) {
+	DefaultInjectField(final Field annotatedField) {
 		
 		// if injected component name is empty, will change it to nll
 		super(annotatedField);
@@ -39,7 +39,7 @@ class InjectAnnotatedField extends AbstractAnnotatedField {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.context.AbstractAnnotatedField#get(com.corona.context.ContextManager)
+	 * @see com.corona.context.AbstractInjectField#get(com.corona.context.ContextManager)
 	 */
 	@Override
 	protected Object get(final ContextManager contextManager) {
