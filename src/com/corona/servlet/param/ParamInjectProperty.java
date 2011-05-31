@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import com.corona.context.AbstractInjectProperty;
 import com.corona.context.ContextManager;
 import com.corona.context.ContextManagerFactory;
-import com.corona.context.annotation.Inject;
+import com.corona.servlet.annotation.Param;
 import com.corona.util.StringUtil;
 
 /**
@@ -21,11 +21,6 @@ import com.corona.util.StringUtil;
 class ParamInjectProperty extends AbstractInjectProperty {
 	
 	/**
-	 * the annotated property
-	 */
-	private Method property;
-	
-	/**
 	 * the name
 	 */
 	private String name = null;
@@ -36,7 +31,7 @@ class ParamInjectProperty extends AbstractInjectProperty {
 	 */
 	ParamInjectProperty(final ContextManagerFactory contextManagerFactory, final Method property) {
 		super(contextManagerFactory, property);
-		this.name = this.property.getAnnotation(Inject.class).value();
+		this.name = this.getMethod().getAnnotation(Param.class).value();
 		if (StringUtil.isBlank(this.name)) {
 			this.name = null;
 		}

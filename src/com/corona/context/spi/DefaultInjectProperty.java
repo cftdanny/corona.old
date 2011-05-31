@@ -21,11 +21,6 @@ import com.corona.util.StringUtil;
 class DefaultInjectProperty extends AbstractInjectProperty {
 	
 	/**
-	 * the annotated property
-	 */
-	private Method property;
-	
-	/**
 	 * the name
 	 */
 	private String name = null;
@@ -36,7 +31,7 @@ class DefaultInjectProperty extends AbstractInjectProperty {
 	 */
 	DefaultInjectProperty(final ContextManagerFactory contextManagerFactory, final Method property) {
 		super(contextManagerFactory, property);
-		this.name = this.property.getAnnotation(Inject.class).value();
+		this.name = this.getMethod().getAnnotation(Inject.class).value();
 		if (StringUtil.isBlank(this.name)) {
 			this.name = null;
 		}

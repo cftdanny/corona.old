@@ -19,7 +19,7 @@ import com.corona.context.annotation.InjectType;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD, ElementType.PARAMETER }) 
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER }) 
 @InjectType
 public @interface Param {
 

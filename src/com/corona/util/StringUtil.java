@@ -94,6 +94,20 @@ public final class StringUtil {
 	}
 
 	/**
+	 * <p>Convert a string to camel style. Usually, it is getter and setter in java variable </p>
+	 *
+	 * @param value The string
+	 * @return The camel string
+	 */
+	public static String camel(final String value) {
+		if (!isBlank(value)) {
+			return value.substring(0, 1).toLowerCase() + value.substring(1);
+		} else {
+			return value;
+		}
+	}
+	
+	/**
 	 * @param str the string to be trimmed, can be <code>null</code>
 	 * @return the trimmed string, and if str is <code>null</code>, will return ""
 	 */

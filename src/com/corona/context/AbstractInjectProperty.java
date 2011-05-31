@@ -46,10 +46,10 @@ public abstract class AbstractInjectProperty implements InjectProperty {
 		
 		// store this property in order to set component property later
 		this.property = property;
+		this.protocolType = this.property.getParameterTypes()[0];
 		if (this.protocolType.isAnnotationPresent(Optional.class)) {
 			this.optional = true;
 		}
-		this.protocolType = this.property.getParameterTypes()[0];
 	}
 	
 	/**

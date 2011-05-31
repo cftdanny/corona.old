@@ -5,7 +5,6 @@ package com.corona.test.servlet.param;
 
 import java.util.List;
 
-import com.corona.context.annotation.Inject;
 import com.corona.context.annotation.Optional;
 import com.corona.servlet.annotation.FreeMaker;
 import com.corona.servlet.annotation.Param;
@@ -103,7 +102,7 @@ public class ParamStringBean {
 	/**
 	 * @param d the d to set
 	 */
-	@Inject public void setD(@Param("d") final List<String> d) {
+	@Param("d") public void setD(final List<String> d) {
 		this.d = d;
 	}
 	
