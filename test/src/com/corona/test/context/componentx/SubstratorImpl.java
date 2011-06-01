@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.test.context.component;
+package com.corona.test.context.componentx;
 
 /**
  * <p>the test component for provider </p>
@@ -39,7 +39,7 @@ public class SubstratorImpl implements Substrator {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.test.context.component.Substrator#substrate(int, int)
+	 * @see com.corona.test.context.componentx.Substrator#substrate(int, int)
 	 */
 	@Override
 	public int substrate(final int a, final int b) {

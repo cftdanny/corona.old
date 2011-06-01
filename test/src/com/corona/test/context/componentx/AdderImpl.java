@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.test.context.component;
+package com.corona.test.context.componentx;
 
 import com.corona.context.annotation.Create;
 import com.corona.context.annotation.Install;
@@ -67,7 +67,7 @@ public class AdderImpl implements Adder {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.test.context.component.Adder#add(int, int)
+	 * @see com.corona.test.context.componentx.Adder#add(int, int)
 	 */
 	@Override
 	public int add(final int a, final int b) {

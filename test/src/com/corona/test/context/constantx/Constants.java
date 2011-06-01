@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.test.context.constant;
+package com.corona.test.context.constantx;
 
 /**
  * <p>Some constants values </p>

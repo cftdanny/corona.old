@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.test.context.constant;
+package com.corona.test.context.constantx;
 
 /**
  * <p>The implementation service of Calculator </p>
@@ -13,7 +13,7 @@ public class CalculatorImpl implements Calculator {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.test.context.constant.Calculator#add(int, int)
+	 * @see com.corona.test.context.constantx.Calculator#add(int, int)
 	 */
 	@Override
 	public int add(final int a, final int b) {

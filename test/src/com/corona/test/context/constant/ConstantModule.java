@@ -20,15 +20,16 @@ public class ConstantModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		
-		this.bindConstant(Integer.class).as(Constants.NAME).to(1);
-		this.bindConstant(String.class).as(Constants.NAME).to("1");
-		this.bindConstant(Long.class).as(Constants.NAME).to(1L);
-		this.bindConstant(Calculator.class).as(Constants.NAME).to(new CalculatorImpl());
+		// bind primitive value to context 
+		this.bindConstant(Integer.class).as(Constant.NAME).to(1);
+		this.bindConstant(String.class).as(Constant.NAME).to("1");
+		this.bindConstant(Long.class).as(Constant.NAME).to(1L);
 		
-		Computer computer = new Computer();
-		computer.setBrand("Apple");
-		computer.setModel("MacBook");
+		// bind object to context
+		Constant constant = new Constant();
+		constant.setName("Apple");
+		constant.setValue("MacBook");
 		
-		this.bindConstant(Computer.class).to(computer);
+		this.bindConstant(Constant.class).to(constant);
 	}
 }

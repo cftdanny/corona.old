@@ -50,7 +50,7 @@ public class AbstractComponentTest {
 		
 		// determine the modules that are used to run test
 		Module[] modules = this.getModules();
-		if (modules != null) {
+		if ((modules == null) || (modules.length == 0)) {
 			modules = this.config.getModules();
 		}
 		this.contextManagerFactory = Initializer.build(modules);
