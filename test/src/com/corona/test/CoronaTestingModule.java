@@ -17,7 +17,7 @@ import com.corona.data.DataSourceSupportModule;
  * @author $Author$
  * @version $Id$
  */
-public class TestingConfigModule extends AbstractModule {
+public class CoronaTestingModule extends AbstractModule {
 
 	/**
 	 * {@inheritDoc}
@@ -37,5 +37,4 @@ public class TestingConfigModule extends AbstractModule {
 		this.bindConfiguration(DataSourceManagerProvider.class).property("family").value("HSQL");
 		this.bindConfiguration(DataSourceManagerProvider.class).property("settings").value(settings);
 	}
-	
 }

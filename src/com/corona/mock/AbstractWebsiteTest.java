@@ -13,6 +13,11 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.bio.SocketConnector;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -201,6 +206,23 @@ public class AbstractWebsiteTest {
 	 */
 	private TransactionManager getTransactionManager() {
 		return this.contextManager.get(new Key<TransactionManager>(TransactionManager.class), false);
+	}
+	
+	/**
+	 * @return the web driver for testing
+	 */
+	protected WebDriver createWebDriver() {
+		
+		String name = this.config.getWebDriverName();
+		if ("IE".equals(name)) {
+			return new InternetExplorerDriver();
+		} else if ("Firefox".equals(name)) {
+			return new FirefoxDriver();
+		} else if ("Chrome".equals(name)) {
+			return new ChromeDriver();
+		} else {
+			return new HtmlUnitDriver();
+		}
 	}
 	
 	/**

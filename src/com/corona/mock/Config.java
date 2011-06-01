@@ -22,7 +22,7 @@ class Config {
 	/**
 	 * the testing configuration files for all unit test
 	 */
-	private static final String TEST_CONFIG_FILE = "/testing.properties";
+	private static final String TEST_CONFIG_FILE = "/config-test.properties";
 	
 	/**
 	 * the key will define all module classes that will be loaded for testing
@@ -43,6 +43,11 @@ class Config {
 	 * the key is used to get web context path for testing web application
 	 */
 	private static final String WEB_CONTEXT_PATH = "web.context.path";
+	
+	/**
+	 * the key is used to get web driver
+	 */
+	private static final String WEB_DRIVER_NAME = "web.driver.name";
 	
 	/**
 	 * the properties for testing configuration
@@ -141,5 +146,17 @@ class Config {
 			path = "/";
 		}
 		return path;
+	}
+	
+	/**
+	 * @return the selenium web driver name
+	 */
+	String getWebDriverName() {
+		
+		String name = (String) this.properties.get(Config.WEB_DRIVER_NAME);
+		if (StringUtil.isBlank(name)) {
+			name = "HtmlUnit";
+		}
+		return name;
 	}
 }

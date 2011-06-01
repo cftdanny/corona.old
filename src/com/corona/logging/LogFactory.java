@@ -31,7 +31,7 @@ public class LogFactory {
 	/**
 	 * the testing Java Logging configuration file
 	 */
-	private static final String TESTING = "/logging-test.properties";
+	private static final String TESTING = "/test-logging.properties";
 	
 	/**
 	 * the production Java Logging configuration file
@@ -93,7 +93,7 @@ public class LogFactory {
 			Logger.getLogger(LogFactory.class.getName()).info(
 					"Configure Java Logging by class path properties file: " + resource
 			);
-		} catch (IOException e) {
+		} catch (Throwable e) {
 			configured = false;
 		}
 		return configured;

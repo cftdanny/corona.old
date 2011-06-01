@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.corona.context.annotation.Application;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
+import com.corona.util.StringUtil;
 
 /**
  * <p>This handler is used to serve response with static files under root by matching URI and
@@ -43,6 +44,11 @@ public class ResourceHandler implements Handler {
 	 * the expiration for content (< 0, don't care; 0, no cache, > 0, cache)
 	 */
 	private long expiration = -1;
+	
+	/**
+	 * the welcome file name
+	 */
+	private String welcomeFileName = "";
 	
 	/**
 	 * the matcher
@@ -92,13 +98,30 @@ public class ResourceHandler implements Handler {
 	public long getExpiration() {
 		return expiration;
 	}
-
 	
 	/**
 	 * @param expiration how to cache the content in client
 	 */
 	public void setExpiration(final long expiration) {
 		this.expiration = expiration;
+	}
+
+	/**
+	 * @return the welcome file name
+	 */
+	public String getWelcomeFileName() {
+		return welcomeFileName;
+	}
+	
+	/**
+	 * @param welcomeFileName the welcome file name to set
+	 */
+	public void setWelcomeFileName(final String welcomeFileName) {
+		
+		this.welcomeFileName = welcomeFileName;
+		if (StringUtil.isBlank(this.welcomeFileName)) {
+			this.welcomeFileName = "";
+		}
 	}
 
 	/**
@@ -127,23 +150,35 @@ public class ResourceHandler implements Handler {
 
 		// fill response stream by resource file under web root
 		String path = request.getPathInfo();
+		if (path.endsWith("/")) {
+			path = path + this.welcomeFileName;
+		}
 		InputStream in = request.getSession().getServletContext().getResourceAsStream(path);
-		try {
-			
-			OutputStream out = response.getOutputStream();
-			for (int c = in.read(); c != -1; c = in.read()) {
-				out.write(c);
+		if (in != null) {
+			try {
+				
+				OutputStream out = response.getOutputStream();
+				for (int c = in.read(); c != -1; c = in.read()) {
+					out.write(c);
+				}
+			} catch (Exception e) {
+				
+				this.logger.error("Fail to fill response by resource file [{0}]", e, path);
+				throw new HandleException("Fail to fill response by resource file [{0}]", e, path);
+			} finally {
+				
+				try {
+					in.close();
+				} catch (IOException e) {
+					this.logger.error("Fail to close resource file [{0}], just skip this exception", e, path);
+				}
 			}
-		} catch (Exception e) {
-			
-			this.logger.error("Fail to fill response by resource file [{0}]", e, path);
-			throw new HandleException("Fail to fill response by resource file [{0}]", e, path);
-		} finally {
+		} else {
 			
 			try {
-				in.close();
+				response.sendError(HttpServletResponse.SC_NOT_FOUND, "Page Not Found!");
 			} catch (IOException e) {
-				this.logger.error("Fail to close resource file [{0}], just skip this exception", e, path);
+				this.logger.error("Fail to send \"Page Not Found\" to response, just skip this exception", e, path);
 			}
 		}
 	}

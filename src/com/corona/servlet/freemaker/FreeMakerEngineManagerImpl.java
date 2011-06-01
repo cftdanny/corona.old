@@ -49,7 +49,7 @@ public class FreeMakerEngineManagerImpl implements FreeMakerEngineManager {
 	/**
 	 * the root path
 	 */
-	private String basePath = "/WEB-INF";
+	private String basePath = "/WEB-INF/template";
 	
 	/**
 	 * the default encoding for template
