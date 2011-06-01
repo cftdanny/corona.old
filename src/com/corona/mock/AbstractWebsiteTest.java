@@ -69,6 +69,13 @@ public class AbstractWebsiteTest {
 	private Transaction transaction;
 	
 	/**
+	 * @return the testing configuration
+	 */
+	protected Config getConfig() {
+		return config;
+	}
+
+	/**
 	 * @throws Exception if fail to start JETTY server
 	 */
 	@BeforeClass public void startup() throws Exception {
@@ -87,7 +94,7 @@ public class AbstractWebsiteTest {
 	 * @return the JEETY connector
 	 * @exception Exception if fail to create JETTY connector
 	 */
-	private Connector getConnector() throws Exception {
+	protected Connector getConnector() throws Exception {
 		
 		// find a free TCP socket port
 		ServerSocket socket = new ServerSocket(0);
@@ -97,13 +104,6 @@ public class AbstractWebsiteTest {
 		Connector connector = new SocketConnector();
 		connector.setPort(port);
 		return connector;
-	}
-
-	/**
-	 * @return the testing configuration
-	 */
-	public Config getConfig() {
-		return config;
 	}
 
 	/**
@@ -208,6 +208,25 @@ public class AbstractWebsiteTest {
 		return this.contextManager.get(new Key<TransactionManager>(TransactionManager.class), false);
 	}
 	
+	/**
+	 * @param <T> the component type
+	 * @param type the class of component type
+	 * @return the instance of component
+	 */
+	protected <T> T get(final Class<T> type) {
+		return this.contextManager.get(type);
+	}
+	
+	/**
+	 * @param <T> the component type
+	 * @param type the class of component type
+	 * @param name the component name
+	 * @return the instance of component
+	 */
+	protected <T> T get(final Class<T> type, final String name) {
+		return this.contextManager.get(type, name);
+	}
+
 	/**
 	 * create a new transaction
 	 */

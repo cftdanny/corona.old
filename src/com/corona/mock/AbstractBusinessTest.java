@@ -3,7 +3,8 @@
  */
 package com.corona.mock;
 
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 
 import com.corona.context.Key;
 import com.corona.data.ConnectionManager;
@@ -33,26 +34,9 @@ public class AbstractBusinessTest extends AbstractComponentTest {
 	 * @see com.corona.mock.AbstractComponentTest#before()
 	 */
 	@Override
-	@BeforeClass public void before() {
-		
-		// call method before in super class to create test environment
+	@BeforeMethod public void before() {
 		super.before();
-		
-		// open connection manager
 		this.connectionManager = this.get(ConnectionManager.class);
-		
-		// try to find transaction and start it
-		TransactionManager transactionManager = this.getContextManager().get(
-				new Key<TransactionManager>(TransactionManager.class), false
-		);
-		if (transactionManager != null) {
-			this.transaction = transactionManager.getTransaction();
-		} else {
-			this.transaction = this.connectionManager.getTransaction();
-		}
-		
-		// start transaction in order to control data source
-		this.transaction.begin();
 	}
 
 	/**
@@ -60,15 +44,7 @@ public class AbstractBusinessTest extends AbstractComponentTest {
 	 * @see com.corona.mock.AbstractComponentTest#after()
 	 */
 	@Override
-	public void after() {
-		
-		// commit transaction
-		if (this.transaction.getRollbackOnly()) {
-			this.transaction.rollback();
-		} else {
-			this.transaction.commit();
-		}
-		this.transaction = null;
+	@AfterMethod public void after() {
 		
 		// close connection manager
 		this.connectionManager.close();
@@ -79,15 +55,60 @@ public class AbstractBusinessTest extends AbstractComponentTest {
 	}
 	
 	/**
+	 * @return JTA transaction manager 
+	 */
+	private TransactionManager getTransactionManager() {
+		return this.getContextManager().get(new Key<TransactionManager>(TransactionManager.class), false);
+	}
+	
+	/**
+	 * create a new transaction
+	 */
+	protected void begin() {
+		
+		// check if transaction is created or not. If yes, throw exception
+		if (this.transaction != null) {
+			throw new IllegalStateException("Transaction is created already");
+		}
+		
+		// try to find transaction and start it
+		TransactionManager transactionManager = this.getTransactionManager();
+		if (transactionManager != null) {
+			this.transaction = transactionManager.getTransaction();
+		} else {
+			this.transaction = this.connectionManager.getTransaction();
+		}
+		
+		// start transaction in order to control data source
+		this.transaction.begin();
+	}
+	
+	/**
+	 * commit transaction
+	 */
+	protected void commit() {
+		this.transaction.commit();
+		this.transaction = null;
+	}
+	
+	/**
+	 * roll back transaction
+	 */
+	protected void rollback() {
+		this.transaction.rollback();
+		this.transaction = null;
+	}
+
+	/**
 	 * @return the current connection manager
 	 */
-	public ConnectionManager getConnectionManager() {
+	protected ConnectionManager getConnectionManager() {
 		return connectionManager;
 	}
 	/**
 	 * @return the current transaction
 	 */
-	public Transaction getTransaction() {
+	protected Transaction getTransaction() {
 		return transaction;
 	}
 }

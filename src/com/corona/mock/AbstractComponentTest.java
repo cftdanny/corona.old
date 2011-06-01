@@ -51,10 +51,9 @@ public class AbstractComponentTest {
 		// determine the modules that are used to run test
 		Module[] modules = this.getModules();
 		if (modules != null) {
-			this.contextManagerFactory = Initializer.build(modules);
-		} else {
-			this.contextManagerFactory = Initializer.build(this.config.getModules());
+			modules = this.config.getModules();
 		}
+		this.contextManagerFactory = Initializer.build(modules);
 	}
 	
 	/**
@@ -75,7 +74,7 @@ public class AbstractComponentTest {
 	/**
 	 * @return the testing configuration
 	 */
-	public Config getConfig() {
+	protected Config getConfig() {
 		return config;
 	}
 
@@ -104,14 +103,14 @@ public class AbstractComponentTest {
 	/**
 	 * @return the context manager factory
 	 */
-	public ContextManagerFactory getContextManagerFactory() {
+	protected ContextManagerFactory getContextManagerFactory() {
 		return this.contextManagerFactory;
 	}
 	
 	/**
 	 * @return the current context manager
 	 */
-	public ContextManager getContextManager() {
+	protected ContextManager getContextManager() {
 		return contextManager;
 	}
 	
@@ -120,7 +119,7 @@ public class AbstractComponentTest {
 	 * @param type the class of component type
 	 * @return the instance of component
 	 */
-	public <T> T get(final Class<T> type) {
+	protected <T> T get(final Class<T> type) {
 		return this.contextManager.get(type);
 	}
 	
@@ -130,15 +129,7 @@ public class AbstractComponentTest {
 	 * @param name the component name
 	 * @return the instance of component
 	 */
-	public <T> T get(final Class<T> type, final String name) {
+	protected <T> T get(final Class<T> type, final String name) {
 		return this.contextManager.get(type, name);
-	}
-
-	/**
-	 * @param alias the component alias
-	 * @return the instance of component
-	 */
-	public Object get(final String alias) {
-		return this.contextManager.get(alias);
 	}
 }

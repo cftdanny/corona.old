@@ -97,7 +97,7 @@ class Config {
 	 * @return all modules that are defined in testing configuration file 
 	 * @throws Exception if fail to load modules
 	 */
-	List<Module> getModules() throws Exception {
+	Module[] getModules() throws Exception {
 		
 		String classNames = this.properties.getProperty(Config.TEST_MODULES_CLASSES);
 		if (StringUtil.isBlank(classNames)) {
@@ -106,9 +106,9 @@ class Config {
 			for (String className : classNames.split(",")) {
 				modules.add((Module) Class.forName(className).newInstance());
 			}
-			return modules;
+			return modules.toArray(new Module[0]);
 		} else {
-			return new ArrayList<Module>();
+			return new Module[0];
 		}
 	}
 	
