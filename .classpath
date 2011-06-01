@@ -29,5 +29,24 @@
 	<classpathentry kind="lib" path="test/lib/selenium-2.0b3.jar"/>
 	<classpathentry kind="lib" path="test/lib/testng-6.0.1.jar"/>
 	<classpathentry kind="lib" path="test/lib/tomcat-juli.jar"/>
+	<classpathentry kind="lib" path="test/lib/htmlunit-2.8.jar"/>
+	<classpathentry kind="lib" path="test/lib/htmlunit-core-js-2.8.jar"/>
+	<classpathentry kind="lib" path="test/lib/commons-codec-1.4.jar"/>
+	<classpathentry kind="lib" path="test/lib/httpclient-4.0.2.jar"/>
+	<classpathentry kind="lib" path="test/lib/sac-1.3.jar"/>
+	<classpathentry kind="lib" path="test/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="test/lib/httpcore-4.0.1.jar"/>
+	<classpathentry kind="lib" path="test/lib/httpmime-4.0.1.jar"/>
+	<classpathentry kind="lib" path="test/lib/apache-mime4j-0.6.jar"/>
+	<classpathentry kind="lib" path="test/lib/nekohtml-1.9.14.jar"/>
+	<classpathentry kind="lib" path="test/lib/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="test/lib/commons-io-1.4.jar"/>
+	<classpathentry kind="lib" path="test/lib/xercesImpl-2.9.1.jar"/>
+	<classpathentry kind="lib" path="test/lib/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="test/lib/cssparser-0.9.5.jar"/>
+	<classpathentry kind="lib" path="test/lib/xalan-2.7.1.jar"/>
+	<classpathentry kind="lib" path="test/lib/guava-r08.jar"/>
+	<classpathentry kind="lib" path="test/lib/json-20080701.jar"/>
+	<classpathentry kind="lib" path="test/lib/jna.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

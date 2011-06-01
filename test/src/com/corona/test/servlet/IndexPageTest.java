@@ -3,7 +3,10 @@
  */
 package com.corona.test.servlet;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.corona.mock.AbstractWebsiteTest;
@@ -21,7 +24,10 @@ public class IndexPageTest extends AbstractWebsiteTest {
 	 */
 	@Test public void index() throws Exception {
 		
-		WebDriver driver = this.createWebDriver();
-		driver.get(this.createRequestPath("/"));
+		WebDriver driver = this.getWebDriver("/");
+		
+		Assert.assertEquals("Corona Web Framework (CWF)", driver.getTitle());
+		WebElement element = driver.findElement(By.id("caption"));
+		Assert.assertEquals("Welcome to Corona Web Framework (CWF)", element.getText());
 	}
 }

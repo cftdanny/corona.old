@@ -209,23 +209,6 @@ public class AbstractWebsiteTest {
 	}
 	
 	/**
-	 * @return the web driver for testing
-	 */
-	protected WebDriver createWebDriver() {
-		
-		String name = this.config.getWebDriverName();
-		if ("IE".equals(name)) {
-			return new InternetExplorerDriver();
-		} else if ("Firefox".equals(name)) {
-			return new FirefoxDriver();
-		} else if ("Chrome".equals(name)) {
-			return new ChromeDriver();
-		} else {
-			return new HtmlUnitDriver();
-		}
-	}
-	
-	/**
 	 * create a new transaction
 	 */
 	protected void begin() {
@@ -277,18 +260,44 @@ public class AbstractWebsiteTest {
 	protected String getContextPath() {
 		return this.getWebAppContext().getContextPath();
 	}
+
+	/**
+	 * @return the web driver for testing
+	 */
+	protected WebDriver getWebDriver() {
+		
+		String name = this.config.getWebDriverName();
+		if ("IE".equals(name)) {
+			return new InternetExplorerDriver();
+		} else if ("Firefox".equals(name)) {
+			return new FirefoxDriver();
+		} else if ("Chrome".equals(name)) {
+			return new ChromeDriver();
+		} else {
+			return new HtmlUnitDriver();
+		}
+	}
 	
 	/**
-	 * @param path the relative path
+	 * @param path the relative request path
+	 * @return the web driver for testing
+	 */
+	protected WebDriver getWebDriver(final String path) {
+		WebDriver driver = this.getWebDriver();
+		driver.get(this.getFullPath(path));
+		return driver;
+	}
+
+	/**
+	 * @param path the relative request path
 	 * @return the request path
 	 */
-	protected String createRequestPath(final String path) {
+	protected String getFullPath(final String path) {
 		
-		String contextPath = this.getContextPath();
-		if (contextPath.endsWith("/")) {
-			return "http://127.0.0.1" + this.getContextPath() + path;
-		} else {
-			return "http://127.0.0.1" + this.getContextPath() + "/" + path;
+		String uri = "http://127.0.0.1:" + Integer.toString(this.getPort()) + this.getContextPath();
+		if (uri.endsWith("/")) {
+			uri = uri.substring(0, uri.length() - 1);
 		}
+		return path.startsWith("/") ? uri + path : uri + "/" + path;
 	}
 }

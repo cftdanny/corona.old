@@ -3,7 +3,6 @@
  */
 package com.corona.logging;
 
-import java.io.IOException;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
