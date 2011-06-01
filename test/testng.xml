@@ -1,0 +1,11 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="corona" verbose="0" >
+
+	<!-- All Test Cases for Injection Container -->
+	<test name="context" >
+		<classes>
+			<class name="com.corona.test.context.constant.ConstantComponentTest" />
+			<class name="com.corona.test.context.component.ClassComponentTest" />
+		</classes>
+	</test>
+</suite>

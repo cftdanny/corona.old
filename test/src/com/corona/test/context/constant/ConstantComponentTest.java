@@ -32,13 +32,16 @@ public class ConstantComponentTest extends AbstractComponentTest {
 	@Test public void testConstantComponent() {
 		
 		// check primitive component
-		Assert.assertEquals("1", this.get(String.class, Constant.NAME));
-		Assert.assertEquals((Integer) 1, this.get(Integer.class, Constant.NAME));
-		Assert.assertEquals((Long) 1L, this.get(Long.class, Constant.NAME));
+		Assert.assertEquals(this.get(String.class, Constant.NAME), "1");
+		Assert.assertEquals(this.get(Integer.class, Constant.NAME), (Integer) 1);
+		Assert.assertEquals(this.get(Long.class, Constant.NAME), (Long) 1L);
 		
 		// check object component
 		Constant constant = this.get(Constant.class);
-		Assert.assertEquals("Apple", constant.getName());
-		Assert.assertEquals("MacBook", constant.getValue());
+		Assert.assertEquals(constant.getName(), "Apple");
+		Assert.assertEquals(constant.getValue(), "MacBook");
+		
+		// check injected component, should can't inject
+		Assert.assertNull(constant.getInteger());
 	}
 }

@@ -3,6 +3,8 @@
  */
 package com.corona.test.context.constant;
 
+import com.corona.context.annotation.Inject;
+
 /**
  * <p>Some constants values </p>
  *
@@ -17,6 +19,11 @@ public class Constant {
 	public static final String NAME = "constant";
 	
 	/**
+	 * the integer value
+	 */
+	@Inject(Constant.NAME) private Integer integer;
+	
+	/**
 	 * the constant name
 	 */
 	private String name;
@@ -26,6 +33,20 @@ public class Constant {
 	 */
 	private String value;
 	
+	/**
+	 * @return the integer
+	 */
+	public Integer getInteger() {
+		return integer;
+	}
+	
+	/**
+	 * @param integer the integer to set
+	 */
+	public void setInteger(final Integer integer) {
+		this.integer = integer;
+	}
+
 	/**
 	 * @return the constant name
 	 */
