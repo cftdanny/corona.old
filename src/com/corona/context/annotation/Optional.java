@@ -42,4 +42,8 @@ import java.lang.annotation.Target;
 @Target({ ElementType.FIELD, ElementType.PARAMETER })
 public @interface Optional {
 
+	/**
+	 * if resolved value is null, don't bind to field or property if true 
+	 */
+	boolean value() default true;
 }

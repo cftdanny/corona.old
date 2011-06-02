@@ -33,13 +33,20 @@ public abstract class AbstractInjectField implements InjectField {
 	private boolean optional = false;
 	
 	/**
+	 * if resolved value is null, don't bind to field or property if true 
+	 */
+	private boolean ignoreNull = false;
+	
+	/**
 	 * @param field the annotated field
 	 */
 	protected AbstractInjectField(final Field field) {
 		
 		this.field = field;
-		if (this.field.isAnnotationPresent(Optional.class)) {
+		Optional nullOptional = this.field.getAnnotation(Optional.class);
+		if (nullOptional != null) {
 			this.optional = true;
+			this.ignoreNull = nullOptional.value();
 		}
 		this.field.setAccessible(true);
 	}
@@ -73,6 +80,20 @@ public abstract class AbstractInjectField implements InjectField {
 	protected void setOptional(final boolean optional) {
 		this.optional = optional;
 	}
+	
+	/**
+	 * @return if resolved value is null, don't bind to field or property if true 
+	 */
+	protected boolean isIgnoreNull() {
+		return ignoreNull;
+	}
+	
+	/**
+	 * @param ignoreNull if resolved value is null, don't bind to field or property if true  to set
+	 */
+	protected void setIgnoreNull(final boolean ignoreNull) {
+		this.ignoreNull = ignoreNull;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -88,12 +109,14 @@ public abstract class AbstractInjectField implements InjectField {
 			throw new ValueException("Resolved value is null, but field [{0}] is mandatory.", this.field);
 		}
 		
-		// set field value to resolved value from context manager
-		try {
-			this.field.set(component, value);
-		} catch (Throwable e) {
-			this.logger.error("Fail to set resolved value to field [{0}]", e, this.field);
-			throw new ValueException("Fail to set resolved value to field [{0}]", e, this.field);
+		if ((value != null) || (!this.ignoreNull)) {
+			// set field value to resolved value from context manager
+			try {
+				this.field.set(component, value);
+			} catch (Throwable e) {
+				this.logger.error("Fail to set resolved value to field [{0}]", e, this.field);
+				throw new ValueException("Fail to set resolved value to field [{0}]", e, this.field);
+			}
 		}
 	}
 	

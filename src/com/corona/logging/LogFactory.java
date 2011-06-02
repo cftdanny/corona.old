@@ -30,7 +30,7 @@ public class LogFactory {
 	/**
 	 * the testing Java Logging configuration file
 	 */
-	private static final String TESTING = "/test-logging.properties";
+	private static final String TESTING = "/logging-test.properties";
 	
 	/**
 	 * the production Java Logging configuration file

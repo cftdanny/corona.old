@@ -39,6 +39,11 @@ public abstract class AbstractInjectProperty implements InjectProperty {
 	private boolean optional = false;
  
 	/**
+	 * if resolved value is null, don't bind to field or property if true 
+	 */
+	private boolean ignoreNull = false;
+
+	/**
 	 * @param contextManagerFactory the context manager factory
 	 * @param property the property that is annotated with {@link Inject}
 	 */
@@ -47,8 +52,10 @@ public abstract class AbstractInjectProperty implements InjectProperty {
 		// store this property in order to set component property later
 		this.property = property;
 		this.protocolType = this.property.getParameterTypes()[0];
-		if (this.protocolType.isAnnotationPresent(Optional.class)) {
+		Optional nullOptional = this.property.getAnnotation(Optional.class);
+		if (nullOptional != null) {
 			this.optional = true;
+			this.ignoreNull = nullOptional.value();
 		}
 	}
 	
@@ -76,6 +83,20 @@ public abstract class AbstractInjectProperty implements InjectProperty {
 	}
 	
 	/**
+	 * @return if resolved value is null, don't bind to field or property if true 
+	 */
+	protected boolean isIgnoreNull() {
+		return ignoreNull;
+	}
+	
+	/**
+	 * @param ignoreNull if resolved value is null, don't bind to field or property if true  to set
+	 */
+	protected void setIgnoreNull(final boolean ignoreNull) {
+		this.ignoreNull = ignoreNull;
+	}
+
+	/**
 	 * @return the protocol type
 	 */
 	public Class<?> getType() {
@@ -95,11 +116,13 @@ public abstract class AbstractInjectProperty implements InjectProperty {
 			throw new ValueException("Resolved value is null, but property [{0}] is mandatory.", this.property);
 		}
 
-		try {
-			this.property.invoke(component, value);
-		} catch (Throwable e) {
-			this.logger.error("Fail set value to property [{0}]", e, this.property);
-			throw new CreationException("Fail set value to property [{0}]", e, this.property);
+		if ((value != null) || (!this.ignoreNull)) {
+			try {
+				this.property.invoke(component, value);
+			} catch (Throwable e) {
+				this.logger.error("Fail set value to property [{0}]", e, this.property);
+				throw new CreationException("Fail set value to property [{0}]", e, this.property);
+			}
 		}
 	}
 	

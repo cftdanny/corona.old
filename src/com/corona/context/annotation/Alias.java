@@ -18,7 +18,6 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ScopeType
 public @interface Alias {
 
 	/**

@@ -26,7 +26,6 @@
 	<classpathentry kind="lib" path="test/lib/jetty-util-7.4.2.v20110526.jar"/>
 	<classpathentry kind="lib" path="test/lib/jetty-webapp-7.4.2.v20110526.jar"/>
 	<classpathentry kind="lib" path="test/lib/jetty-xml-7.4.2.v20110526.jar"/>
-	<classpathentry kind="lib" path="test/lib/selenium-2.0b3.jar"/>
 	<classpathentry kind="lib" path="test/lib/testng-6.0.1.jar"/>
 	<classpathentry kind="lib" path="test/lib/tomcat-juli.jar"/>
 	<classpathentry kind="lib" path="test/lib/htmlunit-2.8.jar"/>
@@ -40,13 +39,14 @@
 	<classpathentry kind="lib" path="test/lib/apache-mime4j-0.6.jar"/>
 	<classpathentry kind="lib" path="test/lib/nekohtml-1.9.14.jar"/>
 	<classpathentry kind="lib" path="test/lib/commons-lang-2.4.jar"/>
-	<classpathentry kind="lib" path="test/lib/commons-io-1.4.jar"/>
 	<classpathentry kind="lib" path="test/lib/xercesImpl-2.9.1.jar"/>
 	<classpathentry kind="lib" path="test/lib/commons-collections-3.2.1.jar"/>
 	<classpathentry kind="lib" path="test/lib/cssparser-0.9.5.jar"/>
 	<classpathentry kind="lib" path="test/lib/xalan-2.7.1.jar"/>
-	<classpathentry kind="lib" path="test/lib/guava-r08.jar"/>
 	<classpathentry kind="lib" path="test/lib/json-20080701.jar"/>
 	<classpathentry kind="lib" path="test/lib/jna.jar"/>
+	<classpathentry kind="lib" path="test/lib/commons-io-2.0.1.jar"/>
+	<classpathentry kind="lib" path="test/lib/guava-r09.jar"/>
+	<classpathentry kind="lib" path="test/lib/selenium-2.0rc1.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

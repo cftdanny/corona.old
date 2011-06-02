@@ -6,6 +6,13 @@ package com.corona.test;
 import com.corona.servlet.Handler;
 import com.corona.servlet.ResourceHandler;
 import com.corona.servlet.WebStartModule;
+import com.corona.test.servlet.IndexExcel;
+import com.corona.test.servlet.IndexHtml;
+import com.corona.test.servlet.IndexJson;
+import com.corona.test.servlet.IndexPdf;
+import com.corona.test.servlet.IndexPng;
+import com.corona.test.servlet.IndexText;
+import com.corona.test.servlet.IndexXml;
 
 /**
  * <p>This module is used to define all components for application, both for testing and production. </p>
@@ -21,6 +28,18 @@ public class CoronaApplicationModule extends WebStartModule {
 	 */
 	@Override
 	protected void configure() {
+		
+		// STATIC CONTENT
+		this.configureStaticContent();
+		
+		// PRODUCER
+		this.configureProducerContent();
+	}
+
+	/**
+	 * configure static content
+	 */
+	private void configureStaticContent() {
 		
 		// Install JavaScript handler to match all requests for /script/* with first (1) priority
 		this.bind(Handler.class).to(ResourceHandler.class).as("script");
@@ -40,5 +59,32 @@ public class CoronaApplicationModule extends WebStartModule {
 		// Install other static resources to match other handler can't match with last priority
 		this.bind(Handler.class).to(ResourceHandler.class);
 		this.bindConfiguration(Handler.class).property("welcomeFileName").value("index.html");
+	}
+	
+	/**
+	 * content that is produced by producer
+	 */
+	private void configureProducerContent() {
+
+		// HTML: FREEMAKER
+		this.bind(IndexHtml.class).to(IndexHtml.class);
+
+		// RAW: TEXT
+		this.bind(IndexText.class).to(IndexText.class);
+		
+		// XML
+		this.bind(IndexXml.class).to(IndexXml.class);
+
+		// JSON
+		this.bind(IndexJson.class).to(IndexJson.class);
+
+		// PDF
+		this.bind(IndexPdf.class).to(IndexPdf.class);
+		
+		// EXCEL
+		this.bind(IndexExcel.class).to(IndexExcel.class);
+		
+		// PNG/JPEG
+		this.bind(IndexPng.class).to(IndexPng.class);
 	}
 }

@@ -7,6 +7,7 @@ import com.corona.context.annotation.Create;
 import com.corona.context.annotation.Install;
 import com.corona.context.annotation.Inject;
 import com.corona.context.annotation.Name;
+import com.corona.context.annotation.Version;
 
 /**
  * <p>The implementation of adder </p>
@@ -15,6 +16,7 @@ import com.corona.context.annotation.Name;
  * @version $Id$
  */
 @Install(dependencies = "java.lang.String")
+@Version(2)
 public class CostImpl implements Cost {
 
 	/**

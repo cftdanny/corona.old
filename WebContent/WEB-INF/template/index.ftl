@@ -2,9 +2,9 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>Corona Web Development Framework</title>
+		<title>Corona Web Framework (CWF)</title>
 	</head>
 	<body>
-		<h1 id="welcome">Welcome to Corona Web Development Framework (CWDF) </h1>
+		<h1 id="caption">Welcome to Corona Web Framework (CWF) </h1>
 	</body>
 </html>

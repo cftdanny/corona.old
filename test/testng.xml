@@ -6,6 +6,20 @@
 		<classes>
 			<class name="com.corona.test.context.constant.ConstantComponentTest" />
 			<class name="com.corona.test.context.component.ClassComponentTest" />
+			<class name="com.corona.test.context.provider.ProviderComponentTest" />
+		</classes>
+	</test>
+	
+	<!-- All Test Case for Web Producer -->
+	<test name="web">
+		<classes>
+			<class name="com.corona.test.servlet.IndexTextTest" />
+			<class name="com.corona.test.servlet.IndexXmlTest" />
+			<class name="com.corona.test.servlet.IndexJsonTest" />
+			<class name="com.corona.test.servlet.IndexPageTest" />
+			<class name="com.corona.test.servlet.IndexPdfTest" />
+			<class name="com.corona.test.servlet.IndexExcelTest" />
+			<class name="com.corona.test.servlet.IndexPngTest" />
 		</classes>
 	</test>
 </suite>
