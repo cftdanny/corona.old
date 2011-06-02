@@ -11,7 +11,7 @@ import com.corona.context.annotation.Optional;
 import com.corona.servlet.annotation.Excel;
 import com.corona.servlet.annotation.Param;
 import com.corona.servlet.annotation.Same;
-import com.corona.servlet.annotation.WebResource;
+import com.corona.servlet.annotation.Controller;
 
 /**
  * <p>This page is used to test EXCEL producer </p>
@@ -19,7 +19,7 @@ import com.corona.servlet.annotation.WebResource;
  * @author $Author$
  * @version $Id$
  */
-@WebResource
+@Controller
 public class IndexExcel {
 
 	/**

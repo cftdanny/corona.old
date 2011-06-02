@@ -9,7 +9,7 @@ import com.corona.context.annotation.Optional;
 import com.corona.servlet.annotation.FreeMaker;
 import com.corona.servlet.annotation.Param;
 import com.corona.servlet.annotation.Same;
-import com.corona.servlet.annotation.WebResource;
+import com.corona.servlet.annotation.Controller;
 
 /**
  * <p>The bean to test inject value from request parameter </p>
@@ -17,7 +17,7 @@ import com.corona.servlet.annotation.WebResource;
  * @author $Author$
  * @version $Id$
  */
-@WebResource
+@Controller
 public class ParamStringBean {
 
 	/**

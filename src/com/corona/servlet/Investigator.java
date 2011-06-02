@@ -26,7 +26,7 @@ import com.corona.logging.LogFactory;
 import com.corona.servlet.annotation.Match;
 import com.corona.servlet.annotation.Produce;
 import com.corona.servlet.annotation.Service;
-import com.corona.servlet.annotation.WebResource;
+import com.corona.servlet.annotation.Controller;
 
 /**
  * <p>This handler investigation tools will find all HTTP response producers that are defined in component
@@ -82,7 +82,7 @@ class Investigator implements Visitor {
 			if (descriptor.getScopeType().equals(Application.class)) {
 				this.handlerKeys.add(key);
 			}
-		} else if (componentClass.isAnnotationPresent(WebResource.class)) {
+		} else if (componentClass.isAnnotationPresent(Controller.class)) {
 			// producer method handler
 			add(key, componentClass);
 		}

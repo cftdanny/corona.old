@@ -10,7 +10,7 @@ import com.corona.servlet.annotation.ContentType;
 import com.corona.servlet.annotation.Expiration;
 import com.corona.servlet.annotation.Same;
 import com.corona.servlet.annotation.Service;
-import com.corona.servlet.annotation.WebResource;
+import com.corona.servlet.annotation.Controller;
 
 /**
  * <p>This page is used to test service producer </p>
@@ -18,7 +18,7 @@ import com.corona.servlet.annotation.WebResource;
  * @author $Author$
  * @version $Id$
  */
-@WebResource
+@Controller
 public class IndexText {
 
 	/**

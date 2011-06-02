@@ -6,7 +6,7 @@ package com.corona.test.servlet;
 import com.corona.servlet.annotation.FreeMaker;
 import com.corona.servlet.annotation.GET;
 import com.corona.servlet.annotation.Same;
-import com.corona.servlet.annotation.WebResource;
+import com.corona.servlet.annotation.Controller;
 
 /**
  * <p>This page is used to create HTML page by FreeMaker </p>
@@ -14,7 +14,7 @@ import com.corona.servlet.annotation.WebResource;
  * @author $Author$
  * @version $Id$
  */
-@WebResource
+@Controller
 public class IndexHtml {
 
 	/**

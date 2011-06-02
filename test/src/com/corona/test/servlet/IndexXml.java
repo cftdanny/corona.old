@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import com.corona.context.annotation.Optional;
 import com.corona.servlet.annotation.Param;
 import com.corona.servlet.annotation.Same;
-import com.corona.servlet.annotation.WebResource;
+import com.corona.servlet.annotation.Controller;
 import com.corona.servlet.annotation.Xml;
 
 /**
@@ -18,7 +18,7 @@ import com.corona.servlet.annotation.Xml;
  * @author $Author$
  * @version $Id$
  */
-@WebResource
+@Controller
 @XmlRootElement(name = "result")
 public class IndexXml {
 

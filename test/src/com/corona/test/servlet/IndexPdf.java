@@ -7,7 +7,7 @@ import com.corona.context.annotation.Optional;
 import com.corona.servlet.annotation.Param;
 import com.corona.servlet.annotation.Pdf;
 import com.corona.servlet.annotation.Same;
-import com.corona.servlet.annotation.WebResource;
+import com.corona.servlet.annotation.Controller;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
@@ -18,7 +18,7 @@ import com.itextpdf.text.Paragraph;
  * @author $Author$
  * @version $Id$
  */
-@WebResource
+@Controller
 public class IndexPdf {
 
 	/**
