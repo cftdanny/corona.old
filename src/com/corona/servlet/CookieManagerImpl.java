@@ -3,9 +3,14 @@
  */
 package com.corona.servlet;
 
+import java.security.spec.KeySpec;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.corona.context.ContextManager;
 import com.corona.context.annotation.Inject;
+import com.corona.logging.Log;
+import com.corona.logging.LogFactory;
 import com.corona.util.StringUtil;
 
 /**
@@ -24,6 +31,11 @@ import com.corona.util.StringUtil;
 public class CookieManagerImpl implements CookieManager {
 
 	/**
+	 * the logger
+	 */
+	private final Log logger = LogFactory.getLog(CookieManagerImpl.class);
+	
+	/**
 	 * the current context manager
 	 */
 	@Inject private ContextManager contextManager;
@@ -34,14 +46,26 @@ public class CookieManagerImpl implements CookieManager {
 	private String domain;
 	
 	/**
-	 * the algorithm to encrypt or decrypt cookie
+	 * the default max age of new created cookie
 	 */
-	private String algorithm = "DES";
+	private Integer maxAge = 14 * 24 * 60 * 60;
 	
 	/**
 	 * the default secret key for algorithm
 	 */
-	private String secretKey = "12345678";
+	private byte[] secretKey = new byte[] {
+			-80, 112, -27, -45, -118, 88, -95, 59
+	};
+	
+	/**
+	 * the cipher to encrypt cookie value
+	 */
+	private Cipher encoder;
+	
+	/**
+	 * the cipher to decode cookie value
+	 */
+	private Cipher decoder;
 	
 	/**
 	 * @return the domain of cookie
@@ -55,6 +79,20 @@ public class CookieManagerImpl implements CookieManager {
 	 */
 	public void setDomain(final String domain) {
 		this.domain = domain;
+	}
+	
+	/**
+	 * @return the default max age of new created cookie
+	 */
+	public Integer getMaxAge() {
+		return maxAge;
+	}
+
+	/**
+	 * @param maxAge the default max age of new created cookie to set
+	 */
+	public void setMaxAge(final Integer maxAge) {
+		this.maxAge = maxAge;
 	}
 
 	/**
@@ -76,6 +114,62 @@ public class CookieManagerImpl implements CookieManager {
 	 */
 	private HttpServletResponse getServletResponse() {
 		return this.contextManager.get(HttpServletResponse.class);
+	}
+	
+	/**
+	 * @param cookie the cookie to be encoded
+	 * @return the encoded cookie
+	 */
+	private Cookie encrypt(final Cookie cookie) {
+		
+		if ((cookie != null) && (cookie.getValue() != null)) {
+			
+			try {
+				// create decoding cipher if it isn't created yet
+				if (this.encoder == null) {
+					this.encoder = Cipher.getInstance("DES");
+					
+					KeySpec spec = new SecretKeySpec(this.secretKey, "DES");
+					SecretKey key = SecretKeyFactory.getInstance("DES").generateSecret(spec);
+					this.encoder.init(Cipher.ENCRYPT_MODE, key);
+				}
+				
+				byte[] bytes = this.encoder.doFinal(cookie.getValue().getBytes());
+				cookie.setValue(new String(bytes));
+			} catch (Exception e) {
+				this.logger.error("Fail to decode cookie, just skip this exception", e);
+			}
+		}
+		
+		return cookie;
+	}
+
+	/**
+	 * @param cookie the cookie to be decoded
+	 * @return the decoded cookie
+	 */
+	private Cookie decrypt(final Cookie cookie) {
+		
+		if ((cookie != null) && (cookie.getValue() != null)) {
+			
+			try {
+				// create decoding cipher if it isn't created yet
+				if (this.decoder == null) {
+					this.decoder = Cipher.getInstance("DES");
+					
+					KeySpec spec = new SecretKeySpec(this.secretKey, "DES");
+					SecretKey key = SecretKeyFactory.getInstance("DES").generateSecret(spec);
+					this.decoder.init(Cipher.DECRYPT_MODE, key);
+				}
+				
+				byte[] bytes = this.decoder.doFinal(cookie.getValue().getBytes());
+				cookie.setValue(new String(bytes));
+			} catch (Exception e) {
+				this.logger.error("Fail to decode cookie, just skip this exception", e);
+			}
+		}
+		
+		return cookie;
 	}
 	
 	/**
@@ -109,7 +203,7 @@ public class CookieManagerImpl implements CookieManager {
 			if (name.equals(cookie.getName()) && this.isSameDomain(cookie)) {
 				
 				if (requestPath.equals(cookie.getPath())) {
-					return cookie;
+					return this.decrypt(cookie);
 				} else if (contextPath.equals(cookie.getName())) {
 					applicationCookie = cookie;
 				} else if ("/".equals(cookie.getPath())) {
@@ -117,7 +211,7 @@ public class CookieManagerImpl implements CookieManager {
 				}
 			}
 		}
-		return (applicationCookie != null) ? applicationCookie : globalCookie;
+		return this.decrypt((applicationCookie != null) ? applicationCookie : globalCookie);
 	}
 
 	/**
@@ -190,7 +284,7 @@ public class CookieManagerImpl implements CookieManager {
 		List<Cookie> result = new ArrayList<Cookie>();
 		for (Cookie cookie : cookies) {
 			if (name.equals(cookie.getName()) && this.isSameDomain(cookie)) {
-				result.add(cookie);
+				result.add(this.decrypt(cookie));
 			}
 		}
 		return result;
@@ -211,7 +305,7 @@ public class CookieManagerImpl implements CookieManager {
 		List<Cookie> result = new ArrayList<Cookie>();
 		for (Cookie cookie : cookies) {
 			if (this.isSameDomain(cookie)) {
-				result.add(cookie);
+				result.add(this.decrypt(cookie));
 			}
 		}
 		return result;
@@ -236,7 +330,8 @@ public class CookieManagerImpl implements CookieManager {
 		Cookie cookie = new Cookie(name, value);
 		cookie.setDomain(this.domain);
 		cookie.setPath(this.getServletRequest().getPathInfo());
-		return cookie;
+		cookie.setMaxAge(this.maxAge);
+		return this.encrypt(cookie);
 	}
 
 	/**
@@ -249,7 +344,8 @@ public class CookieManagerImpl implements CookieManager {
 		Cookie cookie = new Cookie(name, value);
 		cookie.setDomain(this.domain);
 		cookie.setPath(this.getServletContext().getContextPath());
-		return cookie;
+		this.setMaxAge(this.maxAge);
+		return this.encrypt(cookie);
 	}
 
 	/**
@@ -262,7 +358,8 @@ public class CookieManagerImpl implements CookieManager {
 		Cookie cookie = new Cookie(name, value);
 		cookie.setDomain(this.domain);
 		cookie.setPath("/");
-		return cookie;
+		cookie.setMaxAge(this.maxAge);
+		return this.encrypt(cookie);
 	}
 
 	/**
