@@ -34,6 +34,16 @@ public class CookieManagerImpl implements CookieManager {
 	private String domain;
 	
 	/**
+	 * the algorithm to encrypt or decrypt cookie
+	 */
+	private String algorithm = "DES";
+	
+	/**
+	 * the default secret key for algorithm
+	 */
+	private String secretKey = "12345678";
+	
+	/**
 	 * @return the domain of cookie
 	 */
 	public String getDomain() {
