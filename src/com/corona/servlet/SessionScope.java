@@ -3,6 +3,7 @@
  */
 package com.corona.servlet;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import com.corona.context.ConfigurationException;
 import com.corona.context.ContextManager;
 import com.corona.context.Descriptor;
 import com.corona.context.Key;
+import com.corona.context.ValueException;
 import com.corona.context.spi.AbstractScope;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
@@ -62,6 +64,16 @@ class SessionScope extends AbstractScope {
 		
 		this.logger.debug("Try to create component with key [{0}], descriptor [{1}]", key, descriptor);
 		component = descriptor.getValue(contextManager);
+		if (!(component instanceof Serializable)) {
+			this.logger.error(
+					"The component class [{0}] of component [{1}] must implement Serializable interface",
+					descriptor.getImplementationClass(), key
+			);
+			throw new ValueException(
+					"The component class [{0}] of component [{1}] must implement Serializable interface",
+					descriptor.getImplementationClass(), key
+			);
+		}
 		variables.put(key, component);
 		this.logger.info("Component with key [{0}] has been create and cached to session repository", key);
 		

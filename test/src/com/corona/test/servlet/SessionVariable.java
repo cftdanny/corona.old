@@ -3,6 +3,8 @@
  */
 package com.corona.test.servlet;
 
+import java.io.Serializable;
+
 import com.corona.servlet.annotation.Session;
 
 /**
@@ -12,8 +14,13 @@ import com.corona.servlet.annotation.Session;
  * @version $Id$
  */
 @Session
-public class SessionVariable {
+public class SessionVariable implements Serializable {
 
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 1632842602508062001L;
+	
 	/**
 	 * the value
 	 */
