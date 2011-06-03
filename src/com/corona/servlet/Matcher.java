@@ -21,8 +21,9 @@ public interface Matcher {
 	/**
 	 * <p>Match HTTP request URI and return matched result. </p>
 	 * 
+	 * @param path the request path to be matched
 	 * @param request the HTTP request
 	 * @return the matched result
 	 */
-	MatchResult match(HttpServletRequest request);
+	MatchResult match(String path, HttpServletRequest request);
 }

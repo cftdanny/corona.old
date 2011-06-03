@@ -22,9 +22,9 @@ public interface Scope {
 	 * </p>
 	 * 
 	 * @param <T> the injection type
-	 * @param context the current context
+	 * @param contextManager the current context
 	 * @param key the component key
 	 * @return the component or <b>null</b> if it doesn't belong to scope
 	 */
-	<T> T get(ContextManager context, Key<T> key);
+	<T> T get(ContextManager contextManager, Key<T> key);
 }

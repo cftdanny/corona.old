@@ -77,7 +77,7 @@ class Handlers {
 		// try to match request path with handler by handler
 		for (Handler handler : this.handlers) {
 			
-			MatchResult result = handler.getMatcher().match(request);
+			MatchResult result = handler.getMatcher().match(path, request);
 			if (result != null) {
 				
 				this.logger.debug("Create HTTP response for path [{0}] by handler [{1}]", path, handler);

@@ -19,6 +19,7 @@ import com.corona.servlet.annotation.Regex;
 import com.corona.servlet.annotation.Resource;
 import com.corona.servlet.annotation.Same;
 import com.corona.servlet.annotation.Service;
+import com.corona.servlet.annotation.Session;
 import com.corona.servlet.annotation.Tail;
 import com.corona.servlet.annotation.Xml;
 import com.corona.servlet.chart.ChartProducerFactory;
@@ -54,6 +55,9 @@ public class ApplicationModule extends WebKernelModule {
 	 */
 	@Override
 	protected void configure() {
+		
+		// configure @Session scope, allow developer to register session component
+		this.bindScope(Session.class).to(new SessionScope());
 		
 		// configure @Param injection for field and parameter
 		this.bindExtension(InjectFieldFactory.class).as(Param.class).to(

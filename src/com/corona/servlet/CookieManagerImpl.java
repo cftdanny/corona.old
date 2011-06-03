@@ -3,14 +3,15 @@
  */
 package com.corona.servlet;
 
-import java.security.spec.KeySpec;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.SecretKeySpec;
+import javax.crypto.spec.DESKeySpec;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ import com.corona.context.ContextManager;
 import com.corona.context.annotation.Inject;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
+import com.corona.util.Base64;
 import com.corona.util.StringUtil;
 
 /**
@@ -30,6 +32,11 @@ import com.corona.util.StringUtil;
  */
 public class CookieManagerImpl implements CookieManager {
 
+	/**
+	 * the encrypt and decrypt algorithm
+	 */
+	private static final String ALGORITHM = "DES";
+	
 	/**
 	 * the logger
 	 */
@@ -43,18 +50,18 @@ public class CookieManagerImpl implements CookieManager {
 	/**
 	 * the domain of cookie
 	 */
-	private String domain;
+	private String domain = "";
 	
 	/**
 	 * the default max age of new created cookie
 	 */
-	private Integer maxAge = 14 * 24 * 60 * 60;
+	private Integer maxAge = null;
 	
 	/**
 	 * the default secret key for algorithm
 	 */
 	private byte[] secretKey = new byte[] {
-			-80, 112, -27, -45, -118, 88, -95, 59
+			14, -2, -53, 88, -118, 56, -116, -23
 	};
 	
 	/**
@@ -67,6 +74,24 @@ public class CookieManagerImpl implements CookieManager {
 	 */
 	private Cipher decoder;
 	
+	/**
+	 * <p>This main is used to create DES key, only for testing purpose </p>
+	 * 
+	 * @param args the argument of command line
+	 * @exception Exception if fail
+	 */
+	public static void main(final String[] args) throws Exception {
+	
+		KeyGenerator generator = KeyGenerator.getInstance(ALGORITHM);
+		generator.init(new SecureRandom());
+		SecretKey key = generator.generateKey();
+		for (byte b : key.getEncoded()) {
+			System.out.print(b);
+			System.out.print(", ");
+		}
+		System.out.println();
+	}
+
 	/**
 	 * @return the domain of cookie
 	 */
@@ -93,6 +118,20 @@ public class CookieManagerImpl implements CookieManager {
 	 */
 	public void setMaxAge(final Integer maxAge) {
 		this.maxAge = maxAge;
+	}
+	
+	/**
+	 * @return the secret key
+	 */
+	public byte[] getSecretKey() {
+		return secretKey;
+	}
+	
+	/**
+	 * @param secretKey the secret key to set
+	 */
+	public void setSecretKey(final byte[] secretKey) {
+		this.secretKey = secretKey;
 	}
 
 	/**
@@ -127,15 +166,16 @@ public class CookieManagerImpl implements CookieManager {
 			try {
 				// create decoding cipher if it isn't created yet
 				if (this.encoder == null) {
-					this.encoder = Cipher.getInstance("DES");
+
+					this.encoder = Cipher.getInstance(ALGORITHM);
 					
-					KeySpec spec = new SecretKeySpec(this.secretKey, "DES");
-					SecretKey key = SecretKeyFactory.getInstance("DES").generateSecret(spec);
-					this.encoder.init(Cipher.ENCRYPT_MODE, key);
+					DESKeySpec desKeySpec = new DESKeySpec(this.secretKey);
+					SecretKeyFactory keyfactory = SecretKeyFactory.getInstance(ALGORITHM);
+					this.encoder.init(Cipher.ENCRYPT_MODE, keyfactory.generateSecret(desKeySpec));
 				}
 				
 				byte[] bytes = this.encoder.doFinal(cookie.getValue().getBytes());
-				cookie.setValue(new String(bytes));
+				cookie.setValue(Base64.encodeBytes(bytes));
 			} catch (Exception e) {
 				this.logger.error("Fail to decode cookie, just skip this exception", e);
 			}
@@ -155,14 +195,15 @@ public class CookieManagerImpl implements CookieManager {
 			try {
 				// create decoding cipher if it isn't created yet
 				if (this.decoder == null) {
-					this.decoder = Cipher.getInstance("DES");
 					
-					KeySpec spec = new SecretKeySpec(this.secretKey, "DES");
-					SecretKey key = SecretKeyFactory.getInstance("DES").generateSecret(spec);
-					this.decoder.init(Cipher.DECRYPT_MODE, key);
+					this.decoder = Cipher.getInstance(ALGORITHM);
+					
+					DESKeySpec desKeySpec = new DESKeySpec(this.secretKey);
+					SecretKeyFactory keyfactory = SecretKeyFactory.getInstance(ALGORITHM);
+					this.decoder.init(Cipher.DECRYPT_MODE, keyfactory.generateSecret(desKeySpec));
 				}
 				
-				byte[] bytes = this.decoder.doFinal(cookie.getValue().getBytes());
+				byte[] bytes = this.decoder.doFinal(Base64.decode(cookie.getValue()));
 				cookie.setValue(new String(bytes));
 			} catch (Exception e) {
 				this.logger.error("Fail to decode cookie, just skip this exception", e);
@@ -191,103 +232,15 @@ public class CookieManagerImpl implements CookieManager {
 	public Cookie getCookie(final String name) {
 		
 		Cookie[] cookies = this.getServletRequest().getCookies();
-		if (cookies == null) {
-			return null;
-		}
-
-		String requestPath = this.getServletRequest().getPathInfo();
-		String contextPath = this.getServletContext().getContextPath();
-		
-		Cookie globalCookie = null, applicationCookie = null;
-		for (Cookie cookie : cookies) {
-			if (name.equals(cookie.getName()) && this.isSameDomain(cookie)) {
-				
-				if (requestPath.equals(cookie.getPath())) {
+		if (cookies != null) {
+			
+			for (Cookie cookie : cookies) {
+				if (name.equals(cookie.getName())) {
 					return this.decrypt(cookie);
-				} else if (contextPath.equals(cookie.getName())) {
-					applicationCookie = cookie;
-				} else if ("/".equals(cookie.getPath())) {
-					globalCookie = cookie;
 				}
 			}
 		}
-		return this.decrypt((applicationCookie != null) ? applicationCookie : globalCookie);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * @see com.corona.servlet.CookieManager#getPageCookie(java.lang.String)
-	 */
-	@Override
-	public Cookie getPageCookie(final String name) {
-
-		String path = this.getServletRequest().getPathInfo();
-		for (Cookie cookie : this.getCookies(name)) {
-			if (path.equals(cookie.getPath())) {
-				return cookie;
-			}
-		}
 		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * @see com.corona.servlet.CookieManager#getApplicationCookie(java.lang.String)
-	 */
-	@Override
-	public Cookie getApplicationCookie(final String name) {
-
-		String path = this.getServletContext().getContextPath();
-		for (Cookie cookie : this.getCookies(name)) {
-			if (path.equals(cookie.getPath())) {
-				return cookie;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * @see com.corona.servlet.CookieManager#getGlobalCookie(java.lang.String)
-	 */
-	@Override
-	public Cookie getGlobalCookie(final String name) {
-		
-		for (Cookie cookie : this.getCookies(name)) {
-			if ("/".equals(cookie.getPath())) {
-				return cookie;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * @param cookie the cookie
-	 * @return whether cookie is matched with domain
-	 */
-	private boolean isSameDomain(final Cookie cookie) {
-		return (StringUtil.isBlank(this.domain) || this.domain.equals(cookie.getPath()));
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * @see com.corona.servlet.CookieManager#getCookies(java.lang.String)
-	 */
-	@Override
-	public List<Cookie> getCookies(final String name) {
-		
-		Cookie[] cookies = this.getServletRequest().getCookies();
-		if (cookies == null) {
-			return new ArrayList<Cookie>();
-		}
-			
-		List<Cookie> result = new ArrayList<Cookie>();
-		for (Cookie cookie : cookies) {
-			if (name.equals(cookie.getName()) && this.isSameDomain(cookie)) {
-				result.add(this.decrypt(cookie));
-			}
-		}
-		return result;
 	}
 
 	/**
@@ -304,9 +257,7 @@ public class CookieManagerImpl implements CookieManager {
 			
 		List<Cookie> result = new ArrayList<Cookie>();
 		for (Cookie cookie : cookies) {
-			if (this.isSameDomain(cookie)) {
-				result.add(this.decrypt(cookie));
-			}
+			result.add(this.decrypt(cookie));
 		}
 		return result;
 	}
@@ -328,9 +279,13 @@ public class CookieManagerImpl implements CookieManager {
 	public Cookie createPageCookie(final String name, final String value) {
 
 		Cookie cookie = new Cookie(name, value);
-		cookie.setDomain(this.domain);
+		if (!StringUtil.isBlank(this.domain)) {
+			cookie.setDomain(this.domain);
+		}
 		cookie.setPath(this.getServletRequest().getPathInfo());
-		cookie.setMaxAge(this.maxAge);
+		if (this.maxAge != null) {
+			cookie.setMaxAge(this.maxAge);
+		}
 		return this.encrypt(cookie);
 	}
 
@@ -342,9 +297,13 @@ public class CookieManagerImpl implements CookieManager {
 	public Cookie createApplicationCookie(final String name, final String value) {
 
 		Cookie cookie = new Cookie(name, value);
-		cookie.setDomain(this.domain);
+		if (!StringUtil.isBlank(this.domain)) {
+			cookie.setDomain(this.domain);
+		}
 		cookie.setPath(this.getServletContext().getContextPath());
-		this.setMaxAge(this.maxAge);
+		if (this.maxAge != null) {
+			cookie.setMaxAge(this.maxAge);
+		}
 		return this.encrypt(cookie);
 	}
 
@@ -356,9 +315,13 @@ public class CookieManagerImpl implements CookieManager {
 	public Cookie createGlobalCookie(final String name, final String value) {
 		
 		Cookie cookie = new Cookie(name, value);
-		cookie.setDomain(this.domain);
+		if (!StringUtil.isBlank(this.domain)) {
+			cookie.setDomain(this.domain);
+		}
 		cookie.setPath("/");
-		cookie.setMaxAge(this.maxAge);
+		if (this.maxAge != null) {
+			cookie.setMaxAge(this.maxAge);
+		}
 		return this.encrypt(cookie);
 	}
 

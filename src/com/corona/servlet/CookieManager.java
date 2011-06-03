@@ -28,30 +28,6 @@ public interface CookieManager {
 	Cookie getCookie(String name);
 
 	/**
-	 * @param name the name of cookie
-	 * @return the cookie that path is request path or <code>null</code> if does not exists
-	 */
-	Cookie getPageCookie(String name);
-
-	/**
-	 * @param name the name of cookie
-	 * @return the cookie that path is context path or <code>null</code> if does not exists
-	 */
-	Cookie getApplicationCookie(String name);
-
-	/**
-	 * @param name the name of cookie
-	 * @return the cookie that path is "/" or <code>null</code> if does not exists
-	 */
-	Cookie getGlobalCookie(String name);
-
-	/**
-	 * @param name the name of cookie
-	 * @return all cookies with the specified name
-	 */
-	List<Cookie> getCookies(String name);
-	
-	/**
 	 * @return all cookies
 	 */
 	List<Cookie> getCookies();

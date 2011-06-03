@@ -5,14 +5,14 @@ package com.corona.servlet.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.corona.context.annotation.ScopeType;
+
 /**
- * <p>This annotation is used to mark component can generate web page by an annotated method. The
- * annotation helps to check component is web component or not easily. </p>
+ * <p>This annotation is used to define session scope. It will store component into HTTP session </p>
  *
  * @author $Author$
  * @version $Id$
@@ -20,16 +20,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Inherited
-public @interface Controller {
+@ScopeType
+public @interface Session {
 
-	/**
-	 * the base path of all handlers in this component
-	 */
-	String value() default "";
-	
-	/**
-	 * the matching priority for this component 
-	 */
-	int priority() default Integer.MAX_VALUE;
 }

@@ -40,6 +40,13 @@ public class MatchResult implements Iterable<String> {
 	}
 
 	/**
+	 * @param path the request URI matched
+	 */
+	public void setPath(final String path) {
+		this.path = path;
+	}
+	
+	/**
 	 * <p>Whether matched result contains value with a name. </p>
 	 * 
 	 * @param name the name

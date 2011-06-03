@@ -51,12 +51,11 @@ class ResourceMatcher implements Matcher {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.Matcher#match(javax.servlet.http.HttpServletRequest)
+	 * @see com.corona.servlet.Matcher#match(java.lang.String, javax.servlet.http.HttpServletRequest)
 	 */
 	@Override
-	public MatchResult match(final HttpServletRequest request) {
+	public MatchResult match(final String path, final HttpServletRequest request) {
 		
-		String path = request.getPathInfo();
 		if ((this.handler.getHead() == null) || (path.startsWith(this.handler.getHead()))) {
 			if (this.exists(request.getSession().getServletContext(), path)) {
 				return new MatchResult(path);

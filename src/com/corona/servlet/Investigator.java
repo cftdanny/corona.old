@@ -77,14 +77,25 @@ class Investigator implements Visitor {
 			return;
 		}
 		
+		// component key handler, should application scope
 		if (Handler.class.isAssignableFrom(key.getProtocolType())) {
-			// component key handler, should application scope
 			if (descriptor.getScopeType().equals(Application.class)) {
 				this.handlerKeys.add(key);
 			}
-		} else if (componentClass.isAnnotationPresent(Controller.class)) {
-			// producer method handler
-			add(key, componentClass);
+		} 
+		
+		// check whether component is component handler and method producer
+		Controller controller = componentClass.getAnnotation(Controller.class); 
+		if (controller != null) {
+			
+			String base = controller.value().trim();
+			if ("".equals(base) || "/".equals(base)) {
+				// producer method handler
+				this.add(key, componentClass);
+			} else {
+				// component handler
+				this.add(key, componentClass, controller);
+			}
 		}
 	}
 
@@ -141,7 +152,36 @@ class Investigator implements Visitor {
 			}
 		}
 	}
-	
+
+	/**
+	 * @param key the component key
+	 * @param controller the controller
+	 * @param componentClass the component class
+	 */
+	private void add(final Key<?> key, final Class<?> componentClass, final Controller controller) {
+		
+		ComponentHandler parent = new ComponentHandler(controller);
+		this.handlers.add(parent);
+		
+		for (Method method : componentClass.getMethods()) {
+			
+			Annotation annotation = ContextUtil.findChainedAnnotation(method, Match.class);
+			if (annotation != null) {
+				
+				this.logger.info("Create HTTP request handler with method [{0}]", method);
+				try {
+					parent.add(new ProducerHandler(
+							this.getMatcher(method, annotation), this.getProducer(key, method)
+					));
+				} catch (Throwable e) {
+					this.logger.error("Fail to register HTTP request handler with method [{0}]", e, method);
+				}
+			}
+		}
+		
+		parent.sort();
+	}
+
 	/**
 	 * @param method the method that is annotated with matcher annotation
 	 * @param annotation the annotated matcher annotation

@@ -16,10 +16,13 @@
 			<class name="com.corona.test.servlet.IndexTextTest" />
 			<class name="com.corona.test.servlet.IndexXmlTest" />
 			<class name="com.corona.test.servlet.IndexJsonTest" />
-			<class name="com.corona.test.servlet.IndexPageTest" />
+			<class name="com.corona.test.servlet.IndexHtmlTest" />
 			<class name="com.corona.test.servlet.IndexPdfTest" />
 			<class name="com.corona.test.servlet.IndexExcelTest" />
 			<class name="com.corona.test.servlet.IndexPngTest" />
+			<class name="com.corona.test.servlet.CookieHtmlTest" />
+			<class name="com.corona.test.servlet.ComponentHandlerHtmlTest" />
+			<class name="com.corona.test.servlet.SessionVariableHtmlTest" />
 		</classes>
 	</test>
 </suite>

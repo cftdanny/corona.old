@@ -3,9 +3,13 @@
  */
 package com.corona.test;
 
+import com.corona.servlet.CookieManager;
+import com.corona.servlet.CookieManagerImpl;
 import com.corona.servlet.Handler;
 import com.corona.servlet.ResourceHandler;
 import com.corona.servlet.WebStartModule;
+import com.corona.test.servlet.ComponentHandlerHtml;
+import com.corona.test.servlet.CookieHtml;
 import com.corona.test.servlet.IndexExcel;
 import com.corona.test.servlet.IndexHtml;
 import com.corona.test.servlet.IndexJson;
@@ -13,6 +17,8 @@ import com.corona.test.servlet.IndexPdf;
 import com.corona.test.servlet.IndexPng;
 import com.corona.test.servlet.IndexText;
 import com.corona.test.servlet.IndexXml;
+import com.corona.test.servlet.SessionVariable;
+import com.corona.test.servlet.SessionVariableHtml;
 
 /**
  * <p>This module is used to define all components for application, both for testing and production. </p>
@@ -34,6 +40,12 @@ public class CoronaApplicationModule extends WebStartModule {
 		
 		// PRODUCER
 		this.configureProducerContent();
+		
+		// COMPONENT
+		this.configureSupportComponent();
+		
+		// PAGE
+		this.configurePageComponent();
 	}
 
 	/**
@@ -86,5 +98,26 @@ public class CoronaApplicationModule extends WebStartModule {
 		
 		// PNG/JPEG
 		this.bind(IndexPng.class).to(IndexPng.class);
+	}
+	
+	/**
+	 * configure support component
+	 */
+	private void configureSupportComponent() {
+		this.bind(CookieManager.class).to(CookieManagerImpl.class);
+		this.bind(ComponentHandlerHtml.class).to(ComponentHandlerHtml.class);
+	}
+	
+	/**
+	 * configure page component
+	 */
+	private void configurePageComponent() {
+		
+		// test cookie manager
+		this.bind(CookieHtml.class).to(CookieHtml.class);
+		
+		// test session scope
+		this.bind(SessionVariable.class).to(SessionVariable.class);
+		this.bind(SessionVariableHtml.class).to(SessionVariableHtml.class);
 	}
 }

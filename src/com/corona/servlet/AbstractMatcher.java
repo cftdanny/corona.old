@@ -52,13 +52,13 @@ public abstract class AbstractMatcher implements Matcher {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.Matcher#match(javax.servlet.http.HttpServletRequest)
+	 * @see com.corona.servlet.Matcher#match(java.lang.String, javax.servlet.http.HttpServletRequest)
 	 */
 	@Override
-	public MatchResult match(final HttpServletRequest request) {
+	public MatchResult match(final String path, final HttpServletRequest request) {
 		
 		if ((this.methods == null) || this.methods.contains(request.getMethod())) {
-			return this.match(request.getPathInfo());
+			return this.match(path);
 		} else {
 			return null;
 		}
