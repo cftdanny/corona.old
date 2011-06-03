@@ -30,7 +30,7 @@ public class SessionVariableHtmlTest extends AbstractWebsiteTest {
 		Assert.assertTrue(element.getText().startsWith("SESSION"));
 		
 		// load value from session
-		element.cl
-		Assert.assertTrue(element.getText().startsWith("SESSION"));
+		element.click();
+		Assert.assertTrue(driver.getPageSource().startsWith("[SESSION]"));
 	}
 }

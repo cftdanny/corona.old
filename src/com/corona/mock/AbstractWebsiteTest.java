@@ -293,7 +293,10 @@ public class AbstractWebsiteTest {
 		} else if ("Chrome".equals(name)) {
 			return new ChromeDriver();
 		} else {
-			return new HtmlUnitDriver();
+			
+			HtmlUnitDriver driver = new HtmlUnitDriver();
+			driver.setJavascriptEnabled(true);
+			return driver;
 		}
 	}
 	
