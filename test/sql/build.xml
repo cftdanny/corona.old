@@ -1,0 +1,33 @@
+<project name="name of project" default="build" basedir=".">
+	
+	<!-- Load configuration that are used to create HSQLDB database -->
+	<property file="build.properties"/>
+	
+	<!-- Initial executing HSQLDB script environment -->
+	<target name="init">
+		<echo>Delete old HSQLDB database in directory ${basedir}/data ...</echo>
+		<delete dir="${basedir}/data"> </delete>
+	</target>
+		
+	<!-- Execute HSQLDB script to create database -->
+	<target name="hsqldb" depends="init">
+		<echo>Execute HSQLDB SQL script ${script} to create database ...</echo>
+		<sql print="true" autocommit="true" src="${script}"
+			driver="org.hsqldb.jdbcDriver" url="jdbc:hsqldb:file:./data/${database}" userid="sa" password=""
+		>
+			<classpath >
+				<pathelement location="${driver}"/>
+			</classpath>
+		</sql>
+		<echo>SQL script ${script} has been executed successfully!</echo>
+	</target>
+	
+	<!-- Pack created HSQLDB database file to jar -->
+	<target name="build" depends="hsqldb">
+		<echo>Pack generated HSQLDB database to ${basedir}/${database}-${version}.jar ... </echo>
+		<jar destfile="${basedir}/${database}-${version}.jar" basedir="${basedir}/data" />
+		
+		<echo>Delete generated HSQLDB database in directory ${basedir}/data ...</echo>
+		<delete dir="${basedir}/data"> </delete>
+	</target>
+</project>
