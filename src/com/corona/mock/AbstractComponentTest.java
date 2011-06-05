@@ -58,15 +58,17 @@ public class AbstractComponentTest {
 	
 	/**
 	 * before test, will try to create context manager
+	 * @throws Exception Fail to load test configuration file
 	 */
-	@BeforeMethod public void before() {
+	@BeforeMethod public void before() throws Exception {
 		this.contextManager = this.contextManagerFactory.create(this.getVariableMap());
 	}
 	
 	/**
 	 * release context manager resources and destroy it
+	 * @throws Exception Fail to load test configuration file
 	 */
-	@AfterMethod public void after() {
+	@AfterMethod public void after() throws Exception {
 		this.contextManager.close();
 		this.contextManager = null;
 	}

@@ -3,11 +3,14 @@
  */
 package com.corona.mock;
 
+import java.sql.Connection;
+
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 import com.corona.context.Key;
 import com.corona.data.ConnectionManager;
+import com.corona.data.ConnectionManagerFactory;
 import com.corona.data.Transaction;
 import com.corona.data.TransactionManager;
 
@@ -19,6 +22,11 @@ import com.corona.data.TransactionManager;
  */
 public class AbstractBusinessTest extends AbstractComponentTest {
 
+	/**
+	 * the connection manager factory
+	 */
+	private ConnectionManagerFactory connectionManagerFactory;
+	
 	/**
 	 * the current connection manager
 	 */
@@ -34,17 +42,38 @@ public class AbstractBusinessTest extends AbstractComponentTest {
 	 * @see com.corona.mock.AbstractComponentTest#before()
 	 */
 	@Override
-	@BeforeMethod public void before() {
+	@BeforeMethod public void before() throws Exception {
 		super.before();
+		
+		// restart HSQLDB if required
+		this.connectionManagerFactory = this.get(ConnectionManagerFactory.class);
+		this.restart();
 		this.connectionManager = this.get(ConnectionManager.class);
 	}
 
+	/**
+	 * restart database if it is HSQLDB
+	 * @exception Exception if fail to restart HSQLDB
+	 */
+	private void restart() throws Exception {
+		
+		if ("HSQL".equals(this.connectionManagerFactory.getDataSourceProvider().getFamily())) {
+			
+			// shutdown HSQLDB, in order to create a blank database
+			Connection connection = ((Connection) this.connectionManagerFactory.open().getSource());
+			connection.createStatement().execute("SHUTDOWN");
+			
+			// re-open database, make sure HSQLDB can be connected
+			this.connectionManagerFactory.open().close();
+		}
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.mock.AbstractComponentTest#after()
 	 */
 	@Override
-	@AfterMethod public void after() {
+	@AfterMethod public void after() throws Exception {
 		
 		// close connection manager
 		this.connectionManager.close();
@@ -100,6 +129,13 @@ public class AbstractBusinessTest extends AbstractComponentTest {
 	}
 
 	/**
+	 * @return the current connection manager factory
+	 */
+	protected ConnectionManagerFactory getConnectionManagerFactory() {
+		return this.connectionManagerFactory;
+	}
+	
+	/**
 	 * @return the current connection manager
 	 */
 	protected ConnectionManager getConnectionManager() {
@@ -110,5 +146,80 @@ public class AbstractBusinessTest extends AbstractComponentTest {
 	 */
 	protected Transaction getTransaction() {
 		return transaction;
+	}
+	
+	/**
+	 * @return the default database schema
+	 */
+	protected String getDatabaseSchema() {
+		return this.getConfig().getDatabaseSchema();
+	}
+	
+	/**
+	 * @param resource the resource
+	 * @return the table set
+	 * @throws Exception if fail
+	 */
+	protected TableSet loadTableSet(final String resource) throws Exception {
+		return new TableSet(this.getClass(), resource);
+	}
+
+	/**
+	 * @param resource the resource
+	 * @param tableName the table name
+	 * @return the table
+	 * @throws Exception if fail
+	 */
+	protected Table loadTable(final String resource, final String tableName) throws Exception {
+		return new TableSet(this.getClass(), resource).getTable(tableName);
+	}
+
+	/**
+	 * @param tableNames the table name
+	 * @return the table set
+	 * @throws Exception if fail
+	 */
+	protected TableSet queryTableSet(final String... tableNames) throws Exception {
+		return new TableSet(this.connectionManager, this.getDatabaseSchema(), tableNames);
+	}
+
+	/**
+	 * @param tableName the table name
+	 * @return the table set
+	 * @throws Exception if fail
+	 */
+	protected Table queryTable(final String tableName) throws Exception {
+		return new Table(this.connectionManager, this.getDatabaseSchema(), tableName);
+	}
+
+	/**
+	 * <p>Load resource and insert to database, the resource is same as test case class name. </p>
+	 * 
+	 * @return the table set that is loaded and inserted to database 
+	 * @throws Exception if fail to insert resource file to database
+	 */
+	protected TableSet loadDatabase() throws Exception {
+		
+		String name = this.getClass().getSimpleName();
+		if (this.getClass().getResourceAsStream(name + ".xlsx") != null) {
+			return this.load(name + ".xlsx");
+		} else if (this.getClass().getResourceAsStream(name + ".xls") != null) {
+			return this.load(name + ".xls");
+		} else {
+			return this.load(name + ".xml");
+		}
+	}
+	
+	/**
+	 * <p>Load database content from a resource file. </p>
+	 * 
+	 * @param resource the resource that will load to database
+	 * @return the table set that is loaded and inserted to database 
+	 * @throws Exception if fail to insert resource file to database
+	 */
+	protected TableSet load(final String resource) throws Exception {
+		TableSet tableset = this.loadTableSet(resource);
+		tableset.load(this.connectionManagerFactory, this.getDatabaseSchema());
+		return tableset;
 	}
 }

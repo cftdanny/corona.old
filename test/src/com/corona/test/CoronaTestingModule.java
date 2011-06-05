@@ -30,7 +30,7 @@ public class CoronaTestingModule extends AbstractModule {
 		this.bindModule(new DataSourceSupportModule());
 		
 		Properties settings = new Properties();
-		settings.setProperty(DataSourceProvider.URL, "jdbc:hsqldb:res:/test");
+		settings.setProperty(DataSourceProvider.URL, "jdbc:hsqldb:res:/testdb");
 		settings.setProperty(DataSourceProvider.USER, "sa");
 		settings.setProperty(DataSourceProvider.PASSWORD, "");
 		

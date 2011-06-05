@@ -46,5 +46,8 @@
 	<classpathentry kind="lib" path="test/lib/commons-io-2.0.1.jar"/>
 	<classpathentry kind="lib" path="test/lib/guava-r09.jar"/>
 	<classpathentry kind="lib" path="test/lib/selenium-2.0rc1.jar"/>
+	<classpathentry kind="lib" path="test/lib/slf4j-api-1.6.1.jar"/>
+	<classpathentry kind="lib" path="test/lib/poi-3.2-FINAL-20081019.jar"/>
+	<classpathentry kind="lib" path="test/lib/slf4j-jdk14-1.6.1.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

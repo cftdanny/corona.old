@@ -28,6 +28,11 @@ class Config {
 	 * the key will define all module classes that will be loaded for testing
 	 */
 	private static final String TEST_MODULES_CLASSES = "test.module.classes";
+
+	/**
+	 * the database schema
+	 */
+	private static final String DATABASE_SCHEMA = "database.schema";
 	
 	/**
 	 * the key is used to get web app descriptor for testing web application 
@@ -99,8 +104,8 @@ class Config {
 	 */
 	Module[] getModules() throws Exception {
 		
-		String classNames = this.properties.getProperty(Config.TEST_MODULES_CLASSES);
-		if (StringUtil.isBlank(classNames)) {
+		String classNames = this.getModuleClassNames();
+		if (!StringUtil.isBlank(classNames)) {
 			
 			List<Module> modules = new ArrayList<Module>();
 			for (String className : classNames.split(",")) {
@@ -110,6 +115,13 @@ class Config {
 		} else {
 			return new Module[0];
 		}
+	}
+	
+	/**
+	 * @return the database schema
+	 */
+	String getDatabaseSchema() {
+		return this.properties.getProperty(Config.DATABASE_SCHEMA);
 	}
 	
 	/**

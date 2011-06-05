@@ -3,9 +3,12 @@
  */
 package com.corona.test.data;
 
+import java.sql.Date;
+
 import com.corona.data.annotation.Entity;
 import com.corona.data.annotation.Id;
 import com.corona.data.annotation.PrimaryKey;
+import com.corona.data.annotation.UniqueKey;
 
 /**
  * <p>TABLE TORDMST </p>
@@ -14,10 +17,18 @@ import com.corona.data.annotation.PrimaryKey;
  * @version $Id$
  */
 @Entity (
-		primaryKey = @PrimaryKey("ORDRID")
+		primaryKey = @PrimaryKey("ORDRID"),
+		uniqueKeys = {
+				@UniqueKey(id = TORDMST.ORDRNO, columns = "ORDRNO")
+		}
 )
 public class TORDMST {
 
+	/**
+	 * the primary key 1
+	 */
+	public static final int ORDRNO = 1;
+	
 	/**
 	 * id
 	 */
@@ -27,6 +38,16 @@ public class TORDMST {
 	 * no
 	 */
 	private String ordrno;
+	
+	/**
+	 * quantity
+	 */
+	private Integer ordqty;
+	
+	/**
+	 * date
+	 */
+	private Date orddat;
 	
 	/**
 	 * @return the oRDRID
@@ -54,5 +75,33 @@ public class TORDMST {
 	 */
 	public void setORDRNO(final String oRDRNO) {
 		ordrno = oRDRNO;
+	}
+	
+	/**
+	 * @return the oRDQTY
+	 */
+	public Integer getORDQTY() {
+		return ordqty;
+	}
+	
+	/**
+	 * @param oRDQTY the oRDQTY to set
+	 */
+	public void setORDQTY(final Integer oRDQTY) {
+		ordqty = oRDQTY;
+	}
+	
+	/**
+	 * @return the oRDDAT
+	 */
+	public Date getORDDAT() {
+		return orddat;
+	}
+
+	/**
+	 * @param oRDDAT the oRDDAT to set
+	 */
+	public void setORDDAT(final Date oRDDAT) {
+		orddat = oRDDAT;
 	}
 }

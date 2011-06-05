@@ -9,6 +9,17 @@
 			<class name="com.corona.test.context.provider.ProviderComponentTest" />
 		</classes>
 	</test>
+
+	<!-- All Test Cases for database -->
+	<test name="database" >
+		<classes>
+			<class name="com.corona.test.data.DatabaseTransactionTest" />
+			<class name="com.corona.test.data.HomePrimaryKeyTest" />
+			<class name="com.corona.test.data.HomeSelectTest" />
+			<class name="com.corona.test.data.ResultHandlerTest" />
+			<class name="com.corona.test.data.DatabaseAssertionTest" />
+		</classes>
+	</test>
 	
 	<!-- All Test Case for Web Producer -->
 	<test name="web">
