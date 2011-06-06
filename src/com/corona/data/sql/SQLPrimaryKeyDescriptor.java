@@ -59,7 +59,7 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 	/**
 	 * the INSERT SQL statement
 	 */
-	private String insertSql = "";
+	private String insertSql = null;
 	
 	/**
 	 * @param parent the parent entity MetaData
@@ -105,31 +105,10 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 			}
 		}
 
-		// create INSERT SQL statement by all column descriptor and identity column
-		String columns = "", params = "";
-		for (ColumnDescriptor<?> descriptor : this.parent.getColumns().values()) {
-			if (!this.isIdentityDescriptor(descriptor)) {
-				columns = columns + (columns.length() == 0 ? "" : ", ") + descriptor.getName();
-				params = params + (params.length() == 0 ? "" : ", ") + "?";
-			}
-		}
 		// create UPDATE, DELETE, SELECT SQL statement for primary key
 		this.updateSql = "UPDATE " + this.parent.getName() + " SET " + this.updateSql + " WHERE " + where;
 		this.selectSql = "SELECT * FROM " + this.parent.getName() + " WHERE " + where;
 		this.deleteSql = "DELETE FROM " + this.parent.getName() + " WHERE " + where;
-		this.insertSql = "INSERT INTO " + this.parent.getName() + " (" + columns + ") VALUES (" + params + ")";
-	}
-	
-	/**
-	 * @param descriptor the descriptor
-	 * @return whether it is descriptor entity
-	 */
-	private boolean isIdentityDescriptor(final ColumnDescriptor<?> descriptor) {
-		
-		if (parent.getIdentityDescriptor() == null) {
-			return false;
-		}
-		return parent.getIdentityDescriptor().equals(descriptor);
 	}
 
 	/**
@@ -180,10 +159,34 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 	}
 	
 	/**
+	 * @param descriptor the descriptor
+	 * @return whether it is descriptor entity
+	 */
+	private boolean isIdentityDescriptor(final ColumnDescriptor<?> descriptor) {
+		
+		if (parent.getIdentityDescriptor() == null) {
+			return false;
+		}
+		return parent.getIdentityDescriptor().equals(descriptor);
+	}
+	
+	/**
 	 * @param connectionManager the current connection manager
 	 * @return the new command for INSERT by identity
 	 */
 	Command createInsertCommand(final ConnectionManager connectionManager) {
+		
+		if (this.insertSql == null) {
+			
+			String columns = "", params = "";
+			for (ColumnDescriptor<?> descriptor : this.parent.getColumns().values()) {
+				if (!this.isIdentityDescriptor(descriptor)) {
+					columns = columns + (columns.length() == 0 ? "" : ", ") + descriptor.getName();
+					params = params + (params.length() == 0 ? "" : ", ") + "?";
+				}
+			}
+			this.insertSql = "INSERT INTO " + this.parent.getName() + " (" + columns + ") VALUES (" + params + ")";
+		}
 		return connectionManager.createCommand(this.insertSql);
 	}
 }
