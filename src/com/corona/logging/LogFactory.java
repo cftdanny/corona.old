@@ -38,14 +38,14 @@ public class LogFactory {
 	private static final String RUNTIME = "/logging.properties";
 	
 	/**
-	 * the flag to start GTalk logging
-	 */
-	private static final String GTALK = GTalkHandler.class.getName() + ".enabled";
-	
-	/**
 	 * the XMPP (Messenger) handler
 	 */
-	private static GTalkHandler defaultHandler = null;
+	private static GTalk gtalk = null;
+	
+	/**
+	 * the MSN Messenger handler
+	 */
+	private static Messenger messenger = null;
 	
 	/**
 	 * load Java Logging Configuration from properties file
@@ -53,8 +53,19 @@ public class LogFactory {
 	static { 
 		
 		config(LogManager.getLogManager()); 
-		if (LogManager.getLogManager().getProperty(GTALK) != null) {
-			defaultHandler = new GTalkHandler();
+		try {
+			if (isHandlerEnabled(GTalk.class)) {
+				gtalk = new GTalk();
+			}
+		} catch (Exception e) {
+			gtalk = null;
+		}
+		try {
+			if (isHandlerEnabled(Messenger.class)) {
+				messenger = new Messenger();
+			}
+		} catch (Exception e) {
+			messenger = null;
 		}
 	}
 
@@ -65,6 +76,14 @@ public class LogFactory {
 		// do nothing
 	}
 
+	/**
+	 * @param handlerClass the handler class
+	 * @return whether this handler is enabled
+	 */
+	private static boolean isHandlerEnabled(final Class<?> handlerClass) {
+		return "enable".equals(LogManager.getLogManager().getProperty(handlerClass.getName()));
+	}
+	
 	/**
 	 * configure Java Logging by properties file 
 	 * @param logManager the current log manager
@@ -138,9 +157,23 @@ public class LogFactory {
 	 */
 	private static Log getLog(final Logger logger) {
 		
-		if (defaultHandler != null) {
-			logger.addHandler(defaultHandler);
+		if (gtalk != null) {
+			logger.addHandler(gtalk);
+		}
+		if (messenger != null) {
+			logger.addHandler(messenger);
 		}
 		return new Log(logger);
+	}
+	
+	/**
+	 * close all opened handlers if required. Usually, it logs out from IM server
+	 */
+	public void close() {
+		
+		// close 
+		if (gtalk != null) {
+			gtalk.close();
+		}
 	}
 }
