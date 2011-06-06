@@ -57,6 +57,11 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 	private String updateSql = "";
 	
 	/**
+	 * the INSERT SQL statement
+	 */
+	private String insertSql = "";
+	
+	/**
 	 * @param parent the parent entity MetaData
 	 * @param primaryKey the primary key that is annotated in entity class with {@link PrimaryKey} annotation
 	 */
@@ -100,12 +105,33 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 			}
 		}
 
+		// create INSERT SQL statement by all column descriptor and identity column
+		String columns = "", params = "";
+		for (ColumnDescriptor<?> descriptor : this.parent.getColumns().values()) {
+			if (!this.isIdentityDescriptor(descriptor)) {
+				columns = columns + (columns.length() == 0 ? "" : ", ") + descriptor.getName();
+				params = params + (params.length() == 0 ? "" : ", ") + "?";
+			}
+		}
 		// create UPDATE, DELETE, SELECT SQL statement for primary key
 		this.updateSql = "UPDATE " + this.parent.getName() + " SET " + this.updateSql + " WHERE " + where;
 		this.selectSql = "SELECT * FROM " + this.parent.getName() + " WHERE " + where;
 		this.deleteSql = "DELETE FROM " + this.parent.getName() + " WHERE " + where;
+		this.insertSql = "INSERT INTO " + this.parent.getName() + " (" + columns + ") VALUES (" + params + ")";
 	}
 	
+	/**
+	 * @param descriptor the descriptor
+	 * @return whether it is descriptor entity
+	 */
+	private boolean isIdentityDescriptor(final ColumnDescriptor<?> descriptor) {
+		
+		if (parent.getIdentityDescriptor() == null) {
+			return false;
+		}
+		return parent.getIdentityDescriptor().equals(descriptor);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.PrimaryKeyDescriptor#create(com.corona.data.ConnectionManager)
@@ -151,5 +177,13 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 	 */
 	Command createUpdateCommand(final ConnectionManager connectionManager) {
 		return connectionManager.createCommand(this.updateSql);
+	}
+	
+	/**
+	 * @param connectionManager the current connection manager
+	 * @return the new command for INSERT by identity
+	 */
+	Command createInsertCommand(final ConnectionManager connectionManager) {
+		return connectionManager.createCommand(this.insertSql);
 	}
 }

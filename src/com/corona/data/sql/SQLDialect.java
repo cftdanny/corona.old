@@ -5,9 +5,10 @@ package com.corona.data.sql;
 
 import java.sql.ResultSet;
 
-import com.corona.data.DataRuntimeException;
+import com.corona.data.ConnectionManager;
 import com.corona.data.Dialect;
-import com.corona.data.HomeBuilder;
+import com.corona.data.EntityMetaData;
+import com.corona.data.StatementBuilder;
 import com.corona.data.ResultHolder;
 
 /**
@@ -19,29 +20,24 @@ import com.corona.data.ResultHolder;
 public abstract class SQLDialect implements Dialect {
 
 	/**
-	 * the home builder
-	 */
-	private SQLHomeBuilder homeBuilder = new SQLHomeBuilder();
-	
-	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.Dialect#getResultHolder(java.lang.Object)
+	 * @see com.corona.data.Dialect#createResultHolder(java.lang.Object)
 	 */
 	@Override
-	public ResultHolder getResultHolder(final Object result) {
-		
-		if (!(result instanceof ResultSet)) {
-			throw new DataRuntimeException("SQL extractor can only extract value from ResultSet");
-		}
+	public ResultHolder createResultHolder(final Object result) {
 		return new SQLResultHolder((ResultSet) result);
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.Dialect#getHomeBuilder()
+	 * @see com.corona.data.Dialect#createStatementBuilder(
+	 * 	com.corona.data.ConnectionManager, com.corona.data.EntityMetaData
+	 * )
 	 */
 	@Override
-	public HomeBuilder getHomeBuilder() {
-		return this.homeBuilder;
+	public <E> StatementBuilder<E> createStatementBuilder(
+			final ConnectionManager connectionManager, final EntityMetaData<E> metadata
+	) {
+		return new SQLStatementBuilder<E>(connectionManager, metadata);
 	}
 }

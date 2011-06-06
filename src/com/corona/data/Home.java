@@ -59,7 +59,7 @@ public interface Home<E> {
 	 * </p>
 	 * 
 	 * @param e the instance of entity
-	 * @return whether entity has been save to data source
+	 * @return whether entity has been saved to data source
 	 */
 	boolean update(E e);
 	
@@ -79,6 +79,11 @@ public interface Home<E> {
 	 * @return <code>true</code> if this entity has been deleted
 	 */
 	boolean delete(Object... keys);
+	
+	/**
+	 * @return the statement builder about this entity home
+	 */
+	StatementBuilder<E> getStatementBuilder();
 	
 	/**
 	 * @return all entity instances (table record) from database

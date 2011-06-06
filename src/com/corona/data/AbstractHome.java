@@ -15,7 +15,7 @@ import java.util.Map;
  * @version $Id$
  * @param <E> the type of entity class
  */
-public class AbstractHome<E> implements Home<E> {
+public abstract class AbstractHome<E> implements Home<E> {
 
 	/**
 	 * the entity configuration
@@ -26,6 +26,11 @@ public class AbstractHome<E> implements Home<E> {
 	 * the current entity manager
 	 */
 	private ConnectionManager connectionManager;
+	
+	/**
+	 * the builder that is used to create statement
+	 */
+	private StatementBuilder<E> statementBuilder;
 	
 	/**
 	 * the primary key
@@ -55,9 +60,12 @@ public class AbstractHome<E> implements Home<E> {
 		
 		this.connectionManager = connectionManager;
 		
-		// find entity configuration for entity class
+		// find entity runtime configuration according to entity class and connection manager
 		EntityMetaDataRepository entityMetaDataManager = this.getEntityMetaDataRepository();
 		this.entityMetaData = entityMetaDataManager.getEntityMetaData(entityClass);
+		this.statementBuilder = this.connectionManager.getDialect().createStatementBuilder(
+				this.connectionManager, this.entityMetaData
+		);
 	}
 	
 	/**
@@ -197,13 +205,6 @@ public class AbstractHome<E> implements Home<E> {
 	}
 
 	/**
-	 * @return the home builder
-	 */
-	private HomeBuilder getBuilder() {
-		return this.connectionManager.getDialect().getHomeBuilder();
-	}
-	
-	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.Home#insert(java.lang.Object)
 	 */
@@ -212,9 +213,7 @@ public class AbstractHome<E> implements Home<E> {
 		
 		// if INSERT command is not created before, we will create it by dialect and HomeBuilder
 		if (this.insert == null) {
-			this.insert = this.getBuilder().createInsertCommand(
-					this.connectionManager, this.entityMetaData
-			);
+			this.insert = this.statementBuilder.createInsertCommand();
 		}
 		
 		// get id column descriptor for entity
@@ -252,11 +251,12 @@ public class AbstractHome<E> implements Home<E> {
 	}
 
 	/**
-	 * @param filter the filter
-	 * @return the SELECT COUNT(*) SQL query
+	 * {@inheritDoc}
+	 * @see com.corona.data.Home#getStatementBuilder()
 	 */
-	private Query<E> createListQuery(final String filter) {
-		return this.getBuilder().createListQuery(connectionManager, entityMetaData, filter);
+	@Override
+	public StatementBuilder<E> getStatementBuilder() {
+		return this.statementBuilder;
 	}
 
 	/**
@@ -265,7 +265,7 @@ public class AbstractHome<E> implements Home<E> {
 	 */
 	@Override
 	public List<E> list() {
-		return this.createListQuery("").list();
+		return this.statementBuilder.createListQuery("").list();
 	}
 
 	/**
@@ -274,7 +274,7 @@ public class AbstractHome<E> implements Home<E> {
 	 */
 	@Override
 	public List<E> list(final String sql, final Object... args) {
-		return this.createListQuery(sql).list(args);
+		return this.statementBuilder.createListQuery(sql).list(args);
 	}
 
 	/**
@@ -283,24 +283,16 @@ public class AbstractHome<E> implements Home<E> {
 	 */
 	@Override
 	public List<E> list(final String sql, final String[] names, final Object[] args) {
-		return this.createListQuery(sql).list(names, args);
+		return this.statementBuilder.createListQuery(sql).list(names, args);
 	}
 
-	/**
-	 * @param filter the filter
-	 * @return the SELECT COUNT(*) SQL query
-	 */
-	private Query<Long> createCountQuery(final String filter) {
-		return this.getBuilder().createCountQuery(connectionManager, entityMetaData, filter);
-	}
-	
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.Home#count()
 	 */
 	@Override
 	public long count() {
-		return this.createCountQuery("").get();
+		return this.statementBuilder.createCountQuery("").get();
 	}
 
 	/**
@@ -309,7 +301,7 @@ public class AbstractHome<E> implements Home<E> {
 	 */
 	@Override
 	public long count(final String filter, final Object... args) {
-		return this.createCountQuery(filter).get(args);
+		return this.statementBuilder.createCountQuery(filter).get(args);
 	}
 
 	/**
@@ -318,24 +310,16 @@ public class AbstractHome<E> implements Home<E> {
 	 */
 	@Override
 	public long count(final String filter, final String[] names, final Object... args) {
-		return this.createCountQuery(filter).get(names, args);
+		return this.statementBuilder.createCountQuery(filter).get(names, args);
 	}
 
-	/**
-	 * @param filter the filter
-	 * @return the command
-	 */
-	private Command createUpdateCommand(final String filter) {
-		return this.getBuilder().createUpdateCommand(this.connectionManager, this.entityMetaData, filter);
-	}
-	
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.Home#update(java.lang.String, java.lang.Object[])
 	 */
 	@Override
 	public int update(final String sql, final Object... args) {
-		return this.createUpdateCommand(sql).update(args);
+		return this.statementBuilder.createUpdateCommand(sql).update(args);
 	}
 
 	/**
@@ -344,24 +328,16 @@ public class AbstractHome<E> implements Home<E> {
 	 */
 	@Override
 	public int update(final String sql, final String[] names, final Object[] args) {
-		return this.createUpdateCommand(sql).update(names, args);
+		return this.statementBuilder.createUpdateCommand(sql).update(names, args);
 	}
 
-	/**
-	 * @param filter the filter
-	 * @return the command
-	 */
-	private Command createDeleteCommand(final String filter) {
-		return this.getBuilder().createDeleteCommand(connectionManager, this.entityMetaData, filter);
-	}
-	
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.Home#delete(java.lang.String, java.lang.Object[])
 	 */
 	@Override
 	public int delete(final String sql, final Object... args) {
-		return this.createDeleteCommand(sql).delete(args);
+		return this.statementBuilder.createDeleteCommand(sql).delete(args);
 	}
 
 	/**
@@ -370,6 +346,6 @@ public class AbstractHome<E> implements Home<E> {
 	 */
 	@Override
 	public int delete(final String sql, final String[] names, final Object[] args) {
-		return this.createDeleteCommand(sql).delete(names, args);
+		return this.statementBuilder.createDeleteCommand(sql).delete(names, args);
 	}
 }

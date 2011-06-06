@@ -25,7 +25,7 @@ public class SQLCommand implements Command {
 	/**
 	 * the prepared and named parameter SQL statement
 	 */
-	private NamingStatement statement;
+	private ParametricStatement statement;
 	
 	/**
 	 * @param connectionManager the connection manager for SQL database 
@@ -39,7 +39,7 @@ public class SQLCommand implements Command {
 		connectionManager.register(this);
 		
 		// prepare SQL statement
-		this.statement = new NamingStatement(connectionManager.getSource(), sql);
+		this.statement = new ParametricStatement(connectionManager.getSource(), sql);
 	}
 
 	/**

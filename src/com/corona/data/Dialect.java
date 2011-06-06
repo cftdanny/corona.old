@@ -28,10 +28,13 @@ public interface Dialect {
 	 * @param result the query result that returns by query for specified data source
 	 * @return the column value extractor
 	 */
-	ResultHolder getResultHolder(Object result);
+	ResultHolder createResultHolder(Object result);
 	
 	/**
-	 * @return the home builder
+	 * @param <E> the type of entity
+	 * @param connectionManager the current connection manager
+	 * @param metadata the entity metadata
+	 * @return the statement builder for an entity
 	 */
-	HomeBuilder getHomeBuilder();
+	<E> StatementBuilder<E> createStatementBuilder(ConnectionManager connectionManager, EntityMetaData<E> metadata);
 }

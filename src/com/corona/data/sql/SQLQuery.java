@@ -35,7 +35,7 @@ public class SQLQuery<E> implements Query<E> {
 	/**
 	 * the prepared and named parameter SQL statement
 	 */
-	private NamingStatement statement;
+	private ParametricStatement statement;
 
 	/**
 	 * @param connectionManager the connection manager
@@ -65,7 +65,7 @@ public class SQLQuery<E> implements Query<E> {
 		
 		// prepare SQL statement
 		try {
-			this.statement = new NamingStatement(connectionManager.getSource(), sql);
+			this.statement = new ParametricStatement(connectionManager.getSource(), sql);
 		} catch (SQLException e) {
 			throw new DataException("Fail to prepare SQL query statement [{0}]", e, sql);
 		}
