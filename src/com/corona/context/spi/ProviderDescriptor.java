@@ -25,7 +25,7 @@ import com.corona.context.InjectMethodFactory;
 import com.corona.context.InjectProperty;
 import com.corona.context.InjectPropertyFactory;
 import com.corona.context.Provider;
-import com.corona.context.Setting;
+import com.corona.context.Configuration;
 import com.corona.context.annotation.Alias;
 import com.corona.context.annotation.Create;
 import com.corona.context.annotation.Inject;
@@ -95,7 +95,7 @@ public class ProviderDescriptor<T> implements Descriptor<T> {
 	/**
 	 * the setting
 	 */
-	private List<SettingDescriptor> configurationDescriptors = null;
+	private List<ConfigurationDescriptor> configurationDescriptors = null;
 
 	/**
 	 * @param contextManagerFactory the current context manager to build this component descriptor
@@ -295,8 +295,8 @@ public class ProviderDescriptor<T> implements Descriptor<T> {
 		
 		// set setting values to all setting properties
 		if (this.configurationDescriptors != null) {
-			for (SettingDescriptor descriptor : this.configurationDescriptors) {
-				descriptor.setValue(provider);
+			for (ConfigurationDescriptor descriptor : this.configurationDescriptors) {
+				descriptor.setValue(contextManager, provider);
 			}
 		}
 
@@ -318,14 +318,14 @@ public class ProviderDescriptor<T> implements Descriptor<T> {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.context.Descriptor#configure(com.corona.context.Setting)
+	 * @see com.corona.context.Descriptor#configure(com.corona.context.Configuration)
 	 */
 	@Override
-	public void configure(final Setting setting) {
+	public void configure(final Configuration configuration) {
 		
 		if (this.configurationDescriptors == null) {
-			this.configurationDescriptors = new ArrayList<SettingDescriptor>();
+			this.configurationDescriptors = new ArrayList<ConfigurationDescriptor>();
 		}
-		this.configurationDescriptors.add(new SettingDescriptor(this.implementationClass, setting));
+		this.configurationDescriptors.add(new ConfigurationDescriptor(this.implementationClass, configuration));
 	}
 }

@@ -48,7 +48,7 @@ public interface Descriptor<T> {
 	T getValue(ContextManager contextManager);
 	
 	/**
-	 * @param setting the setting to set value to component property
+	 * @param configuration the configuration to set value to component property
 	 */
-	void configure(Setting setting);
+	void configure(Configuration configuration);
 }

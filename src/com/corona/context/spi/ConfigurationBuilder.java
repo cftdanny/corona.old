@@ -7,7 +7,6 @@ import com.corona.context.Builder;
 import com.corona.context.ContextManagerFactory;
 import com.corona.context.Descriptor;
 import com.corona.context.Key;
-import com.corona.context.Setting;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 
@@ -28,28 +27,38 @@ public class ConfigurationBuilder<T> implements Builder<T> {
 	/**
 	 * the protocol type of component
 	 */
-	private Class<T> type;
+	private Class<T> configuredComponentType;
 	
 	/**
 	 * the component name
 	 */
-	private String name = null;
+	private String configuredComponentName = null;
 	
 	/**
-	 * the setting name
+	 * the property name of component to be configured
 	 */
-	private String setting;
+	private String configuredPropertyName;
 	
 	/**
-	 * the setting value
+	 * the constant value to set to component property
 	 */
 	private Object value;
+	
+	/**
+	 * the component to be linked to component property
+	 */
+	private Class<?> linkedComponentType = null;
+	
+	/**
+	 * the component name of linked component
+	 */
+	private String linkedComponentName = null;
 	
 	/**
 	 * @param protocolType the injection type of component
 	 */
 	public ConfigurationBuilder(final Class<T> protocolType) {
-		this.type = protocolType;
+		this.configuredComponentType = protocolType;
 	}
 
 	/**
@@ -57,25 +66,25 @@ public class ConfigurationBuilder<T> implements Builder<T> {
 	 * @return this builder
 	 */
 	public ConfigurationBuilder<T> as(final String componentName) {
-		this.name = componentName;
+		this.configuredComponentName = componentName;
 		return this;
 	}
 
 	/**
-	 * @param settingName the name of setting
+	 * @param propertyName the name of setting
 	 * @return this builder
 	 */
-	public ConfigurationBuilder<T> property(final String settingName) {
-		this.setting = settingName;
+	public ConfigurationBuilder<T> property(final String propertyName) {
+		this.configuredPropertyName = propertyName;
 		return this;
 	}
 
 	/**
-	 * @param settingValue the value of setting
+	 * @param configurationValue the value to configure component property
 	 * @return this builder
 	 */
-	public ConfigurationBuilder<T> value(final Object settingValue) {
-		this.value = settingValue;
+	public ConfigurationBuilder<T> value(final Object configurationValue) {
+		this.value = configurationValue;
 		return this;
 	}
 
@@ -86,13 +95,19 @@ public class ConfigurationBuilder<T> implements Builder<T> {
 	@Override
 	public void build(final ContextManagerFactory contextManagerFactory) {
 
-		Descriptor<T> descriptor = contextManagerFactory.getComponentDescriptor(new Key<T>(this.type, this.name));
+		Key<T> key = new Key<T>(this.configuredComponentType, this.configuredComponentName);
+		Descriptor<T> descriptor = contextManagerFactory.getComponentDescriptor(key);
 		if (descriptor != null) {
-			descriptor.configure(new Setting(this.setting, this.value));
+			
+			if (this.linkedComponentType == null) {
+				descriptor.configure(new ConstantConfiguration(this.configuredPropertyName, this.value));
+			} else {
+				descriptor.configure(new LinkedConfiguration(
+						this.configuredPropertyName, this.linkedComponentType, this.linkedComponentName
+				));
+			}
 		} else {
-			this.logger.warn(
-					"Component with key [{0}] and name [{1}] does not exist, skip it", this.type, this.name
-			);
+			this.logger.warn("Component with key [{0}] does not exist, just skip it", key); 
 		}
 	}
 }

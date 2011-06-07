@@ -9,7 +9,8 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 
 import com.corona.context.ConfigurationException;
-import com.corona.context.Setting;
+import com.corona.context.Configuration;
+import com.corona.context.ContextManager;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 
@@ -19,12 +20,12 @@ import com.corona.logging.LogFactory;
  * @author $Author$
  * @version $Id$
  */
-class SettingDescriptor {
+class ConfigurationDescriptor {
 
 	/**
 	 * the logger
 	 */
-	private final Log logger = LogFactory.getLog(SettingDescriptor.class);
+	private final Log logger = LogFactory.getLog(ConfigurationDescriptor.class);
 	
 	/**
 	 * the method for setting to set value
@@ -32,29 +33,30 @@ class SettingDescriptor {
 	private Method method;
 	
 	/**
-	 * the setting value
+	 * the configuration to configure component
 	 */
-	private Object value;
+	private Configuration configuration;
 	
 	/**
 	 * @param implementationClass the implementation class
-	 * @param setting the setting
+	 * @param configuration the configuration to configure component
 	 */
-	SettingDescriptor(final Class<?> implementationClass, final Setting setting) {
+	ConfigurationDescriptor(final Class<?> implementationClass, final Configuration configuration) {
 		
 		// find property by property name and implementation class
 		PropertyDescriptor descriptor = null;
 		try {
 			descriptor = new PropertyDescriptor(
-					setting.getName(), implementationClass, null, "set" + this.capitalize(setting.getName())
+					configuration.getPropertyName(), implementationClass, null, 
+					"set" + this.capitalize(configuration.getPropertyName())
 			);
 		} catch (Exception e) {
 			
 			this.logger.error("Property [{0}] does not exist in component class [{1}]", 
-					e, setting.getName(), implementationClass
+					e, configuration.getPropertyName(), implementationClass
 			);
 			throw new ConfigurationException("Property [{0}] does not exist in component class [{1}]", 
-					e, setting.getName(), implementationClass
+					e, configuration.getPropertyName(), implementationClass
 			);
 		}
 		
@@ -62,16 +64,16 @@ class SettingDescriptor {
 		if (descriptor.getWriteMethod() == null) {
 			
 			this.logger.error("Write method [{0}] does not exist in component class [{1}]", 
-					setting.getName(), implementationClass
+					configuration.getPropertyName(), implementationClass
 			);
 			throw new ConfigurationException("Write method [{0}] does not exist in component class [{1}]", 
-					setting.getName(), implementationClass
+					configuration.getPropertyName(), implementationClass
 			);
 		}
 		
 		// store writer method and value, for later to set component value
 		this.method = descriptor.getWriteMethod();
-		this.value = setting.getValue();
+		this.configuration = configuration;
 	}
 
 	/**
@@ -87,12 +89,13 @@ class SettingDescriptor {
     }
 
 	/**
+	 * @param contextManager the current context manager
 	 * @param component the component to set its setting value
 	 */
-	void setValue(final Object component) {
+	void setValue(final ContextManager contextManager, final Object component) {
 		
 		try {
-			this.method.invoke(component, this.value);
+			this.method.invoke(component, this.configuration.getValue(contextManager));
 		} catch (Exception e) {
 			
 			this.logger.error("Fail to set component value by mehtod [{0}]", e, method);

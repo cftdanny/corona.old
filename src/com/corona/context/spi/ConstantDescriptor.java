@@ -7,7 +7,7 @@ import java.lang.annotation.Annotation;
 
 import com.corona.context.ContextManager;
 import com.corona.context.Descriptor;
-import com.corona.context.Setting;
+import com.corona.context.Configuration;
 import com.corona.context.annotation.Application;
 
 /**
@@ -121,9 +121,9 @@ class ConstantDescriptor<T> implements Descriptor<T> {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.context.Descriptor#configure(com.corona.context.Setting)
+	 * @see com.corona.context.Descriptor#configure(com.corona.context.Configuration)
 	 */
 	@Override
-	public void configure(final Setting setting) {
+	public void configure(final Configuration configuration) {
 	}
 }
