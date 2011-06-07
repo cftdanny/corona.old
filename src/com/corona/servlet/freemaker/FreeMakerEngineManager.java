@@ -5,7 +5,6 @@ package com.corona.servlet.freemaker;
 
 import java.io.IOException;
 import java.util.Locale;
-import java.util.Map;
 
 import freemarker.template.Template;
 
@@ -20,7 +19,7 @@ public interface FreeMakerEngineManager {
 	/**
 	 * @return all defined theme templates
 	 */
-	Map<String, String> getThemeTemplates();
+	FreeMakerThemes getThemes();
 
 	/**
 	 * @return the default theme name

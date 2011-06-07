@@ -145,7 +145,7 @@ public class FreeMakerDataModel extends BeanModel {
 	 * @return the theme template
 	 */
 	private String getThemeTemplate(final String themeName) {
-		return this.freeMakerEngineManager.getThemeTemplates().get(themeName);
+		return this.freeMakerEngineManager.getThemes().getThemeTemplate(themeName, this.childTemplate);
 	}
 	
 	/**

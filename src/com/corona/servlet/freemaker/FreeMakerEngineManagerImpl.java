@@ -34,7 +34,7 @@ public class FreeMakerEngineManagerImpl implements FreeMakerEngineManager {
 	/**
 	 * the logger
 	 */
-	private Log logger = LogFactory.getLog("FreeMaker");
+	private Log logger = LogFactory.getLog(FreeMakerEngineManagerImpl.class);
 	
 	/**
 	 * the FreeMaker configuration
@@ -89,7 +89,7 @@ public class FreeMakerEngineManagerImpl implements FreeMakerEngineManager {
 	/**
 	 * all theme templates
 	 */
-	private Map<String, String> themeTemplates = new HashMap<String, String>();
+	private FreeMakerThemes themes = new DefaultFreeMakerThemes();
 	
 	/**
 	 * the default theme name
@@ -120,9 +120,9 @@ public class FreeMakerEngineManagerImpl implements FreeMakerEngineManager {
 
 		this.basePath = basePath;
 		if (this.configuration != null) {
-			this.configuration.setServletContextForTemplateLoading(
-					this.servletContext, this.basePath
-			);
+			this.configuration.setServletContextForTemplateLoading(this.servletContext, this.basePath);
+		} else {
+			this.configuration.setClassForTemplateLoading(this.getClass(), this.basePath);
 		}
 	}
 
@@ -254,17 +254,17 @@ public class FreeMakerEngineManagerImpl implements FreeMakerEngineManager {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.freemaker.FreeMakerEngineManager#getThemeTemplates()
+	 * @see com.corona.servlet.freemaker.FreeMakerEngineManager#getThemes()
 	 */
-	public Map<String, String> getThemeTemplates() {
-		return themeTemplates;
+	public FreeMakerThemes getThemes() {
+		return this.themes;
 	}
 
 	/**
-	 * @param themeTemplates all theme templates
+	 * @param themes all theme templates
 	 */
-	public void setThemeTemplates(final Map<String, String> themeTemplates) {
-		this.themeTemplates = themeTemplates;
+	public void setThemes(final FreeMakerThemes themes) {
+		this.themes = themes;
 	}
 
 	/**
@@ -327,22 +327,20 @@ public class FreeMakerEngineManagerImpl implements FreeMakerEngineManager {
 		
 		// will load FreeMaker template from ServletContext path
 		this.configuration.setObjectWrapper(new DefaultObjectWrapper());
-		this.configuration.setServletContextForTemplateLoading(
-				this.servletContext, this.basePath
-		);
+		this.setBasePath(this.basePath);
 		
 		// set default encoding and locale to FreeMaker engine
-		this.configuration.setDefaultEncoding(this.defaultEncoding);
-		this.configuration.setLocale(this.defaultLocale);
-		this.configuration.setLocalizedLookup(this.localizedLookup);
+		this.setDefaultEncoding(this.defaultEncoding);
+		this.setDefaultLocale(this.defaultLocale);
+		this.setLocalizedLookup(this.localizedLookup);
 		
 		// add all auto-import and auto-include templates to FreeMaker configuration
-		this.configuration.setAutoIncludes(this.includedTemplates);
-		this.configuration.setAutoImports(this.importedTemplates);
+		this.setIncludedTemplates(this.includedTemplates);
+		this.setImportedTemplates(this.importedTemplates);
 		
 		// set template new version checking and white space strip
-		this.configuration.setTemplateUpdateDelay(this.templateUpdateDelay);
-		this.configuration.setWhitespaceStripping(this.whitespaceStripping);
+		this.setTemplateUpdateDelay(this.templateUpdateDelay);
+		this.setWhitespaceStripping(this.whitespaceStripping);
 	}
 
 	/**
