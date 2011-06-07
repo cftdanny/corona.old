@@ -27,4 +27,9 @@ public interface Scope {
 	 * @return the component or <b>null</b> if it doesn't belong to scope
 	 */
 	<T> T get(ContextManager contextManager, Key<T> key);
+	
+	/**
+	 * @param context the scope context specified with scope implementation 
+	 */
+	void close(Object context);
 }

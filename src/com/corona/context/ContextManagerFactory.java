@@ -79,4 +79,9 @@ public interface ContextManagerFactory {
 	 * @return the new context manager
 	 */
 	ContextManager create(@SuppressWarnings("rawtypes") Map<Key, Object> context);
+	
+	/**
+	 * close this context manager factory
+	 */
+	void close();
 }

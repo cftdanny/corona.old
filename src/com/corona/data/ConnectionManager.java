@@ -3,6 +3,10 @@
  */
 package com.corona.data;
 
+import java.util.Map;
+
+import com.corona.context.Closeable;
+
 /**
  * <p>The connection manager is used to manage data source, for example: query, update or delete data
  * in data source. </p>
@@ -10,7 +14,7 @@ package com.corona.data;
  * @author $Author$
  * @version $Id$
  */
-public interface ConnectionManager {
+public interface ConnectionManager extends Closeable {
 
 	/**
 	 * @return the parent connection manager factory
@@ -31,11 +35,6 @@ public interface ConnectionManager {
 	 * @return <code>true</code> if closed from data source
 	 */
 	boolean isClosed();
-	
-	/**
-	 * close from data source
-	 */
-	void close();
 	
 	/**
 	 * @return get a new transaction from data source
@@ -77,7 +76,19 @@ public interface ConnectionManager {
 	 * @return the new query
 	 */
 	<E> Query<E> createNamedQuery(Class<E> resultClass);
-	
+
+	/**
+	 * <p>Create query by a NamedQuery annotation is result class. It also support multiple data source family 
+	 * query script by NamedQuery annotation.
+	 * </p>
+	 * 
+	 * @param <E> the type of result class
+	 * @param resultClass the result class
+	 * @param bindings the parameters to bind to query statement
+	 * @return the new query
+	 */
+	<E> Query<E> createNamedQuery(Class<E> resultClass, Map<String, ?> bindings);
+
 	/**
 	 * <p>Create query by a NamedQuery annotation is result class. It also support multiple data source family 
 	 * query script by NamedQuery annotation.
@@ -89,7 +100,20 @@ public interface ConnectionManager {
 	 * @return the new query
 	 */
 	<E> Query<E> createNamedQuery(Class<E> resultClass, String name);
-	
+
+	/**
+	 * <p>Create query by a NamedQuery annotation is result class. It also support multiple data source family 
+	 * query script by NamedQuery annotation.
+	 * </p>
+	 * 
+	 * @param <E> the type of result class
+	 * @param resultClass the result class
+	 * @param name the named query name
+	 * @param bindings the parameters to bind to query statement
+	 * @return the new query
+	 */
+	<E> Query<E> createNamedQuery(Class<E> resultClass, String name, Map<String, ?> bindings);
+
 	/**
 	 * <p>Create command by command string. For example, if data source is SQL, it will be DELETE, UPDATE, INSERT
 	 * statement.
@@ -109,7 +133,18 @@ public interface ConnectionManager {
 	 * @return the created command
 	 */
 	Command createNamedCommand(Class<?> commandClass);
-	
+
+	/**
+	 * <p>Create command by a command annotation in class. For example, if data source is SQL, it will be DELETE, 
+	 * UPDATE, INSERT statement.
+	 * </p>
+	 *  
+	 * @param commandClass the class that is annotated with command annotation
+	 * @param bindings the parameters to bind to query statement
+	 * @return the created command
+	 */
+	Command createNamedCommand(Class<?> commandClass, Map<String, ?> bindings);
+
 	/**
 	 * <p>Create command by a command annotation in class. For example, if data source is SQL, it will be DELETE, 
 	 * UPDATE, INSERT statement.
@@ -120,4 +155,16 @@ public interface ConnectionManager {
 	 * @return the created command
 	 */
 	Command createNamedCommand(Class<?> commandClass, String name);
+
+	/**
+	 * <p>Create command by a command annotation in class. For example, if data source is SQL, it will be DELETE, 
+	 * UPDATE, INSERT statement.
+	 * </p>
+	 *  
+	 * @param commandClass the class that is annotated with command annotation
+	 * @param name the command name
+	 * @param bindings the parameters to bind to query statement
+	 * @return the created command
+	 */
+	Command createNamedCommand(Class<?> commandClass, String name, Map<String, ?> bindings);
 }

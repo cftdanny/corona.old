@@ -73,8 +73,17 @@ public class Expression {
 	 * @param expression the expression
 	 * @return the compiled expression
 	 */
-	public static Expression compile(final String expression) {
+	public static Expression getExpression(final String expression) {
 		return new Expression(expression);
+	}
+	
+	/**
+	 * @return the compiled expression
+	 */
+	public Expression compile() {
+		this.getGetExpression();
+		this.getSetExpression();
+		return this;
 	}
 	
 	/**

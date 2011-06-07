@@ -6,6 +6,7 @@ package com.corona.context.spi;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.corona.context.Closeable;
 import com.corona.context.ConfigurationException;
 import com.corona.context.ContextManager;
 import com.corona.context.Descriptor;
@@ -62,5 +63,28 @@ public class ApplicationScope extends AbstractScope {
 		this.logger.info("Component with key [{0}] has been create and cached to application repository", key);
 		
 		return component;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.context.Scope#close(java.lang.Object)
+	 */
+	@Override
+	public void close(final Object context) {
+		
+		// close all components belongs to this context if it implements Closeable interface
+		for (Map.Entry<Key<?>, Object> item : this.components.entrySet()) {
+			
+			if (item.getValue() instanceof Closeable) {
+				try {
+					((Closeable) item.getValue()).close();
+				} catch (Exception e) {
+					this.logger.error("Fail to close component [{0}, {1}]", item.getKey(), item.getValue());
+				}
+			}
+		}
+		
+		// set local variable to null to release resources
+		this.components = null;
 	}
 }

@@ -37,4 +37,13 @@ public class TransitionScope extends AbstractScope {
 		}
 		return descriptor.getValue(contextManager);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.context.Scope#close(java.lang.Object)
+	 */
+	@Override
+	public void close(final Object context) {
+		// do nothing
+	}
 }

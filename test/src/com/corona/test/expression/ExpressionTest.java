@@ -17,7 +17,7 @@ import com.corona.expression.Expression;
  * @author $Author$
  * @version $Id$
  */
-public class TestExpression {
+public class ExpressionTest {
 
 	/**
 	 * the house
@@ -27,7 +27,7 @@ public class TestExpression {
 	/**
 	 * default constructor
 	 */
-	public TestExpression() {
+	public ExpressionTest() {
 		
 		house = new House();
 		house.setWidth(10);
@@ -40,7 +40,7 @@ public class TestExpression {
 	 */
 	@Test public void testRootExpression() {
 
-		Expression expr = Expression.compile("name");
+		Expression expr = Expression.getExpression("name");
 		Assert.assertEquals(expr.get(house), "SHA");
 		Assert.assertEquals(expr.get(house, String.class), "SHA");
 	}
@@ -53,7 +53,7 @@ public class TestExpression {
 		Map<String, Object> context = new HashMap<String, Object>();
 		context.put("discount", 10);
 		
-		Expression expr = Expression.compile("width * height - discount");
+		Expression expr = Expression.getExpression("width * height - discount");
 		Assert.assertEquals(expr.get(house, context), 90);
 		Assert.assertEquals(expr.get(house, context, Integer.class).intValue(), 90);
 	}
@@ -67,7 +67,7 @@ public class TestExpression {
 		context.put("discount", 10);
 		context.put("profit", 20);
 		
-		Expression expr = Expression.compile("profit - discount");
+		Expression expr = Expression.getExpression("profit - discount");
 		Assert.assertEquals(expr.get(context), 10);
 		Assert.assertEquals(expr.get(context, Integer.class).intValue(), 10);
 	}
@@ -77,7 +77,7 @@ public class TestExpression {
 	 */
 	@Test public void testSetExpression() {
 		
-		Expression expr = Expression.compile("height");
+		Expression expr = Expression.getExpression("height");
 		expr.set(house, 20);
 		Assert.assertEquals(this.house.getHeight().intValue(), 20);
 		house.setHeight(10);

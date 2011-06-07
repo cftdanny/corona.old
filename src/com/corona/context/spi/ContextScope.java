@@ -64,4 +64,13 @@ public class ContextScope extends AbstractScope {
 		
 		return component;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.context.Scope#close(java.lang.Object)
+	 */
+	@Override
+	public void close(final Object context) {
+		// do nothing
+	}
 }

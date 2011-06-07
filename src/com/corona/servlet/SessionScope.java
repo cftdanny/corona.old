@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import com.corona.context.Closeable;
 import com.corona.context.ConfigurationException;
 import com.corona.context.ContextManager;
 import com.corona.context.Descriptor;
@@ -78,5 +79,32 @@ class SessionScope extends AbstractScope {
 		this.logger.info("Component with key [{0}] has been create and cached to session repository", key);
 		
 		return component;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.context.Scope#close(java.lang.Object)
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public void close(final Object context) {
+		
+		HttpSession session = (HttpSession) context;
+		Map<Key, Object> components = (Map<Key, Object>) session.getAttribute(SessionScope.class.getName());
+		if (components != null) {
+			
+			// close all components belongs to this context if it implements Closeable interface
+			for (Map.Entry<Key, Object> item : components.entrySet()) {
+				
+				if (item.getValue() instanceof Closeable) {
+					try {
+						((Closeable) item.getValue()).close();
+					} catch (Exception e) {
+						this.logger.error("Fail to close component [{0}, {1}]", item.getKey(), item.getValue());
+					}
+				}
+			}
+			session.removeAttribute(SessionScope.class.getName());
+		}
 	}
 }

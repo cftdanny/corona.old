@@ -6,6 +6,7 @@ package com.corona.context.spi;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.corona.context.Closeable;
 import com.corona.context.ConfigurationException;
 import com.corona.context.ContextManager;
 import com.corona.context.ContextManagerFactory;
@@ -73,6 +74,20 @@ public class ContextManagerImpl implements ContextManager {
 	 */
 	@Override
 	public void close() {
+		
+		// close all components belongs to this context if it implements Closeable interface
+		for (Map.Entry<Key<?>, Object> item : this.components.entrySet()) {
+			
+			if (item.getValue() instanceof Closeable) {
+				try {
+					((Closeable) item.getValue()).close();
+				} catch (Exception e) {
+					this.logger.error("Fail to close component [{0}, {1}]", item.getKey(), item.getValue());
+				}
+			}
+		}
+		
+		// set local variable to null to release resources
 		this.components = null;
 		this.contextManagerFactory = null;
 	}

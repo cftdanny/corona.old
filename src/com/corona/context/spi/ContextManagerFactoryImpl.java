@@ -236,4 +236,13 @@ public class ContextManagerFactoryImpl implements ContextManagerFactory {
 		
 		return contextManager;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.context.ContextManagerFactory#close()
+	 */
+	@Override
+	public void close() {
+		this.scopes.get(Application.class).close(this);
+	}
 }

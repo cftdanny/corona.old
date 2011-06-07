@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.corona.data.Command;
 import com.corona.data.ConnectionManager;
@@ -22,6 +23,7 @@ import com.corona.data.annotation.NamedCommands;
 import com.corona.data.annotation.NamedQueries;
 import com.corona.data.annotation.NamedQuery;
 import com.corona.data.annotation.Statement;
+import com.corona.expression.Template;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 
@@ -95,8 +97,10 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 		try {
 			return this.connection.isClosed();
 		} catch (Exception e) {
-			this.logger.error("Fail to test whether JDBC connection is closed", e);
-			throw new DataRuntimeException("Fail to test whether JDBC connection is closed", e);
+			this.logger.error(
+					"Fail to test whether JDBC connection is closed, just treat as closed.", e
+			);
+			return true;
 		}
 	}
 
@@ -126,13 +130,18 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 	void unregister(final SQLCommand command) {
 		this.commands.remove(command);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.data.ConnectionManager#close()
+	 * @see com.corona.context.Closeable#close()
 	 */
 	@Override
 	public void close() {
+		
+		// if connection manager is closed, don't need close again
+		if (this.isClosed()) {
+			return;
+		}
 		
 		// close all commands if it is not closed yet
 		for (SQLCommand command : this.commands.toArray(new SQLCommand[0])) {
@@ -199,6 +208,38 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 	}
 
 	/**
+	 * @param <E> the type of result class
+	 * @param resultClass the result class
+	 * @param namedQuery the named query annotation
+	 * @param variableMap the variable map
+	 * @return the new query
+	 */
+	private <E> Query<E> createNamedQuery(
+			final Class<E> resultClass, final NamedQuery namedQuery, final Map<String, ?> variableMap) {
+		
+		// get data source family and default query script from NamedQuery annotation
+		String family = this.getConnectionManagerFactory().getDataSourceProvider().getFamily();
+		
+		// if any statement is set to specified data source family, will use it as query script
+		String query = namedQuery.value();
+		for (Statement statement : namedQuery.statements()) {
+			
+			if (family.equals(statement.family())) {
+				query = statement.statement();
+				break;
+			}
+		}
+		
+		// if there is binding parameters in statement, try to bind it to normal statement
+		if (variableMap != null) {
+			query = new Template(query).execute(variableMap);
+		}
+		
+		// create query by query statement
+		return this.createQuery(resultClass, query);
+	}
+
+	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.ConnectionManager#createNamedQuery(java.lang.Class)
 	 */
@@ -210,30 +251,22 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 			this.logger.error("Can not find @NamedQuery annotation in class [{0}]", resultClass);
 			throw new DataRuntimeException("Can not find @NamedQuery annotation in class [{0}]", resultClass);
 		}
-		return this.createNamedQuery(resultClass, namedQuery);
+		return this.createNamedQuery(resultClass, namedQuery, null);
 	}
 
 	/**
-	 * @param <E> the type of result class
-	 * @param resultClass the result class
-	 * @param namedQuery the named query annotation
-	 * @return the new query
+	 * {@inheritDoc}
+	 * @see com.corona.data.ConnectionManager#createNamedQuery(java.lang.Class, java.util.Map)
 	 */
-	private <E> Query<E> createNamedQuery(final Class<E> resultClass, final NamedQuery namedQuery) {
+	@Override
+	public <E> Query<E> createNamedQuery(final Class<E> resultClass, final Map<String, ?> bindings) {
 		
-		// get data source family and default query script from NamedQuery annotation
-		String family = this.getConnectionManagerFactory().getDataSourceProvider().getFamily();
-		String query = namedQuery.value();
-		
-		// if any statement is set to specified data source family, will use it as query script
-		for (Statement statement : namedQuery.statements()) {
-			
-			if (family.equals(statement.family())) {
-				query = statement.statement();
-				break;
-			}
+		NamedQuery namedQuery = resultClass.getAnnotation(NamedQuery.class);
+		if (namedQuery == null) {
+			this.logger.error("Can not find @NamedQuery annotation in class [{0}]", resultClass);
+			throw new DataRuntimeException("Can not find @NamedQuery annotation in class [{0}]", resultClass);
 		}
-		return this.createQuery(resultClass, query);
+		return this.createNamedQuery(resultClass, namedQuery, bindings);
 	}
 	
 	/**
@@ -251,7 +284,30 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 		
 		for (NamedQuery namedQuery : namedQueries.value()) {
 			if (namedQuery.name().equals(name)) {
-				this.createNamedQuery(resultClass, namedQuery);
+				this.createNamedQuery(resultClass, namedQuery, null);
+			}
+		}
+		
+		this.logger.error("Can not find @NamedQuery [{0}] in class [{1}]", name, resultClass);
+		throw new DataRuntimeException("Can not find @NamedQuery [{0}] in class [{1}]", name, resultClass);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.ConnectionManager#createNamedQuery(java.lang.Class, java.lang.String, java.util.Map)
+	 */
+	@Override
+	public <E> Query<E> createNamedQuery(final Class<E> resultClass, final String name, final Map<String, ?> bindings) {
+		
+		NamedQueries namedQueries = resultClass.getAnnotation(NamedQueries.class);
+		if (namedQueries == null) {
+			this.logger.error("Can not find @NamedQueries annotation in class [{0}]", resultClass);
+			throw new DataRuntimeException("Can not find @NamedQueries annotation in class [{0}]", resultClass);
+		}
+		
+		for (NamedQuery namedQuery : namedQueries.value()) {
+			if (namedQuery.name().equals(name)) {
+				this.createNamedQuery(resultClass, namedQuery, bindings);
 			}
 		}
 		
@@ -276,6 +332,35 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 	}
 
 	/**
+	 * @param namedCommand the named command annotation
+	 * @param variableMap the variable map
+	 * @return the new command
+	 */
+	private Command createNamedCommand(final NamedCommand namedCommand, final Map<String, ?> variableMap) {
+		
+		// get data source family and default command script from NamedCommand annotation
+		String family = this.getConnectionManagerFactory().getDataSourceProvider().getFamily();
+
+		// if any statement is set to specified data source family, will use it as command script
+		String command = namedCommand.value();
+		for (Statement statement : namedCommand.statements()) {
+			
+			if (family.equals(statement.family())) {
+				command = statement.statement();
+				break;
+			}
+		}
+		
+		// if there is binding parameters in statement, try to bind it to normal statement
+		if (variableMap != null) {
+			command = new Template(command).execute(variableMap);
+		}
+
+		// create query by query statement
+		return this.createCommand(command);
+	}
+
+	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.ConnectionManager#createNamedCommand(java.lang.Class)
 	 */
@@ -287,30 +372,24 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 			this.logger.error("Can not find @NamedCommand annotation in class [{0}]", commandClass);
 			throw new DataRuntimeException("Can not find @NamedCommand annotation in class [{0}]", commandClass);
 		}
-		return this.createNamedCommand(namedCommand);
-	}
-
-	/**
-	 * @param namedCommand the named command annotation
-	 * @return the new command
-	 */
-	private Command createNamedCommand(final NamedCommand namedCommand) {
-		
-		// get data source family and default command script from NamedCommand annotation
-		String family = this.getConnectionManagerFactory().getDataSourceProvider().getFamily();
-		String command = namedCommand.value();
-
-		// if any statement is set to specified data source family, will use it as command script
-		for (Statement statement : namedCommand.statements()) {
-			
-			if (family.equals(statement.family())) {
-				command = statement.statement();
-				break;
-			}
-		}
-		return this.createCommand(command);
+		return this.createNamedCommand(namedCommand, null);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.ConnectionManager#createNamedCommand(java.lang.Class, java.util.Map)
+	 */
+	@Override
+	public Command createNamedCommand(final Class<?> commandClass, final Map<String, ?> bindings) {
+
+		NamedCommand namedCommand = commandClass.getAnnotation(NamedCommand.class);
+		if (namedCommand == null) {
+			this.logger.error("Can not find @NamedCommand annotation in class [{0}]", commandClass);
+			throw new DataRuntimeException("Can not find @NamedCommand annotation in class [{0}]", commandClass);
+		}
+		return this.createNamedCommand(namedCommand, bindings);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.ConnectionManager#createNamedCommand(java.lang.Class, java.lang.String)
@@ -326,7 +405,30 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 		
 		for (NamedCommand namedCommand : namedCommands.value()) {
 			if (namedCommand.name().equals(name)) {
-				this.createNamedCommand(namedCommand);
+				this.createNamedCommand(namedCommand, null);
+			}
+		}
+		
+		this.logger.error("Can not find @NamedCommands [{0}] in class [{1}]", name, commandClass);
+		throw new DataRuntimeException("Can not find @NamedCommands [{0}] in class [{1}]", name, commandClass);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.ConnectionManager#createNamedCommand(java.lang.Class, java.lang.String, java.util.Map)
+	 */
+	@Override
+	public Command createNamedCommand(final Class<?> commandClass, final String name, final Map<String, ?> bindings) {
+
+		NamedCommands namedCommands = commandClass.getAnnotation(NamedCommands.class);
+		if (namedCommands == null) {
+			this.logger.error("Can not find @NamedCommands annotation in class [{0}]", commandClass);
+			throw new DataRuntimeException("Can not find @NamedCommands annotation in class [{0}]", commandClass);
+		}
+		
+		for (NamedCommand namedCommand : namedCommands.value()) {
+			if (namedCommand.name().equals(name)) {
+				this.createNamedCommand(namedCommand, bindings);
 			}
 		}
 		
