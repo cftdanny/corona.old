@@ -14,7 +14,7 @@ import freemarker.template.Template;
  * @author $Author$
  * @version $Id$
  */
-public interface FreeMakerEngineManager {
+public interface FreeMakerEngine {
 
 	/**
 	 * @return all defined theme templates
@@ -29,12 +29,12 @@ public interface FreeMakerEngineManager {
 	/**
 	 * @return the variable name is used to include child template
 	 */
-	String getThemeTemplateVariableName();
+	String getVariableNameForChildTemplate();
 
 	/**
 	 * @return the applied theme name to get from request or session by attribute name 
 	 */
-	String getThemeRequestAttributeName();
+	String getRequestAttributeNameForTheme();
 
 	/**
 	 * <p>Compile source FreeMaker template into compiled template. </p>

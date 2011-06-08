@@ -21,7 +21,7 @@ import freemarker.template.TemplateModelException;
  * @author $Author$
  * @version $Id$
  */
-public class FreeMakerDataModel extends BeanModel {
+public class FreeMakerContext extends BeanModel {
 
 	/**
 	 * the context manager
@@ -31,7 +31,7 @@ public class FreeMakerDataModel extends BeanModel {
 	/**
 	 * the FreeMaker engine
 	 */
-	private FreeMakerEngineManager freeMakerEngineManager;
+	private FreeMakerEngine freeMakerEngineManager;
 	
 	/**
 	 * the child template
@@ -57,7 +57,7 @@ public class FreeMakerDataModel extends BeanModel {
 	 * @param contextManager the current context manager
 	 * @param root the root outcome from FreeMaker producer
 	 */
-	public FreeMakerDataModel(final ContextManager contextManager, final Object root) {
+	public FreeMakerContext(final ContextManager contextManager, final Object root) {
 		super(root, new BeansWrapper());
 		this.contextManager = contextManager;
 	}
@@ -65,7 +65,7 @@ public class FreeMakerDataModel extends BeanModel {
 	/**
 	 * @param freeMakerEngineManager the freeMakerEngineManager to set
 	 */
-	public void setFreeMakerEngineManager(final FreeMakerEngineManager freeMakerEngineManager) {
+	public void setFreeMakerEngineManager(final FreeMakerEngine freeMakerEngineManager) {
 		this.freeMakerEngineManager = freeMakerEngineManager;
 	}
 
@@ -92,7 +92,7 @@ public class FreeMakerDataModel extends BeanModel {
 			return this.wrap(this.getResponse());
 		} else if ("session".equals(name)) {
 			return this.wrap(this.getSession());
-		} else if (this.freeMakerEngineManager.getThemeTemplateVariableName().equals(name)) {
+		} else if (name.equals(this.freeMakerEngineManager.getVariableNameForChildTemplate())) {
 			return this.wrap(this.childTemplate);
 		} else {
 			Object component = this.contextManager.get(name);
@@ -136,25 +136,26 @@ public class FreeMakerDataModel extends BeanModel {
 	/**
 	 * @return get theme name from request or session with this attribute name
 	 */
-	private String getThemeAttributeName() {
-		return this.freeMakerEngineManager.getThemeRequestAttributeName();
+	private String getRequestAttributeNameForThemeName() {
+		return this.freeMakerEngineManager.getRequestAttributeNameForTheme();
 	}
 	
 	/**
 	 * @param themeName the theme name
 	 * @return the theme template
 	 */
-	private String getThemeTemplate(final String themeName) {
+	private String getTemplateByThemeNameAndChildTemplate(final String themeName) {
 		return this.freeMakerEngineManager.getThemes().getThemeTemplate(themeName, this.childTemplate);
 	}
 	
 	/**
 	 * @return the theme name that is defined by cookie
 	 */
-	private String getCookieThemeName() {
+	private String findThemeNameFromCookie() {
 		
 		Cookie[] cookies = this.getRequest().getCookies();
 		if (cookies != null) {
+			
 			String contextPath = this.getSession().getServletContext().getContextPath();
 			for (Cookie cookie : cookies) {
 				if (contextPath.equals(cookie.getPath())) {
@@ -168,9 +169,9 @@ public class FreeMakerDataModel extends BeanModel {
 	/**
 	 * @param themeName the theme name
 	 */
-	private void setCookieThemeName(final String themeName) {
+	private void saveThemeNameToCookie(final String themeName) {
 		
-		Cookie cookie = new Cookie(this.getThemeAttributeName(), themeName);
+		Cookie cookie = new Cookie(this.getRequestAttributeNameForThemeName(), themeName);
 		cookie.setPath(this.getSession().getServletContext().getContextPath());
 		this.getResponse().addCookie(cookie);
 	}
@@ -178,22 +179,22 @@ public class FreeMakerDataModel extends BeanModel {
 	/**
 	 * @return the theme template
 	 */
-	String getThemeName() {
+	String getParentThemeTemplate() {
 		
 		// find theme name from request parameter first. If can't find, try other way
-		String themeName = this.getRequest().getParameter(this.getThemeAttributeName());
+		String themeName = this.getRequest().getParameter(this.getRequestAttributeNameForThemeName());
 		if (themeName == null) {
 			// if theme name is defined in cookie, will store it to cookie   
-			themeName = this.getCookieThemeName();
+			themeName = this.findThemeNameFromCookie();
 		} else {
 			// store request theme name to cookie for later usage 
-			this.setCookieThemeName(themeName);
+			this.saveThemeNameToCookie(themeName);
 		}
 		
 		// find theme template by theme name from FreeMaker engine
 		if (themeName != null) {
 			
-			String themeTemplate = this.getThemeTemplate(themeName);
+			String themeTemplate = this.getTemplateByThemeNameAndChildTemplate(themeName);
 			if (themeTemplate != null) {
 				return themeTemplate;
 			}
@@ -203,9 +204,9 @@ public class FreeMakerDataModel extends BeanModel {
 		themeName = this.freeMakerEngineManager.getDefaultThemeName();
 		if (themeName != null) {
 			// store default theme name to cookie for later usage
-			this.setCookieThemeName(themeName);
+			this.saveThemeNameToCookie(themeName);
 		}
 		
-		return this.getThemeTemplate(themeName);
+		return this.getTemplateByThemeNameAndChildTemplate(themeName);
 	}
 }

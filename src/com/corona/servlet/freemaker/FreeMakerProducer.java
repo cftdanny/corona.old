@@ -79,17 +79,17 @@ public class FreeMakerProducer extends AbstractProducer {
 			final Object component, final Object data) throws ProduceException {
 		
 		// find FreeMaker engine is used to compile and process that request
-		FreeMakerEngineManager manager = contextManager.get(FreeMakerEngineManager.class, this.engine);
+		FreeMakerEngine manager = contextManager.get(FreeMakerEngine.class, this.engine);
 		if (manager == null) {
 			this.logger.error("FreeMaker engine [{0}] is not configured, please configure it", this.engine);
 			throw new ProduceException("FreeMaker engine [{0}] is not configured, please configure it", this.engine);
 		}
 		
 		// create FreeMaker data model
-		FreeMakerDataModel dataModel = new FreeMakerDataModel(contextManager, data);
+		FreeMakerContext dataModel = new FreeMakerContext(contextManager, data);
 		
 		// find template to be processed
-		String forCompiledTemplate = null;
+		String toBeCompiledTemplate = null;
 		if (this.theme) {
 			
 			// pass FreeMaker engine and child template
@@ -97,18 +97,18 @@ public class FreeMakerProducer extends AbstractProducer {
 			dataModel.setChildTemplate(this.template);
 			
 			// find theme template. If not exist, use child template
-			forCompiledTemplate = dataModel.getThemeName();
-			if (StringUtil.isBlank(forCompiledTemplate)) {
-				forCompiledTemplate = this.template;
+			toBeCompiledTemplate = dataModel.getParentThemeTemplate();
+			if (StringUtil.isBlank(toBeCompiledTemplate)) {
+				toBeCompiledTemplate = this.template;
 			}
 		} else {
-			forCompiledTemplate = this.template;
+			toBeCompiledTemplate = this.template;
 		}
 		
 		// compile FreeMaker template by found FreeMaker engine
 		Template compiledTemplate = null;
 		try {
-			compiledTemplate = manager.compile(forCompiledTemplate, dataModel.getRequest().getLocale());
+			compiledTemplate = manager.compile(toBeCompiledTemplate, dataModel.getRequest().getLocale());
 		} catch (IOException e) {
 			this.logger.error("Fail to compile FreeMaker template [{0}]", e, this.template);
 			throw new ProduceException("Fail to compile FreeMaker template [{0}]", e, this.template);

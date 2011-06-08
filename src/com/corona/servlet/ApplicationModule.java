@@ -24,8 +24,8 @@ import com.corona.servlet.annotation.Tail;
 import com.corona.servlet.annotation.Xml;
 import com.corona.servlet.chart.ChartProducerFactory;
 import com.corona.servlet.excel.ExcelProducerFactory;
-import com.corona.servlet.freemaker.FreeMakerEngineManager;
-import com.corona.servlet.freemaker.FreeMakerEngineManagerImpl;
+import com.corona.servlet.freemaker.FreeMakerEngine;
+import com.corona.servlet.freemaker.FreeMakerEngineImpl;
 import com.corona.servlet.freemaker.FreeMakerProducerFactory;
 import com.corona.servlet.resource.ResourceProducerFactory;
 import com.corona.servlet.service.ServiceProducerFactory;
@@ -90,7 +90,7 @@ public class ApplicationModule extends WebKernelModule {
 		this.bindExtension(ProducerFactory.class).as(Json.class).to(new JsonProducerFactory());
 		
 		// configure default FreeMaker producer environment with dependency component and extension
-		this.bind(FreeMakerEngineManager.class).to(FreeMakerEngineManagerImpl.class).in(Application.class);
+		this.bind(FreeMakerEngine.class).to(FreeMakerEngineImpl.class).in(Application.class);
 		this.bindExtension(ProducerFactory.class).as(FreeMaker.class).to(new FreeMakerProducerFactory());
 		
 		// configure PDF producer

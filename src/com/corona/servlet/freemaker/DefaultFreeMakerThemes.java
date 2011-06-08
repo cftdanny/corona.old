@@ -15,28 +15,9 @@ import java.util.Map;
 public class DefaultFreeMakerThemes implements FreeMakerThemes {
 
 	/**
-	 * the default FreeMaker theme
-	 */
-	private FreeMakerTheme defaultTheme = new DefaultFreeMakerTheme();
-	
-	/**
 	 * all FreeMaker themes
 	 */
 	private Map<String, FreeMakerTheme> themes = new HashMap<String, FreeMakerTheme>();
-	
-	/**
-	 * @return the default FreeMaker theme
-	 */
-	public FreeMakerTheme getDefaultTheme() {
-		return defaultTheme;
-	}
-
-	/**
-	 * @param defaultTheme the default FreeMaker theme to set
-	 */
-	public void setDefaultTheme(final FreeMakerTheme defaultTheme) {
-		this.defaultTheme = defaultTheme;
-	}
 
 	/**
 	 * @return all theme names
@@ -66,12 +47,7 @@ public class DefaultFreeMakerThemes implements FreeMakerThemes {
 	 */
 	@Override
 	public String getThemeTemplate(final String themeName, final String template) {
-		
-		FreeMakerTheme foundTheme = this.themes.get(themeName);
-		if (foundTheme != null) {
-			return foundTheme.getThemeTemplate(template);
-		} else {
-			return this.defaultTheme.getThemeTemplate(template);
-		}
+		FreeMakerTheme themeTemplate = this.themes.get(themeName);
+		return (themeTemplate != null) ? themeTemplate.getThemeTemplate(template) : null;
 	}
 }

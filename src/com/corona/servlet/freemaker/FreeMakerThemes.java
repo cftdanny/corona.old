@@ -14,7 +14,7 @@ public interface FreeMakerThemes {
 	/**
 	 * @param themeName the theme name
 	 * @param template the template to be processed
-	 * @return the theme template or <code>null</code> if does not exsit
+	 * @return the theme template or <code>null</code> if does not exist
 	 */
 	String getThemeTemplate(String themeName, String template);
 }

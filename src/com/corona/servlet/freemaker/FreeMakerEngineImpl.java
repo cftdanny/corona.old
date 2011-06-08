@@ -23,18 +23,18 @@ import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 
 /**
- * <p>The implementation class of {@link FreeMakerEngineManager}. </p>
+ * <p>The implementation class of {@link FreeMakerEngine}. </p>
  *
  * @author $Author$
  * @version $Id$
  */
 @Install(dependencies = "freemarker.template.Configuration")
-public class FreeMakerEngineManagerImpl implements FreeMakerEngineManager {
+public class FreeMakerEngineImpl implements FreeMakerEngine {
 
 	/**
 	 * the logger
 	 */
-	private Log logger = LogFactory.getLog(FreeMakerEngineManagerImpl.class);
+	private Log logger = LogFactory.getLog(FreeMakerEngineImpl.class);
 	
 	/**
 	 * the FreeMaker configuration
@@ -47,9 +47,14 @@ public class FreeMakerEngineManagerImpl implements FreeMakerEngineManager {
 	@Inject private ServletContext servletContext;
 	
 	/**
-	 * the root path
+	 * the base path for templates that are store in SERVLET path
 	 */
-	private String basePath = "/WEB-INF/template";
+	private String servletBasePathForTemplate = "/WEB-INF/template";
+
+	/**
+	 * the base path for templates that are stored in class path 
+	 */
+	private String baseClassPathForTemplate = "/template";
 	
 	/**
 	 * the default encoding for template
@@ -99,30 +104,48 @@ public class FreeMakerEngineManagerImpl implements FreeMakerEngineManager {
 	/**
 	 * the variable name is used to include child template
 	 */
-	private String themeTemplateVariableName = "template";
+	private String variableNameforChildTemplate = "template";
 	
 	/**
 	 * the applied theme name to get from request or session by attribute name 
 	 */
-	private String themeRequestAttributeName = "theme";
+	private String requestAttributeNameForTheme = "theme";
 	
 	/**
-	 * @return the path
+	 * @return the base path under SERVLET context to load FreeMaker template
 	 */
-	public String getBasePath() {
-		return basePath;
+	public String getServletBasePathForTemplate() {
+		return servletBasePathForTemplate;
 	}
 	
 	/**
-	 * @param basePath the script base path to set
+	 * @param basePath the base path under SERVLET context to load FreeMaker template to set
 	 */
-	public void setBasePath(final String basePath) {
+	public void setServletBasePathForTemplate(final String basePath) {
 
-		this.basePath = basePath;
-		if (this.configuration != null) {
-			this.configuration.setServletContextForTemplateLoading(this.servletContext, this.basePath);
-		} else {
-			this.configuration.setClassForTemplateLoading(this.getClass(), this.basePath);
+		this.servletBasePathForTemplate = basePath;
+		if ((this.configuration != null) && (this.servletBasePathForTemplate != null)) {
+			this.configuration.setServletContextForTemplateLoading(
+					this.servletContext, this.servletBasePathForTemplate
+			);
+		}
+	}
+	
+	/**
+	 * @return the base path for templates that are stored in class path
+	 */
+	public String getBaseClassPathForTemplate() {
+		return baseClassPathForTemplate;
+	}
+	
+	/**
+	 * @param classBasePath the base path for templates that are stored in class path to set
+	 */
+	public void setBaseClassPathForTemplate(final String classBasePath) {
+		
+		this.baseClassPathForTemplate = classBasePath;
+		if ((this.configuration != null) && (this.baseClassPathForTemplate != null)) {
+			this.configuration.setClassForTemplateLoading(this.getClass(), this.baseClassPathForTemplate);
 		}
 	}
 
@@ -248,13 +271,13 @@ public class FreeMakerEngineManagerImpl implements FreeMakerEngineManager {
 		
 		this.whitespaceStripping = whitespaceStripping;
 		if (this.configuration != null) {
-			this.setWhitespaceStripping(this.whitespaceStripping);
+			this.configuration.setWhitespaceStripping(this.whitespaceStripping);
 		}
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.freemaker.FreeMakerEngineManager#getThemes()
+	 * @see com.corona.servlet.freemaker.FreeMakerEngine#getThemes()
 	 */
 	public FreeMakerThemes getThemes() {
 		return this.themes;
@@ -269,7 +292,7 @@ public class FreeMakerEngineManagerImpl implements FreeMakerEngineManager {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.freemaker.FreeMakerEngineManager#getDefaultThemeName()
+	 * @see com.corona.servlet.freemaker.FreeMakerEngine#getDefaultThemeName()
 	 */
 	public String getDefaultThemeName() {
 		return defaultThemeName;
@@ -284,32 +307,32 @@ public class FreeMakerEngineManagerImpl implements FreeMakerEngineManager {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.freemaker.FreeMakerEngineManager#getThemeTemplateVariableName()
+	 * @see com.corona.servlet.freemaker.FreeMakerEngine#getVariableNameForChildTemplate()
 	 */
-	public String getThemeTemplateVariableName() {
-		return themeTemplateVariableName;
+	public String getVariableNameForChildTemplate() {
+		return variableNameforChildTemplate;
 	}
 
 	/**
 	 * @param themeTemplateVariableName the variable name is used to include child template to set
 	 */
-	public void setThemeTemplateVariableName(final String themeTemplateVariableName) {
-		this.themeTemplateVariableName = themeTemplateVariableName;
+	public void setVariableNameForChildTemplate(final String themeTemplateVariableName) {
+		this.variableNameforChildTemplate = themeTemplateVariableName;
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.freemaker.FreeMakerEngineManager#getThemeRequestAttributeName()
+	 * @see com.corona.servlet.freemaker.FreeMakerEngine#getRequestAttributeNameForTheme()
 	 */
-	public String getThemeRequestAttributeName() {
-		return themeRequestAttributeName;
+	public String getRequestAttributeNameForTheme() {
+		return requestAttributeNameForTheme;
 	}
 	
 	/**
-	 * @param themeRequestAttributeName the applied theme name to get from request or session by attribute name to set
+	 * @param requestAttributeNameForTheme the applied theme name to get from request by attribute name to set
 	 */
-	public void setThemeRequestAttributeName(final String themeRequestAttributeName) {
-		this.themeRequestAttributeName = themeRequestAttributeName;
+	public void setRequestAttributeNameForTheme(final String requestAttributeNameForTheme) {
+		this.requestAttributeNameForTheme = requestAttributeNameForTheme;
 	}
 
 	/**
@@ -327,7 +350,8 @@ public class FreeMakerEngineManagerImpl implements FreeMakerEngineManager {
 		
 		// will load FreeMaker template from ServletContext path
 		this.configuration.setObjectWrapper(new DefaultObjectWrapper());
-		this.setBasePath(this.basePath);
+		this.setBaseClassPathForTemplate(this.baseClassPathForTemplate);
+		this.setServletBasePathForTemplate(this.servletBasePathForTemplate);
 		
 		// set default encoding and locale to FreeMaker engine
 		this.setDefaultEncoding(this.defaultEncoding);
@@ -352,7 +376,7 @@ public class FreeMakerEngineManagerImpl implements FreeMakerEngineManager {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.freemaker.FreeMakerEngineManager#compile(java.lang.String, java.util.Locale)
+	 * @see com.corona.servlet.freemaker.FreeMakerEngine#compile(java.lang.String, java.util.Locale)
 	 */
 	public Template compile(final String name, final Locale locale) throws IOException {
 		return this.configuration.getTemplate(name, locale);
