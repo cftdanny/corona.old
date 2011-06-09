@@ -66,7 +66,9 @@ class Handlers {
 			
 			this.logger.debug("HTT request path [{0}] is protected by application", path);
 			try {
-				response.sendError(HttpServletResponse.SC_NOT_FOUND, "Page not found!");
+				response.sendError(
+						HttpServletResponse.SC_NOT_FOUND, new Messages(request).get(Messages.PAGE_NOT_FOUND, path)
+				);
 			} catch (Exception e) {
 				this.logger.error("Fail to send \"Page Not Found\" command to client", e);
 				throw new HandleException("Fail to send \"Page Not Found\" command to client", e);
@@ -92,7 +94,9 @@ class Handlers {
 		}
 		
 		try {
-			response.sendError(HttpServletResponse.SC_NOT_FOUND, "Page not found!");
+			response.sendError(
+					HttpServletResponse.SC_NOT_FOUND, new Messages(request).get(Messages.PAGE_NOT_FOUND, path)
+			);
 		} catch (Exception e) {
 			this.logger.error("Fail to send page not found command to client", e);
 			throw new HandleException("Fail to send page not found command to client", e);

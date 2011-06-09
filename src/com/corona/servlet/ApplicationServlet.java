@@ -100,15 +100,13 @@ public class ApplicationServlet implements Servlet, Serializable {
 		
 		try {
 			this.handlers.handle((HttpServletRequest) request, (HttpServletResponse) response);
-		} catch (HandleException e) {
+		} catch (Exception e) {
 
 			String path = ((HttpServletRequest) request).getPathInfo();
 			this.getServletContext().log(
 					"Fail to create create response with request path [" + path + "]", e
 			); 
-			throw new ServletException(
-					"Fail to create create response with request path [" + path + "]", e
-			);
+			throw new ServletException(new Messages(request).get(Messages.HANDLER_PRODUCE_ERROR, path), e);
 		}
 	}
 
