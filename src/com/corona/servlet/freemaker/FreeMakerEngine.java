@@ -3,7 +3,6 @@
  */
 package com.corona.servlet.freemaker;
 
-import java.io.IOException;
 import java.util.Locale;
 
 import freemarker.template.Template;
@@ -42,7 +41,7 @@ public interface FreeMakerEngine {
 	 * @param name the template
 	 * @param locale the language for template
 	 * @return the compiled template
-	 * @throws IOException if template can not be found
+	 * @throws Exception if template can not be found
 	 */
-	Template compile(final String name, final Locale locale) throws IOException;
+	Template compile(final String name, final Locale locale) throws Exception;
 }

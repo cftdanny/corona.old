@@ -109,7 +109,7 @@ public class FreeMakerProducer extends AbstractProducer {
 		Template compiledTemplate = null;
 		try {
 			compiledTemplate = manager.compile(toBeCompiledTemplate, dataModel.getRequest().getLocale());
-		} catch (IOException e) {
+		} catch (Exception e) {
 			this.logger.error("Fail to compile FreeMaker template [{0}]", e, this.template);
 			throw new ProduceException("Fail to compile FreeMaker template [{0}]", e, this.template);
 		}
