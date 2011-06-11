@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
+<project name="name of project" default="build" basedir=".">
+	
+	<!-- Store current time to variable for build timestamp -->
+	<tstamp>
+		<format property="current.time" pattern="yyyyMMddHHmm" />
+	</tstamp>
+	
+	<!-- Load configuration that are used to build application -->
+	<property file="build.properties"/>
+
+	<!-- Class path in order to compile application classes -->
+	<path id="app.class.path">
+		<fileset dir="${tomcat.lib.path}">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${app.lib.path}">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${test.lib.path}">
+			<include name="**/*.jar"/>
+		</fileset>
+		<pathelement location="${app.bin.path}"/>
+	</path>
+
+	<!-- Class path in order to run TestNG test suite -->
+	<path id="test.class.path">
+		<fileset dir="${tomcat.lib.path}">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${app.lib.path}">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${test.lib.path}">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${tools.emma.path}">
+			<include name="*.jar"/>
+		</fileset>
+		<pathelement location="${emma.instr.path}"/>
+		<pathelement location="${test.bin.path}"/>
+	</path>
+
+	<!-- Initial and clean build directory -->
+	<target name="init">
+		<delete dir="${build.path}" />
+		<mkdir dir="${build.path}" />
+	</target>
+	
+	<!-- Compile application classes and test case classes -->
+	<target name="compile" depends="init">
+		
+		<mkdir dir="${app.bin.path}" />
+		<javac debug="on" srcdir="${app.src.path}" destdir="${app.bin.path}" classpathref="app.class.path" />
+		<copy todir="${app.bin.path}">
+			<fileset dir="${app.src.path}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+		
+		<mkdir dir="${test.bin.path}" />
+		<javac srcdir="${test.src.path}" destdir="${test.bin.path}" classpathref="app.class.path" />
+		<copy todir="${test.bin.path}">
+			<fileset dir="${test.src.path}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+	</target>
+	
+	<!-- Instrument application classes for EMMA -->
+	<target name="instrument" depends="compile">
+		
+		<taskdef resource="emma_ant.properties" classpathref="test.class.path" />
+		<emma enabled="yes">
+			<instr merge="true" instrpath="${app.bin.path}" destdir="${emma.instr.path}" 
+				metadatafile="${emma.instr.path}\metadata.emma"  
+			/>
+		</emma>
+		<copy todir="${emma.instr.path}">
+			<fileset dir="${app.bin.path}" />
+		</copy>
+	</target>
+	
+	<!-- Run TestNG test suite with EMMA coverage -->
+	<target name="test" depends="instrument">
+		
+		<mkdir dir="${report.path}/testng" />
+		<taskdef resource="testngtasks" classpathref="test.class.path"/>
+		<testng classpathref="test.class.path" outputDir="${report.path}/testng" haltOnfailure="true">
+			<jvmarg value="-Demma.coverage.out.file=${emma.instr.path}/metadata.emma" />
+			<jvmarg value="-Demma.coverage.out.merge=true" />
+			
+		   <xmlfileset dir="${test.suite.path}" includes="testng.xml"/>
+		</testng>
+	</target>
+	
+	<!-- Create junit report by TestNG result -->
+	<target name="junit" depends="test">
+		
+		<mkdir dir="${report.path}/junit" />
+		<junitreport todir="${report.path}/junit">
+			<fileset dir="${report.path}/testng/junitreports">
+				<include name="**/*.xml"/>
+			</fileset>
+		  
+			<report format="noframes" todir="${report.path}/junit"/>
+		</junitreport>
+		<move file="${report.path}/junit/junit-noframes.html" tofile="${report.path}/junit/index.html"/>
+	</target>
+	
+	<!-- Create code coverage by EMMA --> 
+	<target name="coverage" depends="test">
+		
+		<taskdef resource="emma_ant.properties" classpathref="test.class.path" />
+		<emma enabled="yes">
+			<report sourcepath="${app.src.path}" 
+				sort="+block,+name,+method,+class" metrics="method:70,block:80,line:80,class:100"
+			>
+				<fileset dir="${emma.instr.path}">
+					<include name="*.emma" />
+				</fileset>
+				<html outfile="${report.path}/coverage/index.html" depth="method" 
+					columns="name,class,method,block,line" 
+				/>
+			</report>
+		</emma>
+	</target>
+
+	<!-- Collect possible bugs by FindBugs --> 
+	<target name="findbugs" depends="compile">
+
+		<path id="findbugs.class.path" path="app.class.path">
+			<fileset dir="${tools.findbugs.path}">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
+
+		<mkdir dir="${report.path}/findbugs" />
+		<taskdef name="findbugs" classpathref="findbugs.class.path" 
+			classname="edu.umd.cs.findbugs.anttask.FindBugsTask"
+		/>
+		<findbugs home="${tools.findbugs.path}" output="html" stylesheet="plain.xsl" 
+			outputFile="${report.path}/findbugs/index.html" 
+		>
+			<sourcePath path="${app.src.path}" />
+			<class location="${app.bin.path}" />
+		</findbugs>
+	</target>
+
+	<!-- Check source code styles --> 
+	<target name="checkstyle">
+		
+		<path id="checkstyle.class.path" path="app.class.path">
+			<fileset dir="${tools.checkstyle.path}">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
+
+		<mkdir dir="${report.path}/checkstyle" />
+		<taskdef resource="checkstyletask.properties" classpathref="checkstyle.class.path" />
+		<checkstyle failOnViolation="false" classpathref="app.class.path"
+			config="${tools.checkstyle.path}/checkstyle.xml"
+		>
+			<fileset dir="${app.src.path}" includes="**/*.java"/>
+			<formatter type="xml" tofile="${report.path}/checkstyle/index.xml"/>
+		</checkstyle>
+		
+		<xslt in="${report.path}/checkstyle/index.xml" out="${report.path}/checkstyle/index.html"  
+			style="${tools.checkstyle.path}/checkstyle.xsl"
+		/>
+	</target>
+	
+	<!-- JavaNCSS metrics tools -->
+	<target name="javancss" depends="compile">
+		
+		<path id="javancss.class.path" path="app.class.path">
+			<fileset dir="${tools.javancss.path}">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
+		
+		<mkdir dir="${report.path}/javancss" />
+		<taskdef name="javancss" classname="javancss.JavancssAntTask" classpathref="javancss.class.path" />
+		<javancss srcdir="${app.src.path}" generateReport="true" format="xml" includes="**/*.java"
+			outputfile="${report.path}/javancss/index.xml"
+		/>
+		
+		<xslt in="${report.path}/javancss/index.xml" out="${report.path}/javancss/index.html"  
+			style="${tools.javancss.path}/javancss.xsl"
+		/>
+	</target>
+
+	<!-- CKJM metrics tools -->
+	<target name="ckjm" depends="compile">
+		
+		<path id="ckjm.class.path" path="app.class.path">
+			<fileset dir="${tools.ckjm.path}">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
+		
+		<mkdir dir="${report.path}/ckjm" />
+		<taskdef name="ckjm" classname="gr.spinellis.ckjm.ant.CkjmTask" classpathref="ckjm.class.path" />
+		<ckjm outputfile="${report.path}/ckjm/index.xml" format="xml" classdir="${app.bin.path}">
+			<include name="**/*.class" />
+		</ckjm>
+		
+		<xslt in="${report.path}/ckjm/index.xml" out="${report.path}/ckjm/index.html"  
+			style="${tools.ckjm.path}/ckjm.xsl"
+		/>
+		<xslt in="${report.path}/ckjm/index.xml" out="${report.path}/ckjm/index_top10.html"  
+			style="${tools.ckjm.path}/ckjm_extra.xsl"
+		/>
+	</target>
+
+	<!-- Create javadoc for application classes -->
+	<target name="javadoc" depends="test">
+		
+		<javadoc author="true" version="true" use="true" linksource="yes" 
+			classpathref="app.class.path" destdir="${report.path}/javadoc" windowtitle="${app.javadoc.title}" 
+		>
+			<packageset dir="${app.src.path}">
+			      <include name="**"/>
+			</packageset>
+			
+			<doctitle><![CDATA[<h1>${app.javadoc.title} ${app.version}</h1>]]></doctitle>
+			<bottom><![CDATA[<i>${app.javadoc.bottom}</i>]]></bottom>
+		</javadoc>
+	</target>
+	
+	<!-- Build all documents for application -->
+	<target name="document" depends="javadoc, junit, coverage, findbugs, checkstyle, javancss, ckjm">
+	</target>
+	
+	<!-- build application release distribution, and delete temporary files -->
+	<target name="build" depends="document">
+		
+		<jar basedir="${app.bin.path}" 
+			destfile="${build.path}/${app.name}-${app.version}.${current.time}.jar" 
+		/>
+		<jar basedir="${app.src.path}"  
+			destfile="${build.path}/${app.name}-${app.version}.${current.time}-source.jar" 
+		/>
+		<jar basedir="${report.path}/javadoc" 
+			destfile="${build.path}/${app.name}-${app.version}.${current.time}-javadoc.jar" 
+		/>
+		<jar basedir="${report.path}" 
+			destfile="${build.path}/${app.name}-${app.version}.${current.time}-report.jar" 
+		/>
+		
+		<delete includeEmptyDirs="true">
+			<fileset dir="${compiled.path}"/>
+		</delete>
+	</target>
+</project>
