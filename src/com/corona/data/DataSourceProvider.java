@@ -39,6 +39,11 @@ public interface DataSourceProvider {
 	String SCHEMA = "schema";
 	
 	/**
+	 * how many connection managers can be idles
+	 */
+	String SQL_MAX_IDLES = "sql.max.idles";
+		
+	/**
 	 * @return the database family (MySQL, SQL Server, DB2, etc)
 	 */
 	String getFamily();

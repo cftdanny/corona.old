@@ -47,10 +47,19 @@ public class AbstractBusinessTest extends AbstractComponentTest {
 		
 		// restart HSQLDB if required
 		this.connectionManagerFactory = this.get(ConnectionManagerFactory.class);
-		this.restart();
+		if (this.canRestart()) {
+			this.restart();
+		}
 		this.connectionManager = this.get(ConnectionManager.class);
 	}
 
+	/**
+	 * @return whether can restart database server
+	 */
+	protected boolean canRestart() {
+		return true;
+	}
+	
 	/**
 	 * restart database if it is HSQLDB
 	 * @exception Exception if fail to restart HSQLDB

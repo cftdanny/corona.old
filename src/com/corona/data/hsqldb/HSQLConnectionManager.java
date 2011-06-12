@@ -35,4 +35,20 @@ class HSQLConnectionManager extends SQLConnectionManager {
 	public HSQLDialect getDialect() {
 		return this.dialect;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.sql.SQLConnectionManager#isClosed()
+	 */
+	@Override
+	public boolean isClosed() {
+		
+		boolean closed = super.isClosed();
+		try {
+			this.dialect.getCurrentTime();
+			return closed;
+		} catch (Exception e) {
+			return true;
+		}
+	}
 }

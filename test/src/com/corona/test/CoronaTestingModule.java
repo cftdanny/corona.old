@@ -33,6 +33,7 @@ public class CoronaTestingModule extends AbstractModule {
 		settings.setProperty(DataSourceProvider.URL, "jdbc:hsqldb:res:/testdb");
 		settings.setProperty(DataSourceProvider.USER, "sa");
 		settings.setProperty(DataSourceProvider.PASSWORD, "");
+		settings.setProperty(DataSourceProvider.SQL_MAX_IDLES, "2");
 		
 		this.bindConfiguration(DataSourceManagerProvider.class).property("family").value("HSQL");
 		this.bindConfiguration(DataSourceManagerProvider.class).property("settings").value(settings);

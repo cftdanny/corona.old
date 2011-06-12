@@ -138,6 +138,12 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 	@Override
 	public void close() {
 		
+		// to test whether this connection manager can cache, if yes, cache for later using
+		if (this.connectionManagerFactory.canCacheConnectionManager()) {
+			this.connectionManagerFactory.cacheConnectionManager(this);
+			return;
+		}
+		
 		// if connection manager is closed, don't need close again
 		if (this.isClosed()) {
 			return;

@@ -32,6 +32,12 @@ class HSQLConnectionManagerFactory extends SQLConnectionManagerFactory {
 	 */
 	@Override
 	public ConnectionManager open() throws DataException {
-		return new HSQLConnectionManager(this);
+		
+		ConnectionManager connectionManager = this.getCachedConnectionManager();
+		if ((connectionManager != null) && (!connectionManager.isClosed())) {
+			return connectionManager;
+		} else {
+			return new HSQLConnectionManager(this);
+		}
 	}
 }

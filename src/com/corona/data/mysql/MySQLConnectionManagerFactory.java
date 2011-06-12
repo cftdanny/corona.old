@@ -32,6 +32,12 @@ class MySQLConnectionManagerFactory extends SQLConnectionManagerFactory {
 	 */
 	@Override
 	public ConnectionManager open() throws DataException {
-		return new MySQLConnectionManager(this);
+		
+		ConnectionManager connectionManager = this.getCachedConnectionManager();
+		if ((connectionManager != null) && (!connectionManager.isClosed())) {
+			return connectionManager;
+		} else {
+			return new MySQLConnectionManager(this);
+		}
 	}
 }

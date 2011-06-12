@@ -6,6 +6,7 @@ package com.corona.data.sql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
+import java.util.Vector;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -62,6 +63,16 @@ public abstract class SQLConnectionManagerFactory implements ConnectionManagerFa
 	private String password;
 	
 	/**
+	 * how many connection manager can be idles;
+	 */
+	private int maxIdleConnectionManagers;
+	
+	/**
+	 * the cached SQL connection manager
+	 */
+	private Vector<SQLConnectionManager> connectionManagers = new Vector<SQLConnectionManager>();
+	
+	/**
 	 * @param dataSourceProvider the parent data source provider
 	 * @param properties the data source configuration
 	 */
@@ -77,6 +88,15 @@ public abstract class SQLConnectionManagerFactory implements ConnectionManagerFa
 		this.url = this.properties.getProperty(DataSourceProvider.URL);
 		this.user = this.properties.getProperty(DataSourceProvider.USER);
 		this.password = this.properties.getProperty(DataSourceProvider.PASSWORD);
+		
+		// get how many connection manager can be idle
+		try {
+			this.maxIdleConnectionManagers = Integer.parseInt(
+					(String) this.properties.get(DataSourceProvider.SQL_MAX_IDLES)
+			);
+		} catch (Exception e) {
+			this.maxIdleConnectionManagers = 0;
+		}
 	}
 	
 	/**
@@ -97,6 +117,37 @@ public abstract class SQLConnectionManagerFactory implements ConnectionManagerFa
 		return this.entityMetaDataManager;
 	}
 
+	/**
+	 * @return the cached connection manager or <code>null</code> if does not exists
+	 */
+	protected SQLConnectionManager getCachedConnectionManager() {
+		
+		if (this.connectionManagers.size() > 0) {
+			
+			try {
+				return this.connectionManagers.remove(0);
+			} catch (Exception e) {
+				return null;
+			}
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * @return <code>true</code> if connection manager can cache for later using
+	 */
+	protected boolean canCacheConnectionManager() {
+		return this.connectionManagers.size() < this.maxIdleConnectionManagers;
+	}
+	
+	/**
+	 * @param connectionManager the connection manager to be cached
+	 */
+	protected void cacheConnectionManager(final SQLConnectionManager connectionManager) {
+		this.connectionManagers.add(connectionManager);
+	}
+	
 	/**
 	 * @return the opened JDBC connection
 	 * @throws DataException if fail to open JDBC connection
