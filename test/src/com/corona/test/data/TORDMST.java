@@ -9,6 +9,7 @@ import com.corona.data.annotation.Entity;
 import com.corona.data.annotation.Id;
 import com.corona.data.annotation.PrimaryKey;
 import com.corona.data.annotation.UniqueKey;
+import com.corona.data.annotation.Index;
 
 /**
  * <p>TABLE TORDMST </p>
@@ -19,15 +20,23 @@ import com.corona.data.annotation.UniqueKey;
 @Entity (
 		primaryKey = @PrimaryKey("ORDRID"),
 		uniqueKeys = {
-				@UniqueKey(id = TORDMST.ORDRNO, columns = "ORDRNO")
+				@UniqueKey(id = TORDMST.UK_ORDRNO, columns = "ORDRNO")
+		},
+		indexes = {
+				@Index(id = TORDMST.IX_ORDDAT, columns = "ORDDAT")
 		}
 )
 public class TORDMST {
 
 	/**
-	 * the primary key 1
+	 * the unique key 1
 	 */
-	public static final int ORDRNO = 1;
+	public static final int UK_ORDRNO = 1;
+	
+	/**
+	 * the index
+	 */
+	public static final int IX_ORDDAT = 1;
 	
 	/**
 	 * id

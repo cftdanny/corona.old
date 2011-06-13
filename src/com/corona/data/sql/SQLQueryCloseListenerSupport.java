@@ -33,11 +33,18 @@ class SQLQueryCloseListenerSupport {
 	}
 	
 	/**
+	 * @return all listeners as array
+	 */
+	private SQLQueryCloseListener[] getListeners() {
+		return this.listeners.toArray(new SQLQueryCloseListener[0]);
+	}
+	
+	/**
 	 * @param event the event to be fired
 	 */
 	void fire(final SQLQueryCloseEvent event) {
 		
-		for (SQLQueryCloseListener listener : this.listeners) {
+		for (SQLQueryCloseListener listener : this.getListeners()) {
 			listener.close(event);
 		}
 	}

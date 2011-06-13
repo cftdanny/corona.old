@@ -31,13 +31,20 @@ class SQLConnectionManagerCloseListenerSupport {
 	void remove(final SQLConnectionManagerCloseListener listener) {
 		this.listeners.remove(listener);
 	}
+
+	/**
+	 * @return all listeners as array
+	 */
+	private SQLConnectionManagerCloseListener[] getListeners() {
+		return this.listeners.toArray(new SQLConnectionManagerCloseListener[0]);
+	}
 	
 	/**
 	 * @param event the event to be fired
 	 */
 	void fire(final SQLConnectionManagerCloseEvent event) {
 		
-		for (SQLConnectionManagerCloseListener listener : this.listeners) {
+		for (SQLConnectionManagerCloseListener listener : this.getListeners()) {
 			listener.close(event);
 		}
 	}

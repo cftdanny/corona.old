@@ -10,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>This </p>
+ * <p>This annotation is used to indicate field or property is an identity column. </p>
  *
  * @author $Author$
  * @version $Id$

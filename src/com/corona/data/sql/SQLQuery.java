@@ -23,6 +23,11 @@ import com.corona.data.BeanResultHandler;
 public class SQLQuery<E> implements Query<E> {
 
 	/**
+	 * the key for pooling query
+	 */
+	private Key key = null;
+
+	/**
 	 * the close listener support
 	 */
 	private SQLQueryCloseListenerSupport closeListenerSupport;
@@ -78,6 +83,20 @@ public class SQLQuery<E> implements Query<E> {
 		return this.statement.toString();
 	}
 	
+	/**
+	 * @return the key for pooling query
+	 */
+	public Key getKey() {
+		return key;
+	}
+	
+	/**
+	 * @param key the key for pooling query to set
+	 */
+	public void setKey(final Key key) {
+		this.key = key;
+	}
+
 	/**
 	 * @param listener the listener to listen this query closing event
 	 */

@@ -26,6 +26,7 @@
 			<class name="com.corona.test.data.HomeSelectTest" />
 			<class name="com.corona.test.data.ResultHandlerTest" />
 			<class name="com.corona.test.data.DatabaseAssertionTest" />
+			<class name="com.corona.test.data.SQLStatementPoolTest" />
 		</classes>
 	</test>
 	

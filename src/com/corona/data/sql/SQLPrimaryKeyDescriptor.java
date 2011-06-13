@@ -27,6 +27,26 @@ import com.corona.data.annotation.PrimaryKey;
 public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 
 	/**
+	 * the pooled SELECT query name
+	 */
+	private static final String POOLED_SELECT_NAME = "@PK.SELECT@";
+
+	/**
+	 * the pooled DELETE command name
+	 */
+	private static final String POOLED_DELETE_NAME = "@PK.DELETE@";
+
+	/**
+	 * the pooled INSERT command name
+	 */
+	private static final String POOLED_INSERT_NAME = "@PK.INSERT@";
+
+	/**
+	 * the pooled UPDATE command name
+	 */
+	private static final String POOLED_UPDATE_NAME = "@PK.UPDATE@";
+
+	/**
 	 * the entity configuration that defines this primary key
 	 */
 	private EntityMetaData<E> parent;
@@ -135,19 +155,63 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 	}
 
 	/**
+	 * @param connectionManager the connection manager
+	 * @return the SQL connection manager
+	 */
+	private SQLConnectionManager getSQLConnectionManager(final ConnectionManager connectionManager) {
+		return (SQLConnectionManager) connectionManager;
+	}
+	
+	/**
 	 * @param connectionManager the current connection manager
 	 * @return the new query for SELECT by primary key
 	 */
 	Query<E> createSelectQuery(final ConnectionManager connectionManager) {
-		return connectionManager.createQuery(new BeanResultHandler<E>(this.parent), this.selectSql);
+		
+		// find query from connection manager pool first, if find, just return
+		SQLQuery<E> query = this.getSQLConnectionManager(connectionManager).getPooledQuery(
+				this.parent.getType(), POOLED_SELECT_NAME
+		);
+		if (query != null) {
+			return query;
+		}
+		
+		// if can not find query in pool, will create and register it
+		query = (SQLQuery<E>) connectionManager.createQuery(
+				new BeanResultHandler<E>(this.parent), this.selectSql
+		);
+		this.getSQLConnectionManager(connectionManager).addPooledQuery(
+				this.parent.getType(), POOLED_SELECT_NAME, query
+		);
+		return query;
 	}
 
+	/**
+	 * @param connectionManager the connection manager
+	 * @param name the command name
+	 * @return the pooled command
+	 */
+	private SQLCommand getPooledCommand(final ConnectionManager connectionManager, final String name) {
+		return this.getSQLConnectionManager(connectionManager).getPooledCommand(this.parent.getType(), name);
+	}
 	/**
 	 * @param connectionManager the current connection manager
 	 * @return the new command for DELETE by primary key
 	 */
 	Command createDeleteCommand(final ConnectionManager connectionManager) {
-		return connectionManager.createCommand(this.deleteSql);
+		
+		// find command from connection manager pool first, if find, just return
+		SQLCommand command = this.getPooledCommand(connectionManager, POOLED_DELETE_NAME); 
+		if (command != null) {
+			return command;
+		}
+		
+		// if can not find command in pool, will create and register it
+		command = (SQLCommand) connectionManager.createCommand(this.deleteSql);
+		this.getSQLConnectionManager(connectionManager).addPooledCommand(
+				this.parent.getType(), POOLED_DELETE_NAME, command
+		);
+		return command;
 	}
 	
 	/**
@@ -155,7 +219,19 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 	 * @return the new command for UPDATE by primary key
 	 */
 	Command createUpdateCommand(final ConnectionManager connectionManager) {
-		return connectionManager.createCommand(this.updateSql);
+
+		// find command from connection manager pool first, if find, just return
+		SQLCommand command = this.getPooledCommand(connectionManager, POOLED_UPDATE_NAME); 
+		if (command != null) {
+			return command;
+		}
+		
+		// if can not find command in pool, will create and register it
+		command = (SQLCommand) connectionManager.createCommand(this.updateSql);
+		this.getSQLConnectionManager(connectionManager).addPooledCommand(
+				this.parent.getType(), POOLED_UPDATE_NAME, command
+		);
+		return command;
 	}
 	
 	/**
@@ -175,9 +251,15 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 	 * @return the new command for INSERT by identity
 	 */
 	Command createInsertCommand(final ConnectionManager connectionManager) {
-		
+
+		// find command from connection manager pool first, if find, just return
+		SQLCommand command = this.getPooledCommand(connectionManager, POOLED_INSERT_NAME); 
+		if (command != null) {
+			return command;
+		}
+
+		// check whether INSERT SQL is created or not, if not, create it
 		if (this.insertSql == null) {
-			
 			String columns = "", params = "";
 			for (ColumnDescriptor<?> descriptor : this.parent.getColumns().values()) {
 				if (!this.isIdentityDescriptor(descriptor)) {
@@ -187,6 +269,12 @@ public class SQLPrimaryKeyDescriptor<E> implements PrimaryKeyDescriptor<E> {
 			}
 			this.insertSql = "INSERT INTO " + this.parent.getName() + " (" + columns + ") VALUES (" + params + ")";
 		}
-		return connectionManager.createCommand(this.insertSql);
+		
+		// if can not find command in pool, will create and register it
+		command = (SQLCommand) ((SQLConnectionManager) connectionManager).createCommand(this.insertSql, true);
+		this.getSQLConnectionManager(connectionManager).addPooledCommand(
+				this.parent.getType(), POOLED_INSERT_NAME, command
+		);
+		return command;
 	}
 }

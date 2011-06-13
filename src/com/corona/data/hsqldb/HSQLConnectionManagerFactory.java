@@ -8,6 +8,7 @@ import java.util.Properties;
 import com.corona.data.ConnectionManager;
 import com.corona.data.DataException;
 import com.corona.data.DataSourceProvider;
+import com.corona.data.sql.SQLConnectionManager;
 import com.corona.data.sql.SQLConnectionManagerFactory;
 
 /**
@@ -33,11 +34,11 @@ class HSQLConnectionManagerFactory extends SQLConnectionManagerFactory {
 	@Override
 	public ConnectionManager open() throws DataException {
 		
-		ConnectionManager connectionManager = this.getCachedConnectionManager();
-		if ((connectionManager != null) && (!connectionManager.isClosed())) {
-			return connectionManager;
-		} else {
-			return new HSQLConnectionManager(this);
+		SQLConnectionManager connectionManager = this.getCachedConnectionManager();
+		if ((connectionManager == null) || connectionManager.isClosed()) {
+			connectionManager = new HSQLConnectionManager(this);
 		}
+		connectionManager.addCloseListener(this);
+		return connectionManager;
 	}
 }

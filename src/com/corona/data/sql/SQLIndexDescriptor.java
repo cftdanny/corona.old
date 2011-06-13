@@ -3,6 +3,8 @@
  */
 package com.corona.data.sql;
 
+import java.text.MessageFormat;
+
 import com.corona.data.BeanResultHandler;
 import com.corona.data.Command;
 import com.corona.data.ConnectionManager;
@@ -20,6 +22,16 @@ import com.corona.data.annotation.Index;
  * @param <E> the type of entity
  */
 public class SQLIndexDescriptor<E> implements IndexDescriptor<E> {
+
+	/**
+	 * the pooled SELECT query name
+	 */
+	private static final String POOLED_SELECT_NAME = "@IX{0}.SELECT@";
+
+	/**
+	 * the pooled DELETE command name
+	 */
+	private static final String POOLED_DELETE_NAME = "@IX{0}.DELETE@";
 
 	/**
 	 * the parent entity MetaData
@@ -61,10 +73,10 @@ public class SQLIndexDescriptor<E> implements IndexDescriptor<E> {
 		String where = "", orderby = "";
 		for (String column : index.columns()) {
 			where = where + ((where.length() == 0) ? "" : " AND ") + "(" + column.toUpperCase() + " = ?)";
-			orderby = orderby + ((where.length() == 0) ? "" : ", ") + column;
+			orderby = orderby + ((orderby.length() == 0) ? "" : ", ") + column;
 		}
 		
-		this.selectSql = "SELECT * FROM " + this.parent.getName() + " WHERE " + where + " " + orderby;
+		this.selectSql = "SELECT * FROM " + this.parent.getName() + " WHERE " + where + " ORDER BY " + orderby;
 		this.deleteSql = "DELETE FROM " + this.parent.getName() + " WHERE " + where;
 	}
 
@@ -87,11 +99,38 @@ public class SQLIndexDescriptor<E> implements IndexDescriptor<E> {
 	}
 
 	/**
+	 * @param connectionManager the connection manager
+	 * @return the SQL connection manager
+	 */
+	private SQLConnectionManager getSQLConnectionManager(final ConnectionManager connectionManager) {
+		return (SQLConnectionManager) connectionManager;
+	}
+
+	/**
 	 * @param connectionManager the current connection manager
 	 * @return the new query by SELECT SQL for unique key
 	 */
 	Query<E> createSelectQuery(final ConnectionManager connectionManager) {
-		return connectionManager.createQuery(new BeanResultHandler<E>(this.parent), this.selectSql);
+		
+		// create query name by unique key id
+		String name = MessageFormat.format(POOLED_SELECT_NAME, new Integer(this.id));
+		
+		// find query from connection manager pool first, if find, just return
+		SQLQuery<E> query = this.getSQLConnectionManager(connectionManager).getPooledQuery(
+				this.parent.getType(), name
+		);
+		if (query != null) {
+			return query;
+		}
+
+		// if can not find query in pool, will create and register it
+		query = (SQLQuery<E>) connectionManager.createQuery(
+				new BeanResultHandler<E>(this.parent), this.selectSql
+		);
+		this.getSQLConnectionManager(connectionManager).addPooledQuery(
+				this.parent.getType(), name, query
+		);
+		return query;
 	}
 
 	/**
@@ -99,6 +138,23 @@ public class SQLIndexDescriptor<E> implements IndexDescriptor<E> {
 	 * @return the new query by DELETE SQL for unique key
 	 */
 	Command createDeleteCommand(final ConnectionManager connectionManager) {
-		return connectionManager.createCommand(this.deleteSql);
+		
+		// create query name by unique key id
+		String name = MessageFormat.format(POOLED_DELETE_NAME, new Integer(this.id));
+
+		// find command from connection manager pool first, if find, just return
+		SQLCommand command = this.getSQLConnectionManager(connectionManager).getPooledCommand(
+				this.parent.getType(), name
+		); 
+		if (command != null) {
+			return command;
+		}
+
+		// if can not find command in pool, will create and register it
+		command = (SQLCommand) connectionManager.createCommand(this.deleteSql);
+		this.getSQLConnectionManager(connectionManager).addPooledCommand(
+				this.parent.getType(), name, command
+		);
+		return command;
 	}
 }

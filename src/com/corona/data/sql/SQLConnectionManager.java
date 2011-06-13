@@ -143,7 +143,13 @@ public abstract class SQLConnectionManager implements ConnectionManager,
 	 */
 	@Override
 	public void close(final SQLCommandCloseEvent event) {
-		this.commands.remove(event.getSource());
+		
+		Key key = event.getSource().getKey();
+		if (key != null) {
+			this.pooledCommands.remove(key);
+		} else {
+			this.commands.remove(key);
+		}
 	}
 
 	/**
@@ -152,7 +158,13 @@ public abstract class SQLConnectionManager implements ConnectionManager,
 	 */
 	@Override
 	public void close(final SQLQueryCloseEvent event) {
-		this.queries.remove(event.getSource());
+		
+		Key key = event.getSource().getKey();
+		if (key != null) {
+			this.pooledQueries.remove(key);
+		} else {
+			this.queries.remove(event.getSource());
+		}
 	}
 
 	/**
@@ -193,6 +205,27 @@ public abstract class SQLConnectionManager implements ConnectionManager,
 		
 		// if all listeners don't want to cache and reuse this client, will close it
 		if (!event.isCancel()) {
+			
+			// close all pooled command
+			for (SQLCommand command : this.pooledCommands.values().toArray(new SQLCommand[0])) {
+				try {
+					command.close();
+				} catch (Exception e) {
+					this.logger.error("Fail to close command [{0}], ignore this exception", e, command);
+				}
+			}
+			this.pooledCommands.clear();
+
+			// close all pooled queries 
+			for (SQLQuery<?> query : this.pooledQueries.values().toArray(new SQLQuery<?>[0])) {
+				try {
+					query.close();
+				} catch (Exception e) {
+					this.logger.error("Fail to close query [{0}], ignore this exception", e, query);
+				}
+			}
+			this.queries.clear();
+
 			// close JDBC connection
 			try {
 				this.connection.close();
@@ -224,7 +257,8 @@ public abstract class SQLConnectionManager implements ConnectionManager,
 		this.queries.remove(query);
 		
 		// put query to pooled query map, allow to find it later
-		this.pooledQueries.put(new Key(type, name), query);
+		query.setKey(new Key(type, name));
+		this.pooledQueries.put(query.getKey(), query);
 	}
 
 	/**
@@ -235,10 +269,11 @@ public abstract class SQLConnectionManager implements ConnectionManager,
 	void addPooledCommand(final Class<?> type, final String name, final SQLCommand command) {
 		
 		// remove command from to auto-closed command list if added before
-		this.pooledCommands.remove(command);
+		this.commands.remove(command);
 		
 		// put command to pooled command map, allow to find it later
-		this.pooledCommands.put(new Key(type, name), command);
+		command.setKey(new Key(type, name));
+		this.pooledCommands.put(command.getKey(), command);
 	}
 	
 	/**
@@ -331,12 +366,24 @@ public abstract class SQLConnectionManager implements ConnectionManager,
 	@Override
 	public <E> Query<E> createNamedQuery(final Class<E> resultClass) {
 		
+		// get query from query pool, if found, just return
+		SQLQuery<E> query = this.getPooledQuery(resultClass, null);
+		if (query != null) {
+			return query;
+		}
+
+		// if query is created and pooled before, will create one
 		NamedQuery namedQuery = resultClass.getAnnotation(NamedQuery.class);
 		if (namedQuery == null) {
 			this.logger.error("Can not find @NamedQuery annotation in class [{0}]", resultClass);
 			throw new DataRuntimeException("Can not find @NamedQuery annotation in class [{0}]", resultClass);
 		}
-		return this.createNamedQuery(resultClass, namedQuery, null);
+		
+		// create query and add it to query pool
+		query = (SQLQuery<E>) this.createNamedQuery(resultClass, namedQuery, null);
+		// create named command and add it to command pool 
+		this.addPooledQuery(resultClass, null, query);
+		return query;
 	}
 
 	/**
@@ -361,6 +408,13 @@ public abstract class SQLConnectionManager implements ConnectionManager,
 	@Override
 	public <E> Query<E> createNamedQuery(final Class<E> resultClass, final String name) {
 		
+		// get query from query pool, if found, just return
+		SQLQuery<E> query = this.getPooledQuery(resultClass, name);
+		if (query != null) {
+			return query;
+		}
+
+		// if query is created and pooled before, will create one
 		NamedQueries namedQueries = resultClass.getAnnotation(NamedQueries.class);
 		if (namedQueries == null) {
 			this.logger.error("Can not find @NamedQueries annotation in class [{0}]", resultClass);
@@ -369,7 +423,12 @@ public abstract class SQLConnectionManager implements ConnectionManager,
 		
 		for (NamedQuery namedQuery : namedQueries.value()) {
 			if (namedQuery.name().equals(name)) {
-				this.createNamedQuery(resultClass, namedQuery, null);
+				
+				// create query and add it to query pool
+				query = (SQLQuery<E>) this.createNamedQuery(resultClass, namedQuery, null);
+				// create named command and add it to command pool 
+				this.addPooledQuery(resultClass, name, query);
+				return query;
 			}
 		}
 		
@@ -406,10 +465,19 @@ public abstract class SQLConnectionManager implements ConnectionManager,
 	 */
 	@Override
 	public Command createCommand(final String command) {
+		return this.createCommand(command, false);
+	}
+
+	/**
+	 * @param command the SQL command (INSERT, UPDATE, DELETE) statement
+	 * @param autoGeneratedKeys should be INSERT SQL, and need return auto-generated keys if true
+	 * @return the new command
+	 */
+	public Command createCommand(final String command, final boolean autoGeneratedKeys) {
 		
 		SQLCommand sqlCommand = null;
 		try {
-			sqlCommand = new SQLCommand(this, command);
+			sqlCommand = new SQLCommand(this, command, autoGeneratedKeys);
 		} catch (SQLException e) {
 			
 			this.logger.error("Fail to create SQL command by [{0}]", e, command);
@@ -447,7 +515,7 @@ public abstract class SQLConnectionManager implements ConnectionManager,
 			command = new Template(command).execute(variableMap);
 		}
 
-		// create query by query statement
+		// create command by SQL statement
 		return this.createCommand(command);
 	}
 
@@ -458,12 +526,23 @@ public abstract class SQLConnectionManager implements ConnectionManager,
 	@Override
 	public Command createNamedCommand(final Class<?> commandClass) {
 		
+		// get command from command pool, if found, just return
+		SQLCommand command = this.getPooledCommand(commandClass, null);
+		if (command != null) {
+			return command;
+		}
+		
+		// can not find command in command pool, will create command
 		NamedCommand namedCommand = commandClass.getAnnotation(NamedCommand.class);
 		if (namedCommand == null) {
 			this.logger.error("Can not find @NamedCommand annotation in class [{0}]", commandClass);
 			throw new DataRuntimeException("Can not find @NamedCommand annotation in class [{0}]", commandClass);
 		}
-		return this.createNamedCommand(namedCommand, null);
+		
+		// create named command and add it to command pool 
+		command = (SQLCommand) this.createNamedCommand(namedCommand, null);
+		this.addPooledCommand(commandClass, null, command);
+		return command;
 	}
 	
 	/**
@@ -487,7 +566,14 @@ public abstract class SQLConnectionManager implements ConnectionManager,
 	 */
 	@Override
 	public Command createNamedCommand(final Class<?> commandClass, final String name) {
-		
+
+		// get command from command pool, if found, just return
+		SQLCommand command = this.getPooledCommand(commandClass, name);
+		if (command != null) {
+			return command;
+		}
+
+		// can not find command in command pool, will create command
 		NamedCommands namedCommands = commandClass.getAnnotation(NamedCommands.class);
 		if (namedCommands == null) {
 			this.logger.error("Can not find @NamedCommands annotation in class [{0}]", commandClass);
@@ -496,7 +582,10 @@ public abstract class SQLConnectionManager implements ConnectionManager,
 		
 		for (NamedCommand namedCommand : namedCommands.value()) {
 			if (namedCommand.name().equals(name)) {
-				this.createNamedCommand(namedCommand, null);
+				
+				command = (SQLCommand) this.createNamedCommand(namedCommand, null);
+				this.addPooledCommand(commandClass, name, command);
+				return command;
 			}
 		}
 		
@@ -519,7 +608,7 @@ public abstract class SQLConnectionManager implements ConnectionManager,
 		
 		for (NamedCommand namedCommand : namedCommands.value()) {
 			if (namedCommand.name().equals(name)) {
-				this.createNamedCommand(namedCommand, bindings);
+				return this.createNamedCommand(namedCommand, bindings);
 			}
 		}
 		

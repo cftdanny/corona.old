@@ -64,7 +64,7 @@ public class AbstractBusinessTest extends AbstractComponentTest {
 	 * restart database if it is HSQLDB
 	 * @exception Exception if fail to restart HSQLDB
 	 */
-	private void restart() throws Exception {
+	protected void restart() throws Exception {
 		
 		if ("HSQL".equals(this.connectionManagerFactory.getDataSourceProvider().getFamily())) {
 			

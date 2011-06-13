@@ -33,11 +33,18 @@ class SQLCommandCloseListenerSupport {
 	}
 	
 	/**
+	 * @return all listeners as array
+	 */
+	private SQLCommandCloseListener[] getListeners() {
+		return this.listeners.toArray(new SQLCommandCloseListener[0]);
+	}
+	
+	/**
 	 * @param event the event to be fired
 	 */
 	void fire(final SQLCommandCloseEvent event) {
 		
-		for (SQLCommandCloseListener listener : this.listeners) {
+		for (SQLCommandCloseListener listener : this.getListeners()) {
 			listener.close(event);
 		}
 	}
