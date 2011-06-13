@@ -56,9 +56,7 @@ class MySQLDialect extends SQLDialect {
 		try {
 			statement = this.connectionManager.getSource().createStatement();
 			resultSet = statement.executeQuery("SELECT NOW()"); 
-			resultSet.first();
-			
-			return resultSet.getTimestamp(1);
+			return resultSet.next() ? resultSet.getTimestamp(1) : null;
 		} catch (SQLException e) {
 			
 			this.logger.error("Fail to get current time from MySQL", e);

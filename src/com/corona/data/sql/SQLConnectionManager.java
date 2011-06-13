@@ -6,6 +6,7 @@ package com.corona.data.sql;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +34,8 @@ import com.corona.logging.LogFactory;
  * @author $Author$
  * @version $Id$
  */
-public abstract class SQLConnectionManager implements ConnectionManager {
+public abstract class SQLConnectionManager implements ConnectionManager, 
+		SQLCommandCloseListener, SQLQueryCloseListener {
 
 	/**
 	 * the logger
@@ -49,11 +51,26 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 	 * the opened JDBC connection
 	 */
 	private Connection connection;
+
+	/**
+	 * the listener support for querying connection manager close event
+	 */
+	private SQLConnectionManagerCloseListenerSupport closeListenerSupport;
+	
+	/**
+	 * the pooled commands
+	 */
+	private Map<Key, SQLCommand> pooledCommands = new HashMap<Key, SQLCommand>();
 	
 	/**
 	 * all opened commands, will close them when manager is closed
 	 */
 	private List<SQLCommand> commands = new ArrayList<SQLCommand>();
+	
+	/**
+	 * the pooled queries
+	 */
+	private Map<Key, SQLQuery<?>> pooledQueries = new HashMap<Key, SQLQuery<?>>();
 	
 	/**
 	 * all opened queries, will close them when manager is closed
@@ -67,8 +84,24 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 	public SQLConnectionManager(final SQLConnectionManagerFactory connectionManagerFactory) throws DataException {
 		this.connectionManagerFactory = connectionManagerFactory;
 		this.connection = this.connectionManagerFactory.getConnection();
+		
+		this.closeListenerSupport = new SQLConnectionManagerCloseListenerSupport();
 	}
-	
+
+	/**
+	 * @param listener the listener to listen SQL connection manager close event
+	 */
+	public void addCloseListener(final SQLConnectionManagerCloseListener listener) {
+		this.closeListenerSupport.add(listener);
+	}
+
+	/**
+	 * @param listener the listener to listen SQL connection manager close event
+	 */
+	public void removeCloseListener(final SQLConnectionManagerCloseListener listener) {
+		this.closeListenerSupport.remove(listener);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.ConnectionManager#getConnectionManagerFactory()
@@ -103,32 +136,23 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 			return true;
 		}
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.data.sql.SQLCommandCloseListener#close(com.corona.data.sql.SQLCommandCloseEvent)
+	 */
+	@Override
+	public void close(final SQLCommandCloseEvent event) {
+		this.commands.remove(event.getSource());
+	}
 
 	/**
-	 * @param query the new opened query, register it to connection manager
+	 * {@inheritDoc}
+	 * @see com.corona.data.sql.SQLQueryCloseListener#close(com.corona.data.sql.SQLQueryCloseEvent)
 	 */
-	void register(final SQLQuery<?> query) {
-		this.queries.add(query);
-	}
-	
-	/**
-	 * @param command the new opened query, register it to connection manager
-	 */
-	void register(final SQLCommand command) {
-		this.commands.add(command);
-	}
-/**
-	 * @param query the query to be closed, unregister from connection manager
-	 */
-	void unregister(final SQLQuery<?> query) {
-		this.queries.remove(query);
-	}
-	
-	/**
-	 * @param command the command to be closed, unregister from connection manager
-	 */
-	void unregister(final SQLCommand command) {
-		this.commands.remove(command);
+	@Override
+	public void close(final SQLQueryCloseEvent event) {
+		this.queries.remove(event.getSource());
 	}
 
 	/**
@@ -137,13 +161,11 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 	 */
 	@Override
 	public void close() {
-		
-		// to test whether this connection manager can cache, if yes, cache for later using
-		if (this.connectionManagerFactory.canCacheConnectionManager()) {
-			this.connectionManagerFactory.cacheConnectionManager(this);
-			return;
-		}
-		
+
+		// fire closing event to tell all listeners, connection manager will close
+		SQLConnectionManagerCloseEvent event = new SQLConnectionManagerCloseEvent(this);
+		this.closeListenerSupport.fire(event);
+
 		// if connection manager is closed, don't need close again
 		if (this.isClosed()) {
 			return;
@@ -169,13 +191,16 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 		}
 		this.queries.clear();
 		
-		// close JDBC connection
-		try {
-			this.connection.close();
-		} catch (Exception e) {
-			
-			this.logger.error("Fail to close opened JDBC connection", e);
-			throw new DataRuntimeException("Fail to close opened JDBC connection", e);
+		// if all listeners don't want to cache and reuse this client, will close it
+		if (!event.isCancel()) {
+			// close JDBC connection
+			try {
+				this.connection.close();
+			} catch (Exception e) {
+				
+				this.logger.error("Fail to close opened JDBC connection", e);
+				throw new DataRuntimeException("Fail to close opened JDBC connection", e);
+			}
 		}
 	}
 
@@ -186,6 +211,54 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 	@Override
 	public Transaction getTransaction() {
 		return new SQLLocalTransaction(this);
+	}
+
+	/**
+	 * @param type the class type of query result
+	 * @param name the query name
+	 * @param query the query
+	 */
+	void addPooledQuery(final Class<?> type, final String name, final SQLQuery<?> query) {
+		
+		// remove query from to auto-closed query list if added before
+		this.queries.remove(query);
+		
+		// put query to pooled query map, allow to find it later
+		this.pooledQueries.put(new Key(type, name), query);
+	}
+
+	/**
+	 * @param type the class type of query result or it defines the command
+	 * @param name the command name
+	 * @param command the command
+	 */
+	void addPooledCommand(final Class<?> type, final String name, final SQLCommand command) {
+		
+		// remove command from to auto-closed command list if added before
+		this.pooledCommands.remove(command);
+		
+		// put command to pooled command map, allow to find it later
+		this.pooledCommands.put(new Key(type, name), command);
+	}
+	
+	/**
+	 * @param type the class type of query result or it defines the command
+	 * @param name the command name
+	 * @return the pooled command or <code>null</code> if does not exist
+	 */
+	SQLCommand getPooledCommand(final Class<?> type, final String name) {
+		return this.pooledCommands.get(new Key(type, name));
+	}
+
+	/**
+	 * @param <E> the class type of query result
+	 * @param type the class type of query result
+	 * @param name the query name
+	 * @return the pooled query or <code>null</code> if does not exist
+	 */
+	@SuppressWarnings("unchecked")
+	<E> SQLQuery<E> getPooledQuery(final Class<E> type, final String name) {
+		return (SQLQuery<E>) this.pooledQueries.get(new Key(type, name));
 	}
 
 	/**
@@ -204,15 +277,21 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 	@Override
 	public <E> Query<E> createQuery(final ResultHandler<E> resultHandler, final String query) {
 		
+		SQLQuery<E> sqlQuery = null;
 		try {
-			return new SQLQuery<E>(this, resultHandler, query);
+			sqlQuery = new SQLQuery<E>(this, resultHandler, query);
 		} catch (DataException e) {
 			
 			this.logger.error("Fail to create query by SQL [{0}]", e, query);
 			throw new DataRuntimeException("Fail to create query by SQL [{0}]", e, query);
 		}
+		
+		this.queries.add(sqlQuery);
+		sqlQuery.addCloseListener(this);
+		
+		return sqlQuery;
 	}
-
+	
 	/**
 	 * @param <E> the type of result class
 	 * @param resultClass the result class
@@ -328,13 +407,19 @@ public abstract class SQLConnectionManager implements ConnectionManager {
 	@Override
 	public Command createCommand(final String command) {
 		
+		SQLCommand sqlCommand = null;
 		try {
-			return new SQLCommand(this, command);
+			sqlCommand = new SQLCommand(this, command);
 		} catch (SQLException e) {
 			
 			this.logger.error("Fail to create SQL command by [{0}]", e, command);
 			throw new DataRuntimeException("Fail to create SQL command by [{0}]", e, command);
 		}
+		
+		this.commands.add(sqlCommand);
+		sqlCommand.addCloseListener(this);
+		
+		return sqlCommand;
 	}
 
 	/**

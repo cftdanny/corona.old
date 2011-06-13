@@ -18,9 +18,9 @@ import com.corona.data.DataRuntimeException;
 public class SQLCommand implements Command {
 
 	/**
-	 * the parent connection manager
+	 * the close listener support
 	 */
-	private SQLConnectionManager parent;
+	private SQLCommandCloseListenerSupport closeListenerSupport;
 	
 	/**
 	 * the prepared and named parameter SQL statement
@@ -33,13 +33,8 @@ public class SQLCommand implements Command {
 	 * @throws SQLException if fail to prepare SQL statement
 	 */
 	protected SQLCommand(final SQLConnectionManager connectionManager, final String sql) throws SQLException {
-		
-		// register this command to connection manager, enable close command when manager is closed
-		this.parent = connectionManager;
-		connectionManager.register(this);
-		
-		// prepare SQL statement
 		this.statement = new ParametricStatement(connectionManager.getSource(), sql);
+		this.closeListenerSupport = new SQLCommandCloseListenerSupport();
 	}
 
 	/**
@@ -51,6 +46,20 @@ public class SQLCommand implements Command {
 		return this.statement.toString();
 	}
 
+	/**
+	 * @param listener the listener to listen this command closing event
+	 */
+	public void addCloseListener(final SQLCommandCloseListener listener) {
+		this.closeListenerSupport.add(listener);
+	}
+	
+	/**
+	 * @param listener the listener to listen this command closing event
+	 */
+	public void removeCloseListener(final SQLCommandCloseListener listener) {
+		this.closeListenerSupport.remove(listener);
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.data.Command#getSource()
@@ -67,7 +76,10 @@ public class SQLCommand implements Command {
 	@Override
 	public void close() {
 		
-		this.parent.unregister(this);
+		// raise event to tell all listeners that this SQL command will close
+		this.closeListenerSupport.fire(new SQLCommandCloseEvent(this));
+
+		// close prepared SQL statement to release allocated resources
 		try {
 			this.statement.close();
 		} catch (SQLException e) {

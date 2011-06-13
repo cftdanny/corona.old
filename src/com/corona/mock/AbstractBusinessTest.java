@@ -47,7 +47,7 @@ public class AbstractBusinessTest extends AbstractComponentTest {
 		
 		// restart HSQLDB if required
 		this.connectionManagerFactory = this.get(ConnectionManagerFactory.class);
-		if (this.canRestart()) {
+		if (this.isNeedRestart()) {
 			this.restart();
 		}
 		this.connectionManager = this.get(ConnectionManager.class);
@@ -56,7 +56,7 @@ public class AbstractBusinessTest extends AbstractComponentTest {
 	/**
 	 * @return whether can restart database server
 	 */
-	protected boolean canRestart() {
+	protected boolean isNeedRestart() {
 		return true;
 	}
 	
@@ -67,6 +67,12 @@ public class AbstractBusinessTest extends AbstractComponentTest {
 	private void restart() throws Exception {
 		
 		if ("HSQL".equals(this.connectionManagerFactory.getDataSourceProvider().getFamily())) {
+			
+			// If current connection manager is not closed, will close it first
+			if ((this.connectionManager != null) && (!this.connectionManager.isClosed())) {
+				this.connectionManager.close();
+			}
+			this.connectionManagerFactory.close();
 			
 			// shutdown HSQLDB, in order to create a blank database
 			Connection connection = ((Connection) this.connectionManagerFactory.open().getSource());

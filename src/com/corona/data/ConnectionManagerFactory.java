@@ -3,6 +3,8 @@
  */
 package com.corona.data;
 
+import com.corona.context.Closeable;
+
 /**
  * <p>This factory is used to create {@link ConnectionManager}. Normally, it is created by {@DataSourceManager}
  * with data source configuration.
@@ -11,7 +13,7 @@ package com.corona.data;
  * @author $Author$
  * @version $Id$
  */
-public interface ConnectionManagerFactory {
+public interface ConnectionManagerFactory extends Closeable {
 
 	/**
 	 * @return the parent data source provider

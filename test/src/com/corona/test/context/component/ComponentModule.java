@@ -27,5 +27,6 @@ public class ComponentModule extends AbstractModule {
 		
 		// bind class component to context
 		this.bind(Cost.class).to(CostImpl.class);
+		this.bind(Cost.class).to(CostImplV1.class);
 	}
 }

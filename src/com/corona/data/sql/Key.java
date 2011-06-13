@@ -4,7 +4,8 @@
 package com.corona.data.sql;
 
 /**
- * <p>This key is used to register a prepared statement by a class and name. </p>
+ * <p>This identity is used to register query or command by a class type and name. If query or command
+ * is registered to SQL connection manager, it can be resolved by identity. </p>
  * 
  * @author $Author$
  * @version $Id$

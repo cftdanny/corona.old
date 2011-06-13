@@ -12,10 +12,13 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
+import com.corona.data.ConnectionManager;
 import com.corona.data.ConnectionManagerFactory;
 import com.corona.data.DataException;
 import com.corona.data.DataSourceProvider;
 import com.corona.data.EntityMetaDataRepository;
+import com.corona.logging.Log;
+import com.corona.logging.LogFactory;
 
 /**
  * <p>This factory is used to create {@link ConnectionManager}. Normally, it is created by {@DataSourceManager}
@@ -25,8 +28,14 @@ import com.corona.data.EntityMetaDataRepository;
  * @author $Author$
  * @version $Id$
  */
-public abstract class SQLConnectionManagerFactory implements ConnectionManagerFactory {
+public abstract class SQLConnectionManagerFactory implements ConnectionManagerFactory, 
+		SQLConnectionManagerCloseListener {
 
+	/**
+	 * the logger
+	 */
+	private final Log logger = LogFactory.getLog(SQLConnectionManagerFactory.class);
+	
 	/**
 	 * the parent data source provider
 	 */
@@ -65,7 +74,7 @@ public abstract class SQLConnectionManagerFactory implements ConnectionManagerFa
 	/**
 	 * how many connection manager can be idles;
 	 */
-	private int maxIdleConnectionManagers;
+	private int maxIdleConnectionManagers = 2;
 	
 	/**
 	 * the cached SQL connection manager
@@ -95,7 +104,7 @@ public abstract class SQLConnectionManagerFactory implements ConnectionManagerFa
 					(String) this.properties.get(DataSourceProvider.SQL_MAX_IDLES)
 			);
 		} catch (Exception e) {
-			this.maxIdleConnectionManagers = 0;
+			this.logger.error("Error configuration for idled connection managers, skip this error", e);
 		}
 	}
 	
@@ -122,32 +131,50 @@ public abstract class SQLConnectionManagerFactory implements ConnectionManagerFa
 	 */
 	protected SQLConnectionManager getCachedConnectionManager() {
 		
+		SQLConnectionManager connectionManager = null;
 		if (this.connectionManagers.size() > 0) {
-			
 			try {
-				return this.connectionManagers.remove(0);
+				connectionManager = this.connectionManagers.remove(0);
 			} catch (Exception e) {
-				return null;
+				connectionManager = null;
 			}
-		} else {
-			return null;
 		}
+		return connectionManager;
 	}
 	
 	/**
-	 * @return <code>true</code> if connection manager can cache for later using
+	 * {@inheritDoc}
+	 * @see com.corona.context.Closeable#close()
 	 */
-	protected boolean canCacheConnectionManager() {
-		return this.connectionManagers.size() < this.maxIdleConnectionManagers;
+	@Override
+	public void close() {
+		
+		for (ConnectionManager connectionManager : this.connectionManagers.toArray(new ConnectionManager[0])) {
+			try {
+				connectionManager.close();
+			} catch (Exception e) {
+				this.logger.error("Fail to close pooled connection manager, just skip this error", e);
+			}
+		}
+		this.connectionManagers.clear();
 	}
-	
+
 	/**
-	 * @param connectionManager the connection manager to be cached
+	 * {@inheritDoc}
+	 * @see com.corona.data.sql.SQLConnectionManagerCloseListener#close(
+	 * 	com.corona.data.sql.SQLConnectionManagerCloseEvent
+	 * )
 	 */
-	protected void cacheConnectionManager(final SQLConnectionManager connectionManager) {
-		this.connectionManagers.add(connectionManager);
+	@Override
+	public void close(final SQLConnectionManagerCloseEvent event) {
+		
+		if ((!event.isCancel()) && (this.connectionManagers.size() < this.maxIdleConnectionManagers)) {
+			this.connectionManagers.add(event.getSource());
+			event.setCancel(true);
+		}
+		event.getSource().removeCloseListener(this);
 	}
-	
+
 	/**
 	 * @return the opened JDBC connection
 	 * @throws DataException if fail to open JDBC connection

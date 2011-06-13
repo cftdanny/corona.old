@@ -23,9 +23,9 @@ import com.corona.data.BeanResultHandler;
 public class SQLQuery<E> implements Query<E> {
 
 	/**
-	 * the parent connection manager
+	 * the close listener support
 	 */
-	private SQLConnectionManager parent;
+	private SQLQueryCloseListenerSupport closeListenerSupport;
 	
 	/**
 	 * the query request handler
@@ -59,10 +59,6 @@ public class SQLQuery<E> implements Query<E> {
 			final SQLConnectionManager connectionManager, final ResultHandler<E> resultHandler, final String sql
 	) throws DataException {
 		
-		// register this query to connection manager, enable close query if manager is closed
-		this.parent = connectionManager;
-		connectionManager.register(this);
-		
 		// prepare SQL statement
 		try {
 			this.statement = new ParametricStatement(connectionManager.getSource(), sql);
@@ -70,6 +66,7 @@ public class SQLQuery<E> implements Query<E> {
 			throw new DataException("Fail to prepare SQL query statement [{0}]", e, sql);
 		}
 		this.resultHandler = resultHandler;
+		this.closeListenerSupport = new SQLQueryCloseListenerSupport();
 	}
 
 	/**
@@ -79,6 +76,20 @@ public class SQLQuery<E> implements Query<E> {
 	@Override
 	public String toString() {
 		return this.statement.toString();
+	}
+	
+	/**
+	 * @param listener the listener to listen this query closing event
+	 */
+	public void addCloseListener(final SQLQueryCloseListener listener) {
+		this.closeListenerSupport.add(listener);
+	}
+	
+	/**
+	 * @param listener the listener to listen this query closing event
+	 */
+	public void removeCloseListener(final SQLQueryCloseListener listener) {
+		this.closeListenerSupport.remove(listener);
 	}
 
 	/**
@@ -97,7 +108,10 @@ public class SQLQuery<E> implements Query<E> {
 	@Override
 	public void close() {
 		
-		this.parent.unregister(this);
+		// raise event to tell all listeners that this SQL query will close
+		this.closeListenerSupport.fire(new SQLQueryCloseEvent(this));
+
+		// close prepared SQL statement to release allocated resources
 		try {
 			this.statement.close();
 		} catch (SQLException e) {
