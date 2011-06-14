@@ -36,7 +36,8 @@ public final class Messages {
 	 * @param locale the locale for browser
 	 */
 	private Messages(final Locale locale) {
-		this.resource = ResourceBundle.getBundle("/" + Messages.class.getName().replace('.', '/'), locale);
+		//this.resource = ResourceBundle.getBundle("/" + Messages.class.getName().replace('.', '/'), locale);
+		this.resource = ResourceBundle.getBundle(Messages.class.getName(), locale);
 	}
 
 	/**

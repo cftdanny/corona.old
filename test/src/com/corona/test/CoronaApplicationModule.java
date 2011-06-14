@@ -19,6 +19,7 @@ import com.corona.test.servlet.IndexText;
 import com.corona.test.servlet.IndexXml;
 import com.corona.test.servlet.SessionVariable;
 import com.corona.test.servlet.SessionVariableHtml;
+import com.corona.test.servlet.param.ParamsInjection;
 
 /**
  * <p>This module is used to define all components for application, both for testing and production. </p>
@@ -46,6 +47,9 @@ public class CoronaApplicationModule extends WebStartModule {
 		
 		// PAGE
 		this.configurePageComponent();
+		
+		// INJECTION
+		this.configureInjection();
 	}
 
 	/**
@@ -119,5 +123,12 @@ public class CoronaApplicationModule extends WebStartModule {
 		// test session scope
 		this.bind(SessionVariable.class).to(SessionVariable.class);
 		this.bind(SessionVariableHtml.class).to(SessionVariableHtml.class);
+	}
+	
+	/**
+	 * configure injection
+	 */
+	private void configureInjection() {
+		this.bind(ParamsInjection.class).to(ParamsInjection.class);
 	}
 }
