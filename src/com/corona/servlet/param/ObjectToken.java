@@ -4,10 +4,8 @@
 package com.corona.servlet.param;
 
 import java.util.List;
-import java.util.Queue;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
+import org.codehaus.jackson.JsonNode;
 
 /**
  * <p>This token is used to represent an object token. For example, <b>user</b>, <b>user.name</b> 
@@ -39,21 +37,29 @@ public class ObjectToken implements Token {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.test.json.Token#create(
-	 * 	com.corona.test.json.TokenRunner, java.lang.String, java.util.List, org.codehaus.jackson.node.ObjectNode
+	 * @see com.corona.servlet.param.Token#create(
+	 * 	com.corona.servlet.param.TokenRunner, java.util.List, org.codehaus.jackson.JsonNode
 	 * )
 	 */
 	@Override
-	public ObjectNode create(
-			final TokenRunner runner, final String expression, final List<Token> tokens, final ObjectNode current) {
+	public JsonNode create(
+			final TokenRunner runner, final List<Token> tokens, final JsonNode parent) throws TokenParserException {
 		
-		ObjectNode node = null;
-		if (tokens.isEmpty()) {
-			current.put(this.name, runner.getRequest().getParameter(expression));
+		JsonNode node = null;
+		if (!tokens.isEmpty()) {
+			
+			node = parent.findValue(this.name);
+			if (node == null) {
+				node = runner.getMapper().createObjectNode();
+				runner.set(parent, this.name, node);
+			}
+			return node;
 		} else {
-			node = runner.getMapper().createObjectNode();
-			current.put(this.name, node);
+			
+			runner.set(parent, this.name, runner.getValue());
 		}
+		runner.setIndex(-1);
+		
 		return node;
 	}
 }

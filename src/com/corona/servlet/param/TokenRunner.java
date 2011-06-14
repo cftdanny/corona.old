@@ -9,10 +9,12 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.DeserializationContext;
 import org.codehaus.jackson.map.DeserializationProblemHandler;
 import org.codehaus.jackson.map.JsonDeserializer;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 /**
@@ -32,6 +34,16 @@ public class TokenRunner extends DeserializationProblemHandler {
 	 * the HTTP SERVLET request
 	 */
 	private HttpServletRequest request;
+
+	/**
+	 * current parameter name
+	 */
+	private String name;
+
+	/**
+	 * the array index if previous node is array node
+	 */
+	private int index;
 	
 	/**
 	 * @param request the HTTP SERVLET request
@@ -56,7 +68,28 @@ public class TokenRunner extends DeserializationProblemHandler {
 	public HttpServletRequest getRequest() {
 		return request;
 	}
+	
+	/**
+	 * @return the array index if previous node is array node
+	 */
+	int getIndex() {
+		return index;
+	}
+	
+	/**
+	 * @param index the array index if previous node is array node to set
+	 */
+	void setIndex(final int index) {
+		this.index = index;
+	}
 
+	/**
+	 * @return the value of current processing parameter 
+	 */
+	String getValue() {
+		return this.request.getParameter(this.name);
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 * @see org.codehaus.jackson.map.DeserializationProblemHandler#handleUnknownProperty(
@@ -66,10 +99,54 @@ public class TokenRunner extends DeserializationProblemHandler {
 	 */
 	@Override
 	public boolean handleUnknownProperty(
-			final DeserializationContext ctxt, final JsonDeserializer<?> deserializer, final Object beanOrClass, 
-			final String propertyName) 
-	throws IOException {
+			final DeserializationContext ctxt, final JsonDeserializer<?> deserializer, 
+			final Object beanOrClass, final String propertyName
+	) throws IOException {
 		return true;
+	}
+
+	/**
+	 * @param parent the parent node
+	 * @param field the field name of 
+	 * @param value the value of field
+	 */
+	void set(final JsonNode parent, final String field, final String value) {
+		
+		if (parent instanceof ObjectNode) {
+			((ObjectNode) parent).put(field, value);
+		} else if (field == null) {
+			((ArrayNode) parent).insert(this.index, value);
+		} else {
+			
+			ObjectNode node = (ObjectNode) ((ArrayNode) parent).get(this.index);
+			if (node == null) {
+				node = this.mapper.createObjectNode();
+				((ArrayNode) parent).insert(this.index, node);
+			}
+			node.put(field, value);
+		}
+	}
+
+	/**
+	 * @param parent the parent node
+	 * @param field the field name of 
+	 * @param value the value of field
+	 */
+	void set(final JsonNode parent, final String field, final JsonNode value) {
+
+		if (parent instanceof ObjectNode) {
+			((ObjectNode) parent).put(field, value);
+		} else if (field == null) {
+			((ArrayNode) parent).insert(this.index, value);
+		} else {
+			
+			ObjectNode node = (ObjectNode) ((ArrayNode) parent).get(this.index);
+			if (node == null) {
+				node = this.mapper.createObjectNode();
+				((ArrayNode) parent).insert(this.index, node);
+			}
+			node.put(field, value);
+		}
 	}
 
 	/**
@@ -83,17 +160,18 @@ public class TokenRunner extends DeserializationProblemHandler {
 		// find all request parameter names
 		Enumeration<String> names = (Enumeration<String>) this.request.getParameterNames();
 		
-		// parse every parameter name and create Jackson JSON node
+		// parse every parameter name and create JACKSON JSON node
 		ObjectNode root = this.mapper.createObjectNode();
 		while (names.hasMoreElements()) {
 			
-			String name = names.nextElement();
-			List<Token> tokens = TokenParser.parse(name);
+			this.name = names.nextElement();
+			List<Token> tokens = TokenParser.parse(this.name);
 			
-			ObjectNode current = root;
+			JsonNode current = root;
 			while (!tokens.isEmpty()) {
-				current = tokens.remove(0).create(this, name, tokens, current);
+				current = tokens.remove(0).create(this, tokens, current);
 			}
+			this.setIndex(-1);
 		}
 		
 		// translate JSON node to object

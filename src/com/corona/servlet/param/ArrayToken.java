@@ -5,6 +5,8 @@ package com.corona.servlet.param;
 
 import java.util.List;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 /**
@@ -50,13 +52,33 @@ public class ArrayToken implements Token {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.test.json.Token#create(
-	 * 	com.corona.test.json.TokenRunner, java.lang.String, java.util.List, org.codehaus.jackson.node.ObjectNode
+	 * @see com.corona.servlet.param.Token#create(
+	 * 	com.corona.servlet.param.TokenRunner, java.util.List, org.codehaus.jackson.JsonNode
 	 * )
 	 */
 	@Override
-	public ObjectNode create(
-			final TokenRunner runner, final String expression, final List<Token> tokens, final ObjectNode current) {
-		return null;
+	public JsonNode create(
+			final TokenRunner runner, final List<Token> tokens, final JsonNode parent) throws TokenParserException {
+		
+		ArrayNode node = null;
+		if (parent instanceof ObjectNode) {
+			node = (ArrayNode) parent.findValue(this.name);
+			if (node == null) {
+				node = runner.getMapper().createArrayNode();
+				runner.set(parent, this.name, node);
+			}
+		} else {
+			node = (ArrayNode) ((ArrayNode) parent).get(this.index);
+			if (node == null) {
+				node = runner.getMapper().createArrayNode();
+				runner.set(parent, this.name, node);
+			}
+		}
+		runner.setIndex(this.index);
+		
+		if (tokens.isEmpty()) {
+			runner.set(node, null, runner.getValue());
+		}
+		return node;
 	}
 }

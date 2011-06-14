@@ -17,6 +17,11 @@ public class Total {
 	private int count;
 	
 	/**
+	 * the summary
+	 */
+	private int sum;
+	
+	/**
 	 * @return the count
 	 */
 	public int getCount() {
@@ -28,5 +33,19 @@ public class Total {
 	 */
 	public void setCount(final int count) {
 		this.count = count;
+	}
+	
+	/**
+	 * @return the sum
+	 */
+	public int getSum() {
+		return sum;
+	}
+	
+	/**
+	 * @param sum the sum to set
+	 */
+	public void setSum(final int sum) {
+		this.sum = sum;
 	}
 }

@@ -12,8 +12,16 @@
 		<div>Qty: </div>
 		<div id="qty">${qty!}</div>
 		<div>Count: </div>
-		<div id="count"><#if total != null>${total.count}</#if></div>
+		<div id="count">${(total.count)!}</div>
+		<div>Sum: </div>
+		<div id="sum">${(total.sum)!}</div>
 		
+		<div>Mail: </div>
+		<div id="mail">${mails!}</div>
 		
+		<div>Items:</div>
+		<#list items as item>
+		<div id="item:${item.name}">${item.price}</div>
+		</#list>
 	</body>
 </html>

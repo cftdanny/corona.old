@@ -3,6 +3,9 @@
  */
 package com.corona.test.servlet.param;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * <p>The order </p>
  *
@@ -25,6 +28,16 @@ public class Order {
 	 * the count
 	 */
 	private Total total;
+	
+	/**
+	 * the emails
+	 */
+	private List<String> mails = new ArrayList<String>();
+	
+	/**
+	 * the items
+	 */
+	private List<Item> items = new ArrayList<Item>();
 	
 	/**
 	 * @return the no
@@ -66,5 +79,19 @@ public class Order {
 	 */
 	public void setTotal(final Total total) {
 		this.total = total;
+	}
+
+	/**
+	 * @return the mails
+	 */
+	public List<String> getMails() {
+		return mails;
+	}
+
+	/**
+	 * @return the items
+	 */
+	public List<Item> getItems() {
+		return items;
 	}
 }
