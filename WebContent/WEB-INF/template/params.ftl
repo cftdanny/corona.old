@@ -21,7 +21,12 @@
 		
 		<div>Items:</div>
 		<#list items as item>
-		<div id="item:${item.name}">${item.price}</div>
+		<div id="item:${item.name!}">${item.price}</div>
+		</#list>
+		
+		<div>Lines:</div>
+		<#list items[0].lines as line>
+			<div id="item:${line.to!}">${line.notes}</div>
 		</#list>
 	</body>
 </html>

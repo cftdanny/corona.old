@@ -14,7 +14,6 @@ import org.codehaus.jackson.map.DeserializationContext;
 import org.codehaus.jackson.map.DeserializationProblemHandler;
 import org.codehaus.jackson.map.JsonDeserializer;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 /**
@@ -103,50 +102,6 @@ public class TokenRunner extends DeserializationProblemHandler {
 			final Object beanOrClass, final String propertyName
 	) throws IOException {
 		return true;
-	}
-
-	/**
-	 * @param parent the parent node
-	 * @param field the field name of 
-	 * @param value the value of field
-	 */
-	void set(final JsonNode parent, final String field, final String value) {
-		
-		if (parent instanceof ObjectNode) {
-			((ObjectNode) parent).put(field, value);
-		} else if (field == null) {
-			((ArrayNode) parent).insert(this.index, value);
-		} else {
-			
-			ObjectNode node = (ObjectNode) ((ArrayNode) parent).get(this.index);
-			if (node == null) {
-				node = this.mapper.createObjectNode();
-				((ArrayNode) parent).insert(this.index, node);
-			}
-			node.put(field, value);
-		}
-	}
-
-	/**
-	 * @param parent the parent node
-	 * @param field the field name of 
-	 * @param value the value of field
-	 */
-	void set(final JsonNode parent, final String field, final JsonNode value) {
-
-		if (parent instanceof ObjectNode) {
-			((ObjectNode) parent).put(field, value);
-		} else if (field == null) {
-			((ArrayNode) parent).insert(this.index, value);
-		} else {
-			
-			ObjectNode node = (ObjectNode) ((ArrayNode) parent).get(this.index);
-			if (node == null) {
-				node = this.mapper.createObjectNode();
-				((ArrayNode) parent).insert(this.index, node);
-			}
-			node.put(field, value);
-		}
 	}
 
 	/**

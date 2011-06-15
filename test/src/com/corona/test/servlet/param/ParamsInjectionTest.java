@@ -56,7 +56,7 @@ public class ParamsInjectionTest extends AbstractWebsiteTest {
 		String str = "mails[0]=danny&mails[1]=chen";
 		str = str + "&items[0].name=A01&items[0].price=10";
 		str = str + "&items[0].lines[0].to=SHA1&items[0].lines[0].notes[0]=SHA-11&items[0].lines[0].notes[1]=SHA-12";
-		str = str + "&items[0].lines[1].to=SHA2&items[0].lines[1].notes[0]=SHA-11&items[0].lines[1].notes[1]=SHA-12";
+		str = str + "&items[0].lines[1].to=SHA2&items[0].lines[1].notes[0]=SHA-21&items[0].lines[1].notes[1]=SHA-22";
 		str = str + "&items[1].name=A02&items[1].price=20";
 		WebDriver driver1 = this.getWebDriver("/params.html?" + str);
 		

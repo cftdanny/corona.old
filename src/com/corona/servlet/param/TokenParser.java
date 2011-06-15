@@ -24,11 +24,12 @@ public final class TokenParser {
 	}
 	
 	/**
+	 * @param root the root token
 	 * @param expression parameter name or expression
 	 * @return the parsed tokens
 	 * @exception TokenParserException if fail to parse expression
 	 */
-	public static List<Token> parse(final String expression) throws TokenParserException {
+	public static List<Token> parse(final ObjectToken root, final String expression) throws TokenParserException {
 		
 		// if parameter name or expression is blank, throw error
 		if (StringUtil.isBlank(expression)) {
@@ -40,6 +41,9 @@ public final class TokenParser {
 		
 		// the parsing field name and array index
 		StringBuilder name = new StringBuilder(), index = null;
+		
+		// parent token according to parsing token
+		Token parent = root;
 		
 		// start to parse expression
 		List<Token> tokens = new ArrayList<Token>();
