@@ -46,6 +46,7 @@
 			
 			<class name="com.corona.test.servlet.param.ParamUtilTest" />
 			<class name="com.corona.test.servlet.param.ParamBeanInjectionTest" />
+			<class name="com.corona.test.servlet.param.ParamSimpleInjectionTest" />
 		</classes>
 	</test>
 </suite>

@@ -20,6 +20,7 @@ import com.corona.test.servlet.IndexXml;
 import com.corona.test.servlet.SessionVariable;
 import com.corona.test.servlet.SessionVariableHtml;
 import com.corona.test.servlet.param.ParamBeanInjection;
+import com.corona.test.servlet.param.ParamSimpleInjection;
 
 /**
  * <p>This module is used to define all components for application, both for testing and production. </p>
@@ -129,6 +130,7 @@ public class CoronaApplicationModule extends WebStartModule {
 	 * configure injection
 	 */
 	private void configureInjection() {
+		this.bind(ParamSimpleInjection.class).to(ParamSimpleInjection.class);
 		this.bind(ParamBeanInjection.class).to(ParamBeanInjection.class);
 	}
 }

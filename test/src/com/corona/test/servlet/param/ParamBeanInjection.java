@@ -21,8 +21,8 @@ public class ParamBeanInjection {
 	 * @param order the order
 	 * @return the order
 	 */
-	@Same("/params.html")
-	@FreeMaker("/params.ftl") 
+	@Same("/param/bean.html")
+	@FreeMaker("/param-bean.ftl") 
 	public Order html(@Param final Order order) {
 		return order;
 	}

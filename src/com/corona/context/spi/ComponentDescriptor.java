@@ -145,6 +145,15 @@ public class ComponentDescriptor<T> implements Descriptor<T> {
 			}
 		}
 		
+		// if there only one constructor but is not injected, will treat as inject
+		if ((this.annotatedConstructor == null) && (this.clazz.getConstructors().length == 1)) {
+			
+			InjectConstructorFactory factory = contextManagerFactory.getExtension(
+					InjectConstructorFactory.class, Inject.class
+			); 
+			this.annotatedConstructor = factory.create(contextManagerFactory, this.clazz.getConstructors()[0]);
+		}
+		
 		// check all fields to verify whether they need to inject value
 		for (Field field : this.clazz.getDeclaredFields()) {
 			

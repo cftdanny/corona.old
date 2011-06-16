@@ -24,7 +24,7 @@ public class ParamBeanInjectionTest extends AbstractWebsiteTest {
 	@Test public void testSimpleObject() throws Exception {
 		
 		String str = "no=001&qty=20&total.count=3&total.sum=80";
-		WebDriver driver1 = this.getWebDriver("/params.html?" + str);
+		WebDriver driver1 = this.getWebDriver("/param/bean.html?" + str);
 		
 		Assert.assertTrue(driver1.getTitle().startsWith("Inject Parameter Map"));
 		Assert.assertEquals(driver1.findElement(By.id("no")).getText(), "001");
@@ -41,7 +41,7 @@ public class ParamBeanInjectionTest extends AbstractWebsiteTest {
 		String str = "mails[0]=danny&mails[1]=chen";
 		str = str + "&items[0].name=A01&items[0].price=10";
 		str = str + "&items[1].name=A02&items[1].price=20";
-		WebDriver driver1 = this.getWebDriver("/params.html?" + str);
+		WebDriver driver1 = this.getWebDriver("/param/bean.html?" + str);
 		
 		Assert.assertEquals(driver1.findElement(By.id("mail")).getText(), "[danny, chen]");
 		Assert.assertEquals(driver1.findElement(By.id("item:A01")).getText(), "10");
@@ -60,7 +60,7 @@ public class ParamBeanInjectionTest extends AbstractWebsiteTest {
 		str = str + "&items[1].name=A02&items[1].price=20";
 		str = str + "&items[1].lines[0].to=SHA3&items[1].lines[0].notes[0]=SHA-31&items[1].lines[0].notes[1]=SHA-32";
 		str = str + "&items[1].lines[1].to=SHA4&items[1].lines[1].notes[0]=SHA-41&items[1].lines[1].notes[1]=SHA-42";
-		WebDriver driver1 = this.getWebDriver("/params.html?" + str);
+		WebDriver driver1 = this.getWebDriver("/param/bean.html?" + str);
 		
 		Assert.assertEquals(driver1.findElement(By.id("mail")).getText(), "[danny, chen]");
 		Assert.assertEquals(driver1.findElement(By.id("item:A01")).getText(), "10");
