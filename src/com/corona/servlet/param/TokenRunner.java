@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.DeserializationContext;
 import org.codehaus.jackson.map.DeserializationProblemHandler;
 import org.codehaus.jackson.map.JsonDeserializer;
@@ -52,13 +51,6 @@ public class TokenRunner extends DeserializationProblemHandler {
 		
 		this.mapper = new ObjectMapper();
 		this.mapper.getDeserializationConfig().addHandler(this);
-	}
-	
-	/**
-	 * @return the object mapper
-	 */
-	public ObjectMapper getMapper() {
-		return mapper;
 	}
 	
 	/**
@@ -114,24 +106,28 @@ public class TokenRunner extends DeserializationProblemHandler {
 		
 		// find all request parameter names
 		Enumeration<String> names = (Enumeration<String>) this.request.getParameterNames();
-		
-		// parse every parameter name and create JACKSON JSON node
-		ObjectNode root = this.mapper.createObjectNode();
+
+		// convert request parameter and value to tokens
+		ObjectToken root = new ObjectToken();
 		while (names.hasMoreElements()) {
 			
 			this.name = names.nextElement();
-			List<Token> tokens = TokenParser.parse(this.name);
+			List<TokenDescriptor> tokens = TokenParser.parse(this.name);
 			
-			JsonNode current = root;
+			Token current = root;
 			while (!tokens.isEmpty()) {
 				current = tokens.remove(0).create(this, tokens, current);
 			}
 			this.setIndex(-1);
 		}
+
+		// create object node by root token
+		ObjectNode source = this.mapper.createObjectNode();
+		root.create(this.mapper, source);
 		
 		// translate JSON node to object
 		try {
-			return mapper.readValue(root, type);
+			return mapper.readValue(source, type);
 		} catch (Exception e) {
 			throw new TokenParserException(
 					"Fail to translate request parameter to class [" + type.getName() + "]", e

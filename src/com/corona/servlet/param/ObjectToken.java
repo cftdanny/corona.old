@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
@@ -67,6 +68,27 @@ public class ObjectToken implements Token {
 		this.tokens.put(childTokenName, childToken);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.servlet.param.Token#create(
+	 * 	org.codehaus.jackson.map.ObjectMapper, org.codehaus.jackson.node.ObjectNode
+	 * )
+	 */
+	@Override
+	public void create(final ObjectMapper mapper, final ObjectNode parent) {
+		
+		for (Token child : this.tokens.values()) {
+			
+			if (child instanceof ValueToken) {
+				parent.put(((ValueToken) child).getName(), ((ValueToken) child).getValue());
+			} else {
+				
+				ObjectNode current = mapper.createObjectNode();
+				parent.put(this.name, current);
+			}
+		}
+	}
+
 	/**
 	 * @param runner the token runner
 	 * @param parent parent object node

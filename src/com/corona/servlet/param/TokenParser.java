@@ -24,12 +24,11 @@ public final class TokenParser {
 	}
 	
 	/**
-	 * @param root the root token
 	 * @param expression parameter name or expression
 	 * @return the parsed tokens
 	 * @exception TokenParserException if fail to parse expression
 	 */
-	public static List<Token> parse(final ObjectToken root, final String expression) throws TokenParserException {
+	public static List<TokenDescriptor> parse(final String expression) throws TokenParserException {
 		
 		// if parameter name or expression is blank, throw error
 		if (StringUtil.isBlank(expression)) {
@@ -42,11 +41,8 @@ public final class TokenParser {
 		// the parsing field name and array index
 		StringBuilder name = new StringBuilder(), index = null;
 		
-		// parent token according to parsing token
-		Token parent = root;
-		
 		// start to parse expression
-		List<Token> tokens = new ArrayList<Token>();
+		List<TokenDescriptor> tokens = new ArrayList<TokenDescriptor>();
 		for (char c : expression.trim().toCharArray()) {
 			
 			switch (state) {
@@ -56,7 +52,7 @@ public final class TokenParser {
 						if (name.length() == 0) {
 							throw new TokenParserException("Invalid expression at ., maybe double it");
 						}
-						tokens.add(new ObjectToken(name.toString()));
+						tokens.add(new ObjectTokenDescriptor(name.toString()));
 						name = new StringBuilder();
 					} else if (c == '[') {
 						index = new StringBuilder();
@@ -72,7 +68,7 @@ public final class TokenParser {
 							throw new TokenParserException("For array, name or index can not be empty");
 						}
 						try {
-							tokens.add(new ArrayToken(name.toString(), Integer.parseInt(index.toString())));
+							tokens.add(new ArrayTokenDescriptor(name.toString(), Integer.parseInt(index.toString())));
 						} catch (Exception e) {
 							throw new TokenParserException("The index of array must be INTEGER");
 						}
@@ -100,7 +96,7 @@ public final class TokenParser {
 		
 		// check parse state and add token if not added yet
 		if ((state == 0) && (name.length() > 0)) {
-			tokens.add(new ObjectToken(name.toString()));
+			tokens.add(new ObjectTokenDescriptor(name.toString()));
 		} else if (state == 1) {
 			throw new TokenParserException("Invalid status, but it should not happens");
 		}

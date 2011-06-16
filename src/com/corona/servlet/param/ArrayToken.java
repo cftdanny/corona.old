@@ -75,12 +75,23 @@ public class ArrayToken implements Token {
 	 */
 	public void set(final int childTokenIndex, final Token childToken) {
 		
-		for (int i = this.tokens.size(); i <= childTokenIndex; i++) {
-			this.tokens.add(null);
+		if (childTokenIndex == this.tokens.size()) {
+			this.tokens.add(childToken);
+		} else if (childTokenIndex + 1 == this.tokens.size()) {
+			
+			this.tokens.remove(childTokenIndex);
+			this.tokens.add(childToken);
+		} else if (childTokenIndex < this.tokens.size()) {
+			
+			this.tokens.remove(childTokenIndex);
+			this.tokens.add(childTokenIndex, childToken);
+		} else {
+			
+			for (int i = this.tokens.size(); i < childTokenIndex - 1; i++) {
+				this.tokens.add(null);
+			}
+			this.tokens.add(childToken);
 		}
-		
-		this.tokens.remove(childTokenIndex);
-		this.tokens.add(childTokenIndex, childToken);
 	}
 	
 	/**
@@ -192,5 +203,13 @@ public class ArrayToken implements Token {
 		runner.setIndex(this.index);
 
 		return node;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.servlet.param.Token#create(com.corona.servlet.param.TokenRunner, java.util.List, com.corona.servlet.param.Token)
+	 */
+	@Override
+	public void create(TokenRunner runner, List<TokenDescriptor> descriptors, Token parent) throws TokenParserException {
 	}
 }
