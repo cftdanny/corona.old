@@ -38,13 +38,20 @@ class ParamInjectField extends AbstractInjectField {
 	private String name;
 	
 	/**
+	 * the annotated parameter
+	 */
+	private Param param;
+	
+	/**
 	 * @param field the field that is annotated with an annotation type
 	 */
 	ParamInjectField(final Field field) {
 		
 		// construct super class and get parameter name
 		super(field);
-		this.name = field.getAnnotation(Param.class).value();
+		
+		this.param = field.getAnnotation(Param.class);
+		this.name = this.param.value();
 		if (StringUtil.isBlank(this.name)) {
 			this.name = field.getName();
 		}
@@ -109,7 +116,8 @@ class ParamInjectField extends AbstractInjectField {
 		} else {
 			
 			try {
-				return new TokenRunner(request).getValue(this.getType());
+				String head = (this.param == null) ? "" : this.param.value();
+				return new TokenRunner(request).getValue(this.getType(), head);
 			} catch (Exception e) {
 				this.logger.error("Fail to translate request parameters to class [{0}]", e, this.getType());
 				throw new ValueException(

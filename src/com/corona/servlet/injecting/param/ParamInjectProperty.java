@@ -38,13 +38,20 @@ class ParamInjectProperty extends AbstractInjectProperty {
 	private String name = null;
  
 	/**
+	 * the annotated parameter
+	 */
+	private Param param;
+	
+	/**
 	 * @param contextManagerFactory the context manager factory
 	 * @param property the property that is annotated with {@link Inject}
 	 */
 	ParamInjectProperty(final ContextManagerFactory contextManagerFactory, final Method property) {
 		
 		super(contextManagerFactory, property);
-		this.name = this.getMethod().getAnnotation(Param.class).value();
+		
+		this.param = this.getMethod().getAnnotation(Param.class);
+		this.name = this.param.value();
 		if (StringUtil.isBlank(this.name)) {
 			this.name = Introspector.decapitalize(this.getMethod().getName().substring(3));
 		}
@@ -105,7 +112,8 @@ class ParamInjectProperty extends AbstractInjectProperty {
 		} else {
 			
 			try {
-				return new TokenRunner(request).getValue(this.getType());
+				String head = (this.param == null) ? "" : this.param.value();
+				return new TokenRunner(request).getValue(this.getType(), head);
 			} catch (Exception e) {
 				this.logger.error("Fail to translate request parameters to class [{0}]", e, this.getType());
 				throw new ValueException(

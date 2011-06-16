@@ -15,7 +15,7 @@
 
 		<div>C: </div>
 		<div id="c"><#list c! as cd>${cd}</#list></div>
-
+${dad}
 		<div>B: </div>
 		<div id="d">${(d.toString())!}</div>
 	</body>

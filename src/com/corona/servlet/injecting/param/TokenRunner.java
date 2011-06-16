@@ -98,11 +98,12 @@ public class TokenRunner extends DeserializationProblemHandler {
 
 	/**
 	 * @param type the class type
+	 * @param head the head of parameter
 	 * @return the translated value
 	 * @exception TokenParserException if fail to translate request parameters to value
 	 */
 	@SuppressWarnings("unchecked")
-	Object getValue(final Class<?> type) throws TokenParserException {
+	Object getValue(final Class<?> type, final String head) throws TokenParserException {
 		
 		// find all request parameter names
 		Enumeration<String> names = (Enumeration<String>) this.request.getParameterNames();
@@ -112,13 +113,15 @@ public class TokenRunner extends DeserializationProblemHandler {
 		while (names.hasMoreElements()) {
 			
 			this.name = names.nextElement();
-			List<TokenDescriptor> tokens = TokenParser.parse(this.name);
-			
-			Token current = root;
-			while (!tokens.isEmpty()) {
-				current = tokens.remove(0).create(this, tokens, current);
+			if ((this.name.length() > head.length()) && this.name.startsWith(head)) { 
+				List<TokenDescriptor> tokens = TokenParser.parse(this.name.substring(head.length()));
+				
+				Token current = root;
+				while (!tokens.isEmpty()) {
+					current = tokens.remove(0).create(this, tokens, current);
+				}
+				this.setIndex(-1);
 			}
-			this.setIndex(-1);
 		}
 
 		// create object node by root token

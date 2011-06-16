@@ -35,6 +35,11 @@ class ParamInjectParameter extends AbstractInjectParameter {
 	private String name = null;
 	
 	/**
+	 * the annotated parameter
+	 */
+	private Param param;
+
+	/**
 	 * @param parameterType the class type of annotated parameter
 	 * @param annotations all annotations for parameter
 	 */
@@ -43,7 +48,8 @@ class ParamInjectParameter extends AbstractInjectParameter {
 		super(parameterType, annotations);
 		for (Annotation annotation : annotations) {
 			if (annotation.annotationType().equals(Param.class)) {
-				this.name = ((Param) annotation).value();
+				this.param = (Param) annotation;
+				this.name = this.param.value();
 				break;
 			}
 		}
@@ -104,7 +110,8 @@ class ParamInjectParameter extends AbstractInjectParameter {
 		} else {
 			
 			try {
-				return new TokenRunner(request).getValue(this.getType());
+				String head = (this.param == null) ? "" : this.param.value();
+				return new TokenRunner(request).getValue(this.getType(), head);
 			} catch (Exception e) {
 				this.logger.error("Fail to translate request parameters to class [{0}]", e, this.getType());
 				throw new ValueException(
