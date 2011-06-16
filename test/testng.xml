@@ -43,6 +43,9 @@
 			<class name="com.corona.test.servlet.CookieHtmlTest" />
 			<class name="com.corona.test.servlet.ComponentHandlerHtmlTest" />
 			<class name="com.corona.test.servlet.SessionVariableHtmlTest" />
+			
+			<class name="com.corona.test.servlet.param.ParamUtilTest" />
+			<class name="com.corona.test.servlet.param.ParamBeanInjectionTest" />
 		</classes>
 	</test>
 </suite>

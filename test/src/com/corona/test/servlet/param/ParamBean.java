@@ -18,7 +18,7 @@ import com.corona.servlet.annotation.Controller;
  * @version $Id$
  */
 @Controller
-public class ParamStringBean {
+public class ParamBean {
 
 	/**
 	 * the a
@@ -140,7 +140,7 @@ public class ParamStringBean {
 	 */
 	@Same("/param/string.html")
 	@FreeMaker("/param/string.ftl") 
-	public ParamStringBean html(@Param("c") @Optional final Long ac) {
+	public ParamBean html(@Param("c") @Optional final Long ac) {
 		this.c = ac;
 		return this;
 	}

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.servlet.param;
+package com.corona.servlet.injecting.param;
 
 import java.util.List;
 
@@ -93,8 +93,8 @@ class ObjectTokenDescriptor implements TokenDescriptor {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.param.TokenDescriptor#create(
-	 * 	com.corona.servlet.param.TokenRunner, java.util.List, com.corona.servlet.param.Token
+	 * @see com.corona.servlet.injecting.param.TokenDescriptor#create(
+	 * 	com.corona.servlet.injecting.param.TokenRunner, java.util.List, com.corona.servlet.injecting.param.Token
 	 * )
 	 */
 	@Override

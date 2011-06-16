@@ -13,7 +13,6 @@ import com.corona.servlet.annotation.FreeMaker;
 import com.corona.servlet.annotation.Head;
 import com.corona.servlet.annotation.Json;
 import com.corona.servlet.annotation.Param;
-import com.corona.servlet.annotation.Params;
 import com.corona.servlet.annotation.Path;
 import com.corona.servlet.annotation.Pdf;
 import com.corona.servlet.annotation.Regex;
@@ -30,16 +29,15 @@ import com.corona.servlet.freemaker.FreeMakerEngineImpl;
 import com.corona.servlet.freemaker.FreeMakerProducerFactory;
 import com.corona.servlet.resource.ResourceProducerFactory;
 import com.corona.servlet.service.ServiceProducerFactory;
+import com.corona.servlet.injecting.param.ParamInjectFieldFactory;
+import com.corona.servlet.injecting.param.ParamInjectParameterFactory;
+import com.corona.servlet.injecting.param.ParamInjectPropertyFactory;
 import com.corona.servlet.json.JsonProducerFactory;
 import com.corona.servlet.matching.HeadMatcherFactory;
 import com.corona.servlet.matching.PathMatcherFactory;
 import com.corona.servlet.matching.RegexMatcherFactory;
 import com.corona.servlet.matching.SameMatcherFactory;
 import com.corona.servlet.matching.TailMatcherFactory;
-import com.corona.servlet.param.ParamInjectFieldFactory;
-import com.corona.servlet.param.ParamInjectParameterFactory;
-import com.corona.servlet.param.ParamInjectPropertyFactory;
-import com.corona.servlet.param.ParamsInjectParameterFactory;
 import com.corona.servlet.pdf.PdfProducerFactory;
 import com.corona.servlet.xml.XmlProducerFactory;
 
@@ -70,11 +68,6 @@ public class ApplicationModule extends WebKernelModule {
 		);
 		this.bindExtension(InjectPropertyFactory.class).as(Param.class).to(
 				new ParamInjectPropertyFactory()
-		);
-
-		// configure @Params injection for field and parameters
-		this.bindExtension(InjectParameterFactory.class).as(Params.class).to(
-				new ParamsInjectParameterFactory()
 		);
 
 		// configure built-in matcher factory for SERVLET

@@ -1,9 +1,10 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.servlet.param;
+package com.corona.servlet.injecting.param;
 
-import java.util.List;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * <p>The token for value </p>
@@ -55,9 +56,11 @@ public class ValueToken implements Token {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.param.Token#create(com.corona.servlet.param.TokenRunner, java.util.List, com.corona.servlet.param.Token)
+	 * @see com.corona.servlet.injecting.param.Token#create(
+	 * 	org.codehaus.jackson.map.ObjectMapper, org.codehaus.jackson.JsonNode
+	 * )
 	 */
 	@Override
-	public void create(TokenRunner runner, List<TokenDescriptor> descriptors, Token parent) throws TokenParserException {
+	public void create(final ObjectMapper mapper, final JsonNode parent) {
 	}
 }

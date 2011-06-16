@@ -5,7 +5,7 @@ package com.corona.test.servlet.param;
 
 import com.corona.servlet.annotation.Controller;
 import com.corona.servlet.annotation.FreeMaker;
-import com.corona.servlet.annotation.Params;
+import com.corona.servlet.annotation.Param;
 import com.corona.servlet.annotation.Same;
 
 /**
@@ -15,7 +15,7 @@ import com.corona.servlet.annotation.Same;
  * @version $Id$
  */
 @Controller
-public class ParamsInjection {
+public class ParamBeanInjection {
 
 	/**
 	 * @param order the order
@@ -23,7 +23,7 @@ public class ParamsInjection {
 	 */
 	@Same("/params.html")
 	@FreeMaker("/params.ftl") 
-	public Order html(@Params final Order order) {
+	public Order html(@Param final Order order) {
 		return order;
 	}
 }

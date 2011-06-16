@@ -1,14 +1,12 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.servlet.param;
+package com.corona.servlet.injecting.param;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -56,7 +54,6 @@ class ParamInjectField extends AbstractInjectField {
 	 * {@inheritDoc}
 	 * @see com.corona.context.AbstractInjectField#get(com.corona.context.ContextManager)
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	protected Object get(final ContextManager contextManager) {
 		
@@ -68,24 +65,57 @@ class ParamInjectField extends AbstractInjectField {
 		
 		if (Collection.class.isAssignableFrom(this.getType())) {
 			
+			String[] result = request.getParameterValues(this.name);
+			if ((result == null) && (!this.isOptional())) {
+				this.logger.error(
+						"Value of parameter [{0}] resolved is mandatory, but resolved value is NULL", this.getType()
+				);
+				throw new ValueException(
+						"Value of parameter [{0}] resolved is mandatory, but resolved value is NULL", this.getType()
+				);
+			}
+
+			// the inject to is Collection/List, will convert parameter to list
 			Type[] types = ((ParameterizedType) this.getField().getGenericType()).getActualTypeArguments();
 			Type type = ((types == null) || (types.length == 0)) ? String.class : types[0];
 
-			List result = new ArrayList();
-			String[] values = request.getParameterValues(this.name);
-			if (values != null) {
-				for (String value : values) {
-					result.add(StringUtil.to(value, type));
-				}
-			}
-			return result;
+			return ParamUtil.getAsList(result, type);
 		} else if (this.getType().isArray()) {
 
-			// Can not find generic type of parameter, only uses String[]
-			return request.getParameterValues(this.name);
+			// the inject to type is array, but can not find generic type of parameter, only uses String[]
+			String[] result = request.getParameterValues(this.name);
+			if ((result == null) && (!this.isOptional())) {
+				this.logger.error(
+						"Value of parameter [{0}] resolved is mandatory, but resolved value is NULL", this.getType()
+				);
+				throw new ValueException(
+						"Value of parameter [{0}] resolved is mandatory, but resolved value is NULL", this.getType()
+				);
+			}
+			return result;
+		} else if (ParamUtil.isSimpleType(this.getType())) {
+			
+			// it is simple type, will transfer by supported simple type
+			String result = request.getParameter(this.name);
+			if ((result == null) && (!this.isOptional())) {
+				this.logger.error(
+						"Value of parameter [{0}] resolved is mandatory, but resolved value is NULL", this.getType()
+				);
+				throw new ValueException(
+						"Value of parameter [{0}] is mandatory, but resolved value is NULL", this.getType()
+				);
+			}
+			return ParamUtil.getAsType(result, this.getType());
 		} else {
 			
-			return StringUtil.to(request.getParameter(this.name), this.getType());
+			try {
+				return new TokenRunner(request).getValue(this.getType());
+			} catch (Exception e) {
+				this.logger.error("Fail to translate request parameters to class [{0}]", e, this.getType());
+				throw new ValueException(
+						"Fail to translate request parameters to class [{0}]", e, this.getType()
+				);
+			}
 		}
 	}
 }

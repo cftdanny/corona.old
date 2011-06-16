@@ -1,23 +1,19 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.servlet.param;
+package com.corona.servlet.injecting.param;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.corona.context.AbstractInjectParameter;
-import com.corona.context.ConfigurationException;
 import com.corona.context.ContextManager;
 import com.corona.context.ValueException;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 import com.corona.servlet.annotation.Param;
-import com.corona.util.StringUtil;
 
 /**
  * <p>This class is used to register a field that is annotated with injection annotation. Its value
@@ -51,13 +47,6 @@ class ParamInjectParameter extends AbstractInjectParameter {
 				break;
 			}
 		}
-		
-		if (StringUtil.isBlank(this.name)) {
-			this.logger.error("@Param annotaton at parameter [{0}] does not define its name", parameterType);
-			throw new ConfigurationException(
-					"@Param annotaton at parameter [{0}] does not define its name", parameterType
-			);
-		}
 	}
 	
 	/**
@@ -76,14 +65,16 @@ class ParamInjectParameter extends AbstractInjectParameter {
 		if (Collection.class.isAssignableFrom(this.getType())) {
 
 			// Can not find generic type of parameter, only uses Collection<String>
-			List<String> result = new ArrayList<String>();
-			String[] values = request.getParameterValues(this.name);
-			if (values != null) {
-				for (String value : values) {
-					result.add(value);
-				}
+			String[] result = request.getParameterValues(this.name);
+			if ((result == null) && (!this.isOptional())) {
+				this.logger.error(
+						"Value of parameter [{0}] resolved is mandatory, but resolved value is NULL", this.getType()
+				);
+				throw new ValueException(
+						"Value of parameter [{0}] resolved is mandatory, but resolved value is NULL", this.getType()
+				);
 			}
-			return result;
+			return ParamUtil.getAsList(result);
 		} else if (this.getType().isArray()) {
 			
 			// Can not find generic type of parameter, only uses String[]
@@ -97,7 +88,7 @@ class ParamInjectParameter extends AbstractInjectParameter {
 				);
 			}
 			return result;
-		} else { 
+		} else if (ParamUtil.isSimpleType(this.getType())) { 
 			
 			// Simple type, String, Long, Integer, Short, Float, Double, Short, Byte, Boolean
 			String result = request.getParameter(this.name);
@@ -109,7 +100,17 @@ class ParamInjectParameter extends AbstractInjectParameter {
 						"Value of parameter [{0}] is mandatory, but resolved value is NULL", this.getType()
 				);
 			}
-			return result == null ? null : StringUtil.to(result, this.getType());
+			return ParamUtil.getAsType(result, this.getType());
+		} else {
+			
+			try {
+				return new TokenRunner(request).getValue(this.getType());
+			} catch (Exception e) {
+				this.logger.error("Fail to translate request parameters to class [{0}]", e, this.getType());
+				throw new ValueException(
+						"Fail to translate request parameters to class [{0}]", e, this.getType()
+				);
+			}
 		}
 	}
 }

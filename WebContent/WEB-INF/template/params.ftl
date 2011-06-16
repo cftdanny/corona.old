@@ -25,8 +25,11 @@
 		</#list>
 		
 		<div>Lines:</div>
-		<#list items[0].lines as line>
-			<div id="item:${line.to!}">${line.notes}</div>
+		<#list (items[0].lines)! as line>
+			<div id="line:${line.to!}">${line.notes}</div>
+		</#list>
+		<#list (items[1].lines)! as line>
+			<div id="line:${line.to!}">${line.notes}</div>
 		</#list>
 	</body>
 </html>

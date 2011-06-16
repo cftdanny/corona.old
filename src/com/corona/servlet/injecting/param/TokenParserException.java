@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.servlet.param;
+package com.corona.servlet.injecting.param;
 
 /**
  * <p>This exception will be thrown if there is error when parse parameter name or expression. </p>
