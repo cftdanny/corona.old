@@ -18,7 +18,7 @@ import org.codehaus.jackson.node.ObjectNode;
  * @author $Author$
  * @version $Id$
  */
-public class ObjectToken implements Token {
+class ObjectToken implements Token {
 
 	/**
 	 * the name

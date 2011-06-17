@@ -12,7 +12,7 @@ import org.codehaus.jackson.map.ObjectMapper;
  * @author $Author$
  * @version $Id$
  */
-public class ValueToken implements Token {
+class ValueToken implements Token {
 
 	/**
 	 * the token name

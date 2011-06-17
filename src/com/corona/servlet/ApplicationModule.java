@@ -12,6 +12,7 @@ import com.corona.servlet.annotation.Excel;
 import com.corona.servlet.annotation.FreeMaker;
 import com.corona.servlet.annotation.Head;
 import com.corona.servlet.annotation.Json;
+import com.corona.servlet.annotation.MatchParam;
 import com.corona.servlet.annotation.Param;
 import com.corona.servlet.annotation.Path;
 import com.corona.servlet.annotation.Pdf;
@@ -22,24 +23,27 @@ import com.corona.servlet.annotation.Service;
 import com.corona.servlet.annotation.Session;
 import com.corona.servlet.annotation.Tail;
 import com.corona.servlet.annotation.Xml;
-import com.corona.servlet.chart.ChartProducerFactory;
-import com.corona.servlet.excel.ExcelProducerFactory;
-import com.corona.servlet.freemaker.FreeMakerEngine;
-import com.corona.servlet.freemaker.FreeMakerEngineImpl;
-import com.corona.servlet.freemaker.FreeMakerProducerFactory;
-import com.corona.servlet.resource.ResourceProducerFactory;
-import com.corona.servlet.service.ServiceProducerFactory;
+import com.corona.servlet.injecting.matchparam.MatchParamInjectFieldFactory;
+import com.corona.servlet.injecting.matchparam.MatchParamInjectParameterFactory;
+import com.corona.servlet.injecting.matchparam.MatchParamInjectPropertyFactory;
 import com.corona.servlet.injecting.param.ParamInjectFieldFactory;
 import com.corona.servlet.injecting.param.ParamInjectParameterFactory;
 import com.corona.servlet.injecting.param.ParamInjectPropertyFactory;
-import com.corona.servlet.json.JsonProducerFactory;
 import com.corona.servlet.matching.HeadMatcherFactory;
 import com.corona.servlet.matching.PathMatcherFactory;
 import com.corona.servlet.matching.RegexMatcherFactory;
 import com.corona.servlet.matching.SameMatcherFactory;
 import com.corona.servlet.matching.TailMatcherFactory;
-import com.corona.servlet.pdf.PdfProducerFactory;
-import com.corona.servlet.xml.XmlProducerFactory;
+import com.corona.servlet.producing.chart.ChartProducerFactory;
+import com.corona.servlet.producing.excel.ExcelProducerFactory;
+import com.corona.servlet.producing.freemaker.FreeMakerEngine;
+import com.corona.servlet.producing.freemaker.FreeMakerEngineImpl;
+import com.corona.servlet.producing.freemaker.FreeMakerProducerFactory;
+import com.corona.servlet.producing.json.JsonProducerFactory;
+import com.corona.servlet.producing.pdf.PdfProducerFactory;
+import com.corona.servlet.producing.resource.ResourceProducerFactory;
+import com.corona.servlet.producing.service.ServiceProducerFactory;
+import com.corona.servlet.producing.xml.XmlProducerFactory;
 
 /**
  * <p>This module is used to configure context manager factory for SERVLET environment. </p>
@@ -59,7 +63,7 @@ public class ApplicationModule extends WebKernelModule {
 		// configure @Session scope, allow developer to register session component
 		this.bindScope(Session.class).to(new SessionScope());
 		
-		// configure @Param injection for field and parameter
+		// configure @Param injection for field, property and parameter
 		this.bindExtension(InjectFieldFactory.class).as(Param.class).to(
 				new ParamInjectFieldFactory()
 		);
@@ -68,6 +72,17 @@ public class ApplicationModule extends WebKernelModule {
 		);
 		this.bindExtension(InjectPropertyFactory.class).as(Param.class).to(
 				new ParamInjectPropertyFactory()
+		);
+
+		// configure @MatchParam injection for field, property and parameter
+		this.bindExtension(InjectFieldFactory.class).as(MatchParam.class).to(
+				new MatchParamInjectFieldFactory()
+		);
+		this.bindExtension(InjectParameterFactory.class).as(MatchParam.class).to(
+				new MatchParamInjectParameterFactory()
+		);
+		this.bindExtension(InjectPropertyFactory.class).as(MatchParam.class).to(
+				new MatchParamInjectPropertyFactory()
 		);
 
 		// configure built-in matcher factory for SERVLET
@@ -83,9 +98,9 @@ public class ApplicationModule extends WebKernelModule {
 		
 		// configure default JSON producer environment with dependency component and extension
 		this.bind(
-				com.corona.servlet.json.JsonMarshaller.class
+				com.corona.servlet.producing.json.JsonMarshaller.class
 		).to(
-				com.corona.servlet.json.JsonMarshallerImpl.class
+				com.corona.servlet.producing.json.JsonMarshallerImpl.class
 		).in(Application.class);
 		this.bindExtension(ProducerFactory.class).as(Json.class).to(new JsonProducerFactory());
 		

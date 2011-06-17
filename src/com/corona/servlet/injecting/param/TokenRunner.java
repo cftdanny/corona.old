@@ -21,7 +21,7 @@ import org.codehaus.jackson.node.ObjectNode;
  * @author $Author$
  * @version $Id$
  */
-public class TokenRunner extends DeserializationProblemHandler {
+class TokenRunner extends DeserializationProblemHandler {
 
 	/**
 	 * the object mapper

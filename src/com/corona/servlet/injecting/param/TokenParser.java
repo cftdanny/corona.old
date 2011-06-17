@@ -14,7 +14,7 @@ import com.corona.util.StringUtil;
  * @author $Author$
  * @version $Id$
  */
-public final class TokenParser {
+final class TokenParser {
 
 	/**
 	 * utility class

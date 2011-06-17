@@ -5,11 +5,11 @@ package com.corona.test.servlet;
 
 import com.corona.context.annotation.Inject;
 import com.corona.context.annotation.Optional;
-import com.corona.servlet.CookieManager;
 import com.corona.servlet.annotation.Controller;
 import com.corona.servlet.annotation.FreeMaker;
 import com.corona.servlet.annotation.Param;
 import com.corona.servlet.annotation.Same;
+import com.corona.servlet.util.CookieManager;
 import com.corona.util.StringUtil;
 
 /**

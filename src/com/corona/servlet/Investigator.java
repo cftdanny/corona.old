@@ -27,6 +27,8 @@ import com.corona.servlet.annotation.Match;
 import com.corona.servlet.annotation.Produce;
 import com.corona.servlet.annotation.Service;
 import com.corona.servlet.annotation.Controller;
+import com.corona.servlet.handling.component.ComponentHandler;
+import com.corona.servlet.handling.producer.ProducerHandler;
 
 /**
  * <p>This handler investigation tools will find all HTTP response producers that are defined in component

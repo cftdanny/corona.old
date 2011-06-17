@@ -13,7 +13,7 @@ import org.codehaus.jackson.map.ObjectMapper;
  * @author $Author$
  * @version $Id$
  */
-public interface Token {
+interface Token {
 
 	/**
 	 * @param mapper the object mapper

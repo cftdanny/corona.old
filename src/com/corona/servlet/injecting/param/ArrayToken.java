@@ -17,7 +17,7 @@ import org.codehaus.jackson.node.ObjectNode;
  * @author $Author$
  * @version $Id$
  */
-public class ArrayToken implements Token {
+class ArrayToken implements Token {
 
 	/**
 	 * the field name

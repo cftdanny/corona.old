@@ -3,11 +3,11 @@
  */
 package com.corona.test;
 
-import com.corona.servlet.CookieManager;
-import com.corona.servlet.CookieManagerImpl;
 import com.corona.servlet.Handler;
-import com.corona.servlet.ResourceHandler;
 import com.corona.servlet.WebStartModule;
+import com.corona.servlet.handling.resource.ResourceHandler;
+import com.corona.servlet.util.CookieManager;
+import com.corona.servlet.util.CookieManagerImpl;
 import com.corona.test.servlet.ComponentHandlerHtml;
 import com.corona.test.servlet.CookieHtml;
 import com.corona.test.servlet.IndexExcel;
@@ -20,6 +20,7 @@ import com.corona.test.servlet.IndexXml;
 import com.corona.test.servlet.SessionVariable;
 import com.corona.test.servlet.SessionVariableHtml;
 import com.corona.test.servlet.param.ParamBeanInjection;
+import com.corona.test.servlet.param.ParamMatchInjection;
 import com.corona.test.servlet.param.ParamSimpleInjection;
 
 /**
@@ -132,5 +133,6 @@ public class CoronaApplicationModule extends WebStartModule {
 	private void configureInjection() {
 		this.bind(ParamSimpleInjection.class).to(ParamSimpleInjection.class);
 		this.bind(ParamBeanInjection.class).to(ParamBeanInjection.class);
+		this.bind(ParamMatchInjection.class).to(ParamMatchInjection.class);
 	}
 }
