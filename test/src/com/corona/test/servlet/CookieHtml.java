@@ -3,13 +3,14 @@
  */
 package com.corona.test.servlet;
 
+import com.corona.component.cookie.CookieManager;
 import com.corona.context.annotation.Inject;
 import com.corona.context.annotation.Optional;
 import com.corona.servlet.annotation.Controller;
+import com.corona.servlet.annotation.CookieParam;
 import com.corona.servlet.annotation.FreeMaker;
 import com.corona.servlet.annotation.Param;
 import com.corona.servlet.annotation.Same;
-import com.corona.servlet.util.CookieManager;
 import com.corona.util.StringUtil;
 
 /**
@@ -37,6 +38,16 @@ public class CookieHtml {
 	private String world;
 	
 	/**
+	 * the hello from cookie
+	 */
+	@CookieParam("hello") @Optional private String cookieHello;
+
+	/**
+	 * the world from cookie
+	 */
+	@CookieParam("world") @Optional private String cookieWorld;
+
+	/**
 	 * @return the hello
 	 */
 	public String getHello() {
@@ -61,12 +72,12 @@ public class CookieHtml {
 			@Param("hello") @Optional final String ihello, @Param("world") @Optional final String iworld) {
 		
 		if (StringUtil.isBlank(ihello)) {
-			this.hello = this.cookieManager.getValue("hello");
+			this.hello = this.cookieHello;
 		} else {
 			this.hello = ihello;
 		}
 		if (StringUtil.isBlank(iworld)) {
-			this.world = this.cookieManager.getValue("world");
+			this.world = this.cookieWorld;
 		} else {
 			this.world = iworld;
 		}

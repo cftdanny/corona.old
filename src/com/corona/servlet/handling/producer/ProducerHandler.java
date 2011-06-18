@@ -30,10 +30,10 @@ import com.corona.servlet.MatchResult;
 import com.corona.servlet.Matcher;
 import com.corona.servlet.Producer;
 import com.corona.servlet.ProducerHint;
-import com.corona.servlet.ServletUtil;
 import com.corona.servlet.annotation.ContentType;
 import com.corona.servlet.annotation.Expiration;
 import com.corona.servlet.annotation.Transactional;
+import com.corona.util.ServletUtil;
 
 /**
  * <p>This handler is used to create HTTP response by an injection method in component. </p>

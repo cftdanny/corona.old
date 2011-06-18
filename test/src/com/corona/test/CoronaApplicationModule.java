@@ -3,11 +3,11 @@
  */
 package com.corona.test;
 
+import com.corona.component.cookie.CookieManager;
+import com.corona.component.cookie.CookieManagerImpl;
 import com.corona.servlet.Handler;
 import com.corona.servlet.WebStartModule;
 import com.corona.servlet.handling.resource.ResourceHandler;
-import com.corona.servlet.util.CookieManager;
-import com.corona.servlet.util.CookieManagerImpl;
 import com.corona.test.servlet.ComponentHandlerHtml;
 import com.corona.test.servlet.CookieHtml;
 import com.corona.test.servlet.IndexExcel;

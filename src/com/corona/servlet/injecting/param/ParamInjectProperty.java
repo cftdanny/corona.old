@@ -16,6 +16,8 @@ import com.corona.context.ValueException;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 import com.corona.servlet.annotation.Param;
+import com.corona.util.ConvertUtil;
+import com.corona.util.ListUtil;
 import com.corona.util.StringUtil;
 
 /**
@@ -81,8 +83,7 @@ class ParamInjectProperty extends AbstractInjectProperty {
 						"Value of parameter [{0}] resolved is mandatory, but resolved value is NULL", this.getType()
 				);
 			}
-
-			return result;
+			return ListUtil.getAsList(result);
 		} else if (this.getType().isArray()) {
 
 			// the inject to type is array, but can not find generic type of parameter, only uses String[]
@@ -96,7 +97,7 @@ class ParamInjectProperty extends AbstractInjectProperty {
 				);
 			}
 			return result;
-		} else if (ParamUtil.isSimpleType(this.getType())) {
+		} else if (ConvertUtil.canConvertFromString(this.getType())) {
 			
 			// it is simple type, will transfer by supported simple type
 			String result = request.getParameter(this.name);
@@ -108,7 +109,7 @@ class ParamInjectProperty extends AbstractInjectProperty {
 						"Value of parameter [{0}] is mandatory, but resolved value is NULL", this.getType()
 				);
 			}
-			return ParamUtil.getAsType(result, this.getType());
+			return ConvertUtil.getAsType(result, this.getType());
 		} else {
 			
 			try {

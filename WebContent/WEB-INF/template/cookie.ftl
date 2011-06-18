@@ -18,5 +18,9 @@
 			<label>World: </label> <input type="text" id="inputWorld" name="world"> <p>
 			<input id="submit" type="submit" value="Submit" />
 		</form>
+		
+		<form action="cookie-param.html" method="post">
+			<input id="submit-param" type="submit" value="Submit" />
+		</form>
 	</body>
 </html>

@@ -16,6 +16,7 @@ import com.corona.context.ValueException;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 import com.corona.servlet.annotation.Param;
+import com.corona.util.ConvertUtil;
 import com.corona.util.StringUtil;
 
 /**
@@ -86,7 +87,7 @@ class ParamInjectField extends AbstractInjectField {
 			Type[] types = ((ParameterizedType) this.getField().getGenericType()).getActualTypeArguments();
 			Type type = ((types == null) || (types.length == 0)) ? String.class : types[0];
 
-			return ParamUtil.getAsList(result, type);
+			return ConvertUtil.getAsList(result, type);
 		} else if (this.getType().isArray()) {
 
 			// the inject to type is array, but can not find generic type of parameter, only uses String[]
@@ -100,7 +101,7 @@ class ParamInjectField extends AbstractInjectField {
 				);
 			}
 			return result;
-		} else if (ParamUtil.isSimpleType(this.getType())) {
+		} else if (ConvertUtil.canConvertFromString(this.getType())) {
 			
 			// it is simple type, will transfer by supported simple type
 			String result = request.getParameter(this.name);
@@ -112,7 +113,7 @@ class ParamInjectField extends AbstractInjectField {
 						"Value of parameter [{0}] is mandatory, but resolved value is NULL", this.getType()
 				);
 			}
-			return ParamUtil.getAsType(result, this.getType());
+			return ConvertUtil.getAsType(result, this.getType());
 		} else {
 			
 			try {

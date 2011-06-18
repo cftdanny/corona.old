@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.servlet.util;
+package com.corona.component.cookie;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -215,7 +215,7 @@ public class CookieManagerImpl implements CookieManager {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.util.CookieManager#getValue(java.lang.String)
+	 * @see com.corona.component.cookie.CookieManager#getValue(java.lang.String)
 	 */
 	@Override
 	public String getValue(final String name) {
@@ -226,7 +226,7 @@ public class CookieManagerImpl implements CookieManager {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.util.CookieManager#getCookie(java.lang.String)
+	 * @see com.corona.component.cookie.CookieManager#getCookie(java.lang.String)
 	 */
 	@Override
 	public Cookie getCookie(final String name) {
@@ -245,7 +245,7 @@ public class CookieManagerImpl implements CookieManager {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.util.CookieManager#getCookies()
+	 * @see com.corona.component.cookie.CookieManager#getCookies()
 	 */
 	@Override
 	public List<Cookie> getCookies() {
@@ -264,7 +264,7 @@ public class CookieManagerImpl implements CookieManager {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.util.CookieManager#createCookie(java.lang.String, java.lang.String)
+	 * @see com.corona.component.cookie.CookieManager#createCookie(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public Cookie createCookie(final String name, final String value) {
@@ -273,7 +273,7 @@ public class CookieManagerImpl implements CookieManager {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.util.CookieManager#createPageCookie(java.lang.String, java.lang.String)
+	 * @see com.corona.component.cookie.CookieManager#createPageCookie(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public Cookie createPageCookie(final String name, final String value) {
@@ -291,7 +291,7 @@ public class CookieManagerImpl implements CookieManager {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.util.CookieManager#createApplicationCookie(java.lang.String, java.lang.String)
+	 * @see com.corona.component.cookie.CookieManager#createApplicationCookie(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public Cookie createApplicationCookie(final String name, final String value) {
@@ -309,7 +309,7 @@ public class CookieManagerImpl implements CookieManager {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.util.CookieManager#createGlobalCookie(java.lang.String, java.lang.String)
+	 * @see com.corona.component.cookie.CookieManager#createGlobalCookie(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public Cookie createGlobalCookie(final String name, final String value) {
@@ -327,7 +327,7 @@ public class CookieManagerImpl implements CookieManager {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.util.CookieManager#add(javax.servlet.http.Cookie)
+	 * @see com.corona.component.cookie.CookieManager#add(javax.servlet.http.Cookie)
 	 */
 	@Override
 	public void add(final Cookie cookie) {

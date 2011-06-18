@@ -18,7 +18,7 @@ import com.corona.logging.LogFactory;
  * @author $Author$
  * @version $Id$
  */
-class Handlers {
+public class Handlers {
 
 	/**
 	 * the logger

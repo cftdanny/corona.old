@@ -8,6 +8,7 @@ import com.corona.context.InjectParameterFactory;
 import com.corona.context.InjectPropertyFactory;
 import com.corona.context.annotation.Application;
 import com.corona.servlet.annotation.Chart;
+import com.corona.servlet.annotation.CookieParam;
 import com.corona.servlet.annotation.Excel;
 import com.corona.servlet.annotation.FreeMaker;
 import com.corona.servlet.annotation.Head;
@@ -23,6 +24,9 @@ import com.corona.servlet.annotation.Service;
 import com.corona.servlet.annotation.Session;
 import com.corona.servlet.annotation.Tail;
 import com.corona.servlet.annotation.Xml;
+import com.corona.servlet.injecting.cookieparam.CookieParamInjectFieldFactory;
+import com.corona.servlet.injecting.cookieparam.CookieParamInjectParameterFactory;
+import com.corona.servlet.injecting.cookieparam.CookieParamInjectPropertyFactory;
 import com.corona.servlet.injecting.matchparam.MatchParamInjectFieldFactory;
 import com.corona.servlet.injecting.matchparam.MatchParamInjectParameterFactory;
 import com.corona.servlet.injecting.matchparam.MatchParamInjectPropertyFactory;
@@ -83,6 +87,17 @@ public class ApplicationModule extends WebKernelModule {
 		);
 		this.bindExtension(InjectPropertyFactory.class).as(MatchParam.class).to(
 				new MatchParamInjectPropertyFactory()
+		);
+
+		// configure @CookieParam injection for field, property and parameter
+		this.bindExtension(InjectFieldFactory.class).as(CookieParam.class).to(
+				new CookieParamInjectFieldFactory()
+		);
+		this.bindExtension(InjectParameterFactory.class).as(CookieParam.class).to(
+				new CookieParamInjectParameterFactory()
+		);
+		this.bindExtension(InjectPropertyFactory.class).as(CookieParam.class).to(
+				new CookieParamInjectPropertyFactory()
 		);
 
 		// configure built-in matcher factory for SERVLET

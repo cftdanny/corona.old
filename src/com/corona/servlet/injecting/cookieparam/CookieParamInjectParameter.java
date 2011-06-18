@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.servlet.injecting.matchparam;
+package com.corona.servlet.injecting.cookieparam;
 
 import java.lang.annotation.Annotation;
 
+import com.corona.component.cookie.CookieManager;
 import com.corona.context.AbstractInjectParameter;
 import com.corona.context.ConfigurationException;
 import com.corona.context.ContextManager;
 import com.corona.context.ValueException;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
-import com.corona.servlet.MatchResult;
-import com.corona.servlet.annotation.MatchParam;
+import com.corona.servlet.annotation.CookieParam;
 import com.corona.util.ConvertUtil;
 
 /**
@@ -22,12 +22,12 @@ import com.corona.util.ConvertUtil;
  * @author $Author$
  * @version $Id$
  */
-class MatchParamInjectParameter extends AbstractInjectParameter {
+class CookieParamInjectParameter extends AbstractInjectParameter {
 
 	/**
 	 * the logger
 	 */
-	private Log logger = LogFactory.getLog(MatchParamInjectParameter.class);
+	private Log logger = LogFactory.getLog(CookieParamInjectParameter.class);
 
 	/**
 	 * the component name
@@ -38,12 +38,12 @@ class MatchParamInjectParameter extends AbstractInjectParameter {
 	 * @param parameterType the class type of annotated parameter
 	 * @param annotations all annotations for parameter
 	 */
-	MatchParamInjectParameter(final Class<?> parameterType, final Annotation[] annotations) {
+	CookieParamInjectParameter(final Class<?> parameterType, final Annotation[] annotations) {
 		
 		super(parameterType, annotations);
 		for (Annotation annotation : annotations) {
-			if (annotation.annotationType().equals(MatchParam.class)) {
-				this.name = ((MatchParam) annotation).value();
+			if (annotation.annotationType().equals(CookieParam.class)) {
+				this.name = ((CookieParam) annotation).value();
 				break;
 			}
 		}
@@ -57,20 +57,22 @@ class MatchParamInjectParameter extends AbstractInjectParameter {
 	public Object get(final ContextManager contextManager) {
 		
 		// resolve match result from current context manager
-		MatchResult result = contextManager.get(MatchResult.class);
-		if (result == null) {
-			this.logger.error("Request is not handled by URI pattern matching");
-			throw new ConfigurationException("Request is not handled by URI pattern matching");
+		CookieManager cookieManager = contextManager.get(CookieManager.class);
+		if (cookieManager == null) {
+			this.logger.error("Request does not run at HTTP SERVLET context, can not find cookie");
+			throw new ConfigurationException(
+					"Request does not run at HTTP SERVLET context, can not find cookie"
+			);
 		}
 		
 		// get value from match result by parameter name
-		Object value = result.get(this.name);
+		Object value = cookieManager.getValue(this.name);
 		if ((value == null) && (!this.isOptional())) {
 			this.logger.error(
-					"Matched value for [{0}] is mandatory, but resolved value is NULL", this.getType()
+					"Parameter [{0}] value is mandatory, but cookie does not exist", this.getType()
 			);
 			throw new ValueException(
-					"Matched value for [{0}] is mandatory, but resolved value is NULL", this.getType()
+					"Parameter [{0}] value is mandatory, but cookie does not exist", this.getType()
 			);
 		}
 		

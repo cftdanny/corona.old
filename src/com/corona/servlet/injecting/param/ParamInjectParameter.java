@@ -14,6 +14,8 @@ import com.corona.context.ValueException;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 import com.corona.servlet.annotation.Param;
+import com.corona.util.ConvertUtil;
+import com.corona.util.ListUtil;
 
 /**
  * <p>This class is used to register a field that is annotated with injection annotation. Its value
@@ -80,7 +82,7 @@ class ParamInjectParameter extends AbstractInjectParameter {
 						"Value of parameter [{0}] resolved is mandatory, but resolved value is NULL", this.getType()
 				);
 			}
-			return ParamUtil.getAsList(result);
+			return ListUtil.getAsList(result);
 		} else if (this.getType().isArray()) {
 			
 			// Can not find generic type of parameter, only uses String[]
@@ -94,7 +96,7 @@ class ParamInjectParameter extends AbstractInjectParameter {
 				);
 			}
 			return result;
-		} else if (ParamUtil.isSimpleType(this.getType())) { 
+		} else if (ConvertUtil.canConvertFromString(this.getType())) { 
 			
 			// Simple type, String, Long, Integer, Short, Float, Double, Short, Byte, Boolean
 			String result = request.getParameter(this.name);
@@ -106,7 +108,7 @@ class ParamInjectParameter extends AbstractInjectParameter {
 						"Value of parameter [{0}] is mandatory, but resolved value is NULL", this.getType()
 				);
 			}
-			return ParamUtil.getAsType(result, this.getType());
+			return ConvertUtil.getAsType(result, this.getType());
 		} else {
 			
 			try {
