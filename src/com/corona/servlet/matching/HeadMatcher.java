@@ -5,8 +5,10 @@ package com.corona.servlet.matching;
 
 import java.lang.reflect.Method;
 
+import com.corona.context.ContextManagerFactory;
 import com.corona.servlet.AbstractMatcher;
 import com.corona.servlet.MatchResult;
+import com.corona.servlet.annotation.Head;
 
 /**
  * <p>Match a request URI by head pattern </p>
@@ -32,17 +34,16 @@ class HeadMatcher extends AbstractMatcher {
 	private String name;
 	
 	/**
+	 * @param contextManagerFactory the current context manager factory
 	 * @param method the method that is annotated with matcher annotation
-	 * @param priority the match priority
-	 * @param pattern the head pattern string
-	 * @param name the name that is used to store URI tail
+	 * @param head the head pattern
 	 */
-	HeadMatcher(final Method method, final int priority, final String pattern, final String name) {
-		super(method);
+	HeadMatcher(final ContextManagerFactory contextManagerFactory, final Method method, final Head head) {
+		super(contextManagerFactory, method);
 		
-		this.priority = priority;
-		this.pattern = pattern;
-		this.name = name;
+		this.priority = head.priority();
+		this.pattern = head.value();
+		this.name = head.name();
 	}
 
 	/**

@@ -5,8 +5,10 @@ package com.corona.servlet.matching;
 
 import java.lang.reflect.Method;
 
+import com.corona.context.ContextManagerFactory;
 import com.corona.servlet.AbstractMatcher;
 import com.corona.servlet.MatchResult;
+import com.corona.servlet.annotation.Same;
 
 /**
  * <p>This matcher will match request URI with pattern exactly same. </p>
@@ -27,14 +29,15 @@ class SameMatcher extends AbstractMatcher {
 	private String pattern;
 	
 	/**
+	 * @param contextManagerFactory the current context manager factory
 	 * @param method the method that is annotated with matcher annotation
-	 * @param priority the match priority
-	 * @param pattern the matching pattern
+	 * @param same the same pattern
 	 */
-	SameMatcher(final Method method, final int priority, final String pattern) {
-		super(method);
-		this.priority = priority;
-		this.pattern = pattern;
+	SameMatcher(final ContextManagerFactory contextManagerFactory, final Method method, final Same same) {
+		super(contextManagerFactory, method);
+
+		this.priority = same.priority();
+		this.pattern = same.value();
 	}
 
 	/**

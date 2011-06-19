@@ -5,6 +5,7 @@ package com.corona.servlet.matching;
 
 import java.lang.reflect.Method;
 
+import com.corona.context.ContextManagerFactory;
 import com.corona.servlet.Matcher;
 import com.corona.servlet.MatcherFactory;
 import com.corona.servlet.annotation.Same;
@@ -28,10 +29,12 @@ public class SameMatcherFactory implements MatcherFactory<Same> {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.MatcherFactory#create(java.lang.reflect.Method, java.lang.annotation.Annotation)
+	 * @see com.corona.servlet.MatcherFactory#create(
+	 * 	com.corona.context.ContextManagerFactory, java.lang.reflect.Method, java.lang.annotation.Annotation
+	 * )
 	 */
 	@Override
-	public Matcher create(final Method method, final Same same) {
-		return new SameMatcher(method, same.priority(), same.value());
+	public Matcher create(final ContextManagerFactory contextManagerFactory, final Method method, final Same same) {
+		return new SameMatcher(contextManagerFactory, method, same);
 	}
 }

@@ -17,7 +17,6 @@ import com.corona.context.InjectFieldFactory;
 import com.corona.context.ConfigurationException;
 import com.corona.context.ContextManager;
 import com.corona.context.ContextManagerFactory;
-import com.corona.context.ContextUtil;
 import com.corona.context.CreationException;
 import com.corona.context.Descriptor;
 import com.corona.context.InjectMethod;
@@ -32,6 +31,7 @@ import com.corona.context.annotation.Inject;
 import com.corona.context.annotation.Version;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
+import com.corona.util.ContextUtil;
 
 /**
  * <p>The component descriptor is used to bind a class as a component to context manager factory. </p>

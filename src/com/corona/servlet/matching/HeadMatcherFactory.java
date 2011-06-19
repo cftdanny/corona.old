@@ -5,6 +5,7 @@ package com.corona.servlet.matching;
 
 import java.lang.reflect.Method;
 
+import com.corona.context.ContextManagerFactory;
 import com.corona.servlet.Matcher;
 import com.corona.servlet.MatcherFactory;
 import com.corona.servlet.annotation.Head;
@@ -28,10 +29,12 @@ public class HeadMatcherFactory implements MatcherFactory<Head> {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.MatcherFactory#create(java.lang.reflect.Method, java.lang.annotation.Annotation)
+	 * @see com.corona.servlet.MatcherFactory#create(
+	 * 	com.corona.context.ContextManagerFactory, java.lang.reflect.Method, java.lang.annotation.Annotation
+	 * )
 	 */
 	@Override
-	public Matcher create(final Method method, final Head head) {
-		return new HeadMatcher(method, head.priority(), head.value(), head.name());
+	public Matcher create(final ContextManagerFactory contextManagerFactory, final Method method, final Head head) {
+		return new HeadMatcher(contextManagerFactory, method, head);
 	}
 }

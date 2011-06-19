@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.context;
+package com.corona.util;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;

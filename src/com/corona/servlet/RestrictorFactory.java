@@ -9,24 +9,19 @@ import java.lang.reflect.Method;
 import com.corona.context.ContextManagerFactory;
 
 /**
- * <p>This factory is used to create {@link Matcher} with configuration by annotation in method. </p>
+ * <p>This factory is used to create Restirctor by context manager factory and Restrict annotation </p>
  *
  * @author $Author$
  * @version $Id$
- * @param <T> the 
+ * @param <T> the restrict annotation
  */
-public interface MatcherFactory<T extends Annotation> {
+public interface RestrictorFactory<T extends Annotation> {
 
-	/**
-	 * @return the match annotation in method
-	 */
-	Class<T> getType();
-	
 	/**
 	 * @param contextManagerFactory the current context manager factory
 	 * @param method the method that is annotated with matcher annotation
-	 * @param pattern the pattern of match annotation
-	 * @return the matcher to match HTTP request URI
+	 * @param restrict the restriction pattern
+	 * @return the restrictor to check whether access resource or not
 	 */
-	Matcher create(ContextManagerFactory contextManagerFactory, Method method, T pattern);
+	Restrictor create(ContextManagerFactory contextManagerFactory, Method method, T restrict);
 }

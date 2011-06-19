@@ -10,14 +10,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>SQL: INSERT </p>
+ * <p>This annotation is used to determine whether web resource is restricted to access or not. </p>
  *
  * @author $Author$
  * @version $Id$
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface POST {
+@Target(ElementType.TYPE)
+public @interface Restrict {
 
 }

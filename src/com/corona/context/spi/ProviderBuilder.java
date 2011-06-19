@@ -7,7 +7,6 @@ import java.lang.annotation.Annotation;
 
 import com.corona.context.Builder;
 import com.corona.context.ContextManagerFactory;
-import com.corona.context.ContextUtil;
 import com.corona.context.Key;
 import com.corona.context.Provider;
 import com.corona.context.annotation.Context;
@@ -15,6 +14,7 @@ import com.corona.context.annotation.Install;
 import com.corona.context.annotation.Name;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
+import com.corona.util.ContextUtil;
 import com.corona.util.StringUtil;
 
 /**

@@ -4,7 +4,8 @@
 package com.corona.test.servlet;
 
 import com.corona.servlet.annotation.FreeMaker;
-import com.corona.servlet.annotation.GET;
+import com.corona.servlet.annotation.HttpMethod;
+import com.corona.servlet.annotation.HttpMethod.Action;
 import com.corona.servlet.annotation.Same;
 import com.corona.servlet.annotation.Controller;
 
@@ -22,7 +23,7 @@ public class IndexHtml {
 	 */
 	@Same("/index.html")
 	@FreeMaker("/index.ftl") 
-	@GET public void produce() {
+	@HttpMethod(Action.GET) public void produce() {
 		// usually, collect data for page in this method
 	}
 }

@@ -11,6 +11,7 @@ import java.util.List;
 import com.corona.context.annotation.Inject;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
+import com.corona.util.ContextUtil;
 
 /**
  * <p>This class is used to create new component instance by constructor annotated with {@link Inject}. The

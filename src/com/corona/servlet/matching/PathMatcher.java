@@ -10,8 +10,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.corona.context.ConfigurationException;
+import com.corona.context.ContextManagerFactory;
 import com.corona.servlet.AbstractMatcher;
 import com.corona.servlet.MatchResult;
+import com.corona.servlet.annotation.Path;
 
 /**
  * <p>Match a request URI by path with or without REGEX expression style. </p>
@@ -37,12 +39,13 @@ class PathMatcher extends AbstractMatcher {
 	private Map<Integer, String> groups = new HashMap<Integer, String>();
 	
 	/**
+	 * @param contextManagerFactory the current context manager factory
 	 * @param method the method that is annotated with matcher annotation
-	 * @param priority the match priority
-	 * @param pattern the path pattern
+	 * @param path the path pattern
 	 */
-	PathMatcher(final Method method, final int priority, final String pattern) {
-		super(method);
+	PathMatcher(final ContextManagerFactory contextManagerFactory, final Method method, final Path path) {
+		super(contextManagerFactory, method);
+		this.priority = path.priority();
 		
 		// the state of parsing machine
 		int state = 0;
@@ -56,7 +59,7 @@ class PathMatcher extends AbstractMatcher {
 		String name = "", value = "";
 		
 		// parse path pattern with state machine
-		for (char c : pattern.toCharArray()) {
+		for (char c : path.value().toCharArray()) {
 			
 			switch (state) {
 				case 0:

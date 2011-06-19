@@ -13,7 +13,6 @@ import java.util.List;
 import com.corona.context.ConfigurationException;
 import com.corona.context.ContextManager;
 import com.corona.context.ContextManagerFactory;
-import com.corona.context.ContextUtil;
 import com.corona.context.Descriptor;
 import com.corona.context.InjectMethod;
 import com.corona.context.InjectMethodFactory;
@@ -29,6 +28,7 @@ import com.corona.servlet.annotation.Service;
 import com.corona.servlet.annotation.Controller;
 import com.corona.servlet.handling.component.ComponentHandler;
 import com.corona.servlet.handling.producer.ProducerHandler;
+import com.corona.util.ContextUtil;
 
 /**
  * <p>This handler investigation tools will find all HTTP response producers that are defined in component
@@ -201,7 +201,7 @@ class Investigator implements Visitor {
 					"Matcher factory for annotation [{0}] does not exist", annotation
 			);
 		}
-		return factory.create(method, annotation);
+		return factory.create(this.contextManagerFactory, method, annotation);
 	}
 	
 	/**

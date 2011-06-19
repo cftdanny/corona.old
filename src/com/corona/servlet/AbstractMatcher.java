@@ -3,16 +3,16 @@
  */
 package com.corona.servlet;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.corona.servlet.annotation.GET;
-import com.corona.servlet.annotation.POST;
-import com.corona.servlet.annotation.PUT;
-import com.corona.servlet.annotation.DELETE;
+import com.corona.context.ConfigurationException;
+import com.corona.context.ContextManagerFactory;
+import com.corona.logging.Log;
+import com.corona.logging.LogFactory;
+import com.corona.servlet.annotation.Restrict;
 
 /**
  * <p>The helper {@link Matcher} that checks GET, POST, PUT and DELETE for HTTP request. </p>
@@ -23,45 +23,49 @@ import com.corona.servlet.annotation.DELETE;
 public abstract class AbstractMatcher implements Matcher {
 
 	/**
-	 * the matched HTTP request method
+	 * the logger
 	 */
-	private Set<String> methods = new HashSet<String>();
+	private Log logger = LogFactory.getLog(AbstractMatcher.class);
 	
 	/**
+	 * whether restrict to access content
+	 */
+	private Restrictors restrictors = new Restrictors();
+	
+	/**
+	 * @param contextManagerFactory the current context manager factory
 	 * @param method the method
 	 */
-	public AbstractMatcher(final Method method) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public AbstractMatcher(final ContextManagerFactory contextManagerFactory, final Method method) {
 		
-		if (method.isAnnotationPresent(GET.class)) {
-			this.methods.add("GET");
-		}
-		if (method.isAnnotationPresent(POST.class)) {
-			this.methods.add("POST");
-		}
-		if (method.isAnnotationPresent(PUT.class)) {
-			this.methods.add("PUT");
-		}
-		if (method.isAnnotationPresent(DELETE.class)) {
-			this.methods.add("DELETE");
-		}
-		
-		if ((this.methods.size() == 0) || (this.methods.size() == 4)) {
-			this.methods = null;
+		for (Annotation annotation : method.getAnnotations()) {
+			
+			if (annotation.annotationType().isAnnotationPresent(Restrict.class)) {
+				RestrictorFactory factory = contextManagerFactory.getExtension(
+						RestrictorFactory.class, annotation.annotationType()
+				);
+				if (factory == null) {
+					this.logger.error("Restrict factory for [{0}] in method [{0}] does not exist",
+							annotation, method
+					);
+					throw new ConfigurationException("Restrict factory for [{0}] in method [{0}] does not exist",
+							annotation, method
+					);
+				}
+				
+				this.restrictors.add(factory.create(contextManagerFactory, method, annotation));
+			}
 		}
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.servlet.Matcher#match(java.lang.String, javax.servlet.http.HttpServletRequest)
 	 */
 	@Override
 	public MatchResult match(final String path, final HttpServletRequest request) {
-		
-		if ((this.methods == null) || this.methods.contains(request.getMethod())) {
-			return this.match(path);
-		} else {
-			return null;
-		}
+		return this.restrictors.restrict(path, request) ? null : this.match(path);
 	}
 	
 	/**

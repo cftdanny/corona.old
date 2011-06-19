@@ -7,8 +7,10 @@ import java.lang.reflect.Method;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.corona.context.ContextManagerFactory;
 import com.corona.servlet.AbstractMatcher;
 import com.corona.servlet.MatchResult;
+import com.corona.servlet.annotation.Regex;
 
 /**
  * <p>Match a request URI by REGEX expression </p>
@@ -34,17 +36,16 @@ class RegexMatcher extends AbstractMatcher {
 	private String name;
 	
 	/**
+	 * @param contextManagerFactory the current context manager factory
 	 * @param method the method that is annotated with matcher annotation
-	 * @param priority the match priority
-	 * @param pattern the head pattern
-	 * @param name the prefix of group name
+	 * @param regex the regex pattern
 	 */
-	RegexMatcher(final Method method, final int priority, final String pattern, final String name) {
-		super(method);
+	RegexMatcher(final ContextManagerFactory contextManagerFactory, final Method method, final Regex regex) {
+		super(contextManagerFactory, method);
 		
-		this.priority = priority;
-		this.pattern = Pattern.compile(pattern);
-		this.name = name;
+		this.priority = regex.priority();
+		this.pattern = Pattern.compile(regex.value());
+		this.name = regex.name();
 	}
 
 	/**

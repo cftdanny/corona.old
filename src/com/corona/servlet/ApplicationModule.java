@@ -12,6 +12,7 @@ import com.corona.servlet.annotation.CookieParam;
 import com.corona.servlet.annotation.Excel;
 import com.corona.servlet.annotation.FreeMaker;
 import com.corona.servlet.annotation.Head;
+import com.corona.servlet.annotation.HttpMethod;
 import com.corona.servlet.annotation.Jndi;
 import com.corona.servlet.annotation.Json;
 import com.corona.servlet.annotation.MatchParam;
@@ -52,6 +53,7 @@ import com.corona.servlet.producing.pdf.PdfProducerFactory;
 import com.corona.servlet.producing.resource.ResourceProducerFactory;
 import com.corona.servlet.producing.service.ServiceProducerFactory;
 import com.corona.servlet.producing.xml.XmlProducerFactory;
+import com.corona.servlet.restricting.httpmethod.HttpMethodRestrictorFactory;
 
 /**
  * <p>This module is used to configure context manager factory for SERVLET environment. </p>
@@ -115,6 +117,9 @@ public class ApplicationModule extends WebKernelModule {
 				new JndiInjectPropertyFactory()
 		);
 
+		// configure built-in restrict factory for SERVLET
+		this.bindExtension(RestrictorFactory.class).as(HttpMethod.class).to(new HttpMethodRestrictorFactory());
+		
 		// configure built-in matcher factory for SERVLET
 		this.bindExtension(MatcherFactory.class).as(Head.class).to(new HeadMatcherFactory());
 		this.bindExtension(MatcherFactory.class).as(Tail.class).to(new TailMatcherFactory());
