@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE project>
-<project name="name of project" default="build" basedir=".">
+<project name="Corona Web Framework" default="build" basedir=".">
 	
 	<!-- Store current time to variable for build timestamp -->
 	<tstamp>
@@ -51,6 +51,7 @@
 	<!-- Compile application classes and test case classes -->
 	<target name="compile" depends="init">
 		
+		<echo>Compile framework source code ... </echo>
 		<mkdir dir="${app.bin.path}" />
 		<javac debug="on" srcdir="${app.src.path}" destdir="${app.bin.path}" classpathref="app.class.path" />
 		<copy todir="${app.bin.path}">
@@ -59,8 +60,9 @@
 			</fileset>
 		</copy>
 		
+		<echo>Compile test case source code ... </echo>
 		<mkdir dir="${test.bin.path}" />
-		<javac srcdir="${test.src.path}" destdir="${test.bin.path}" classpathref="app.class.path" />
+		<javac debug="on" srcdir="${test.src.path}" destdir="${test.bin.path}" classpathref="app.class.path" />
 		<copy todir="${test.bin.path}">
 			<fileset dir="${test.src.path}">
 				<exclude name="**/*.java"/>
@@ -70,7 +72,8 @@
 	
 	<!-- Instrument application classes for EMMA -->
 	<target name="instrument" depends="compile">
-		
+		<echo>Instrument classes for testing and code coverage report... </echo>
+			
 		<taskdef resource="emma_ant.properties" classpathref="test.class.path" />
 		<emma enabled="yes">
 			<instr merge="true" instrpath="${app.bin.path}" destdir="${emma.instr.path}" 

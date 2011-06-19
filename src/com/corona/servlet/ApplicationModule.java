@@ -12,6 +12,7 @@ import com.corona.servlet.annotation.CookieParam;
 import com.corona.servlet.annotation.Excel;
 import com.corona.servlet.annotation.FreeMaker;
 import com.corona.servlet.annotation.Head;
+import com.corona.servlet.annotation.Jndi;
 import com.corona.servlet.annotation.Json;
 import com.corona.servlet.annotation.MatchParam;
 import com.corona.servlet.annotation.Param;
@@ -27,6 +28,9 @@ import com.corona.servlet.annotation.Xml;
 import com.corona.servlet.injecting.cookieparam.CookieParamInjectFieldFactory;
 import com.corona.servlet.injecting.cookieparam.CookieParamInjectParameterFactory;
 import com.corona.servlet.injecting.cookieparam.CookieParamInjectPropertyFactory;
+import com.corona.servlet.injecting.jndi.JndiInjectFieldFactory;
+import com.corona.servlet.injecting.jndi.JndiInjectParameterFactory;
+import com.corona.servlet.injecting.jndi.JndiInjectPropertyFactory;
 import com.corona.servlet.injecting.matchparam.MatchParamInjectFieldFactory;
 import com.corona.servlet.injecting.matchparam.MatchParamInjectParameterFactory;
 import com.corona.servlet.injecting.matchparam.MatchParamInjectPropertyFactory;
@@ -98,6 +102,17 @@ public class ApplicationModule extends WebKernelModule {
 		);
 		this.bindExtension(InjectPropertyFactory.class).as(CookieParam.class).to(
 				new CookieParamInjectPropertyFactory()
+		);
+
+		// configure @Jndi injection for field, property and parameter
+		this.bindExtension(InjectFieldFactory.class).as(Jndi.class).to(
+				new JndiInjectFieldFactory()
+		);
+		this.bindExtension(InjectParameterFactory.class).as(Jndi.class).to(
+				new JndiInjectParameterFactory()
+		);
+		this.bindExtension(InjectPropertyFactory.class).as(Jndi.class).to(
+				new JndiInjectPropertyFactory()
 		);
 
 		// configure built-in matcher factory for SERVLET
