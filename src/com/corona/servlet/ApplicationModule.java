@@ -132,11 +132,6 @@ public class ApplicationModule extends WebKernelModule {
 		this.bindExtension(ProducerFactory.class).as(Xml.class).to(new XmlProducerFactory());
 		
 		// configure default JSON producer environment with dependency component and extension
-		this.bind(
-				com.corona.servlet.producing.json.JsonMarshaller.class
-		).to(
-				com.corona.servlet.producing.json.JsonMarshallerImpl.class
-		).in(Application.class);
 		this.bindExtension(ProducerFactory.class).as(Json.class).to(new JsonProducerFactory());
 		
 		// configure default FreeMaker producer environment with dependency component and extension

@@ -18,6 +18,14 @@
 		</classes>
 	</test>
 
+	<!-- All Test Cases for IO -->
+	<test name="IO" >
+		<classes>
+			<class name="com.corona.test.io.avro.ReflectMarshallerAndUnmarshallerTest" />
+			<class name="com.corona.test.io.jackson.JacksonMarshallerAndUnmarshallerTest" />
+		</classes>
+	</test>
+
 	<!-- All Test Cases for database -->
 	<test name="database" >
 		<classes>

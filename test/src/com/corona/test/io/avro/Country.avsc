@@ -1,0 +1,10 @@
+{ 
+	"type" : "record", 
+	"name" : "Country", 
+	"namespace" : "com.corona.test.io.avro",
+	"fields" : [
+		{"name" : "name", "type": "string"},
+		{"name" : "location", "type": "string"}
+	]
+}
+	
