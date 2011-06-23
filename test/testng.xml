@@ -23,6 +23,7 @@
 		<classes>
 			<class name="com.corona.test.io.avro.ReflectMarshallerAndUnmarshallerTest" />
 			<class name="com.corona.test.io.jackson.JacksonMarshallerAndUnmarshallerTest" />
+			<class name="com.corona.test.io.jaxb.JabxMarhsallerAndUnmarshallerTest" />
 		</classes>
 	</test>
 
