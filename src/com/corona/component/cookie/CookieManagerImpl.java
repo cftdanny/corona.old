@@ -3,15 +3,9 @@
  */
 package com.corona.component.cookie;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.DESKeySpec;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +13,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.corona.context.ContextManager;
 import com.corona.context.annotation.Inject;
+import com.corona.crypto.CipherEngine;
+import com.corona.crypto.CipherEngineFactory;
+import com.corona.crypto.CipherException;
+import com.corona.crypto.Key;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 import com.corona.util.Base64;
@@ -35,7 +33,7 @@ public class CookieManagerImpl implements CookieManager {
 	/**
 	 * the encrypt and decrypt algorithm
 	 */
-	private static final String ALGORITHM = "DES";
+	private static final String ALGORITHM = CipherEngineFactory.RC4;
 	
 	/**
 	 * the logger
@@ -61,18 +59,13 @@ public class CookieManagerImpl implements CookieManager {
 	 * the default secret key for algorithm
 	 */
 	private byte[] secretKey = new byte[] {
-			14, -2, -53, 88, -118, 56, -116, -23
+			-107, 108, 89, 59, -123, 11, 127, -44, 65, -19, 57, 62, -59, -126, 11, -92
 	};
 	
 	/**
-	 * the cipher to encrypt cookie value
+	 * the cipher engine
 	 */
-	private Cipher encoder;
-	
-	/**
-	 * the cipher to decode cookie value
-	 */
-	private Cipher decoder;
+	private CipherEngine cipherEngine;
 	
 	/**
 	 * <p>This main is used to create DES key, only for testing purpose </p>
@@ -82,10 +75,20 @@ public class CookieManagerImpl implements CookieManager {
 	 */
 	public static void main(final String[] args) throws Exception {
 	
-		KeyGenerator generator = KeyGenerator.getInstance(ALGORITHM);
-		generator.init(new SecureRandom());
-		SecretKey key = generator.generateKey();
-		for (byte b : key.getEncoded()) {
+		CipherEngine cipherEngine = CipherEngineFactory.create(ALGORITHM);
+		Key key = cipherEngine.generateKey();
+
+		System.out.println("Public Key:");
+		System.out.print("\t");
+		for (byte b : key.getEncryptionKey()) {
+			System.out.print(b);
+			System.out.print(", ");
+		}
+		System.out.println();
+		
+		System.out.println("Private Key:");
+		System.out.print("\t");
+		for (byte b : key.getDecryptionKey()) {
 			System.out.print(b);
 			System.out.print(", ");
 		}
@@ -156,6 +159,21 @@ public class CookieManagerImpl implements CookieManager {
 	}
 	
 	/**
+	 * @return the cipher engine to encrypt or decrypt data
+	 * @throws CipherException if fail to create cipher engine
+	 */
+	private CipherEngine getCipherEngine() throws CipherException {
+		
+		if (this.cipherEngine == null) {
+			this.cipherEngine = CipherEngineFactory.create(ALGORITHM);
+			
+			this.cipherEngine.setEncryptKey(this.secretKey);
+			this.cipherEngine.setDecryptKey(this.secretKey);
+		}
+		return this.cipherEngine;
+	}
+	
+	/**
 	 * @param cookie the cookie to be encoded
 	 * @return the encoded cookie
 	 */
@@ -164,17 +182,7 @@ public class CookieManagerImpl implements CookieManager {
 		if ((cookie != null) && (cookie.getValue() != null)) {
 			
 			try {
-				// create decoding cipher if it isn't created yet
-				if (this.encoder == null) {
-
-					this.encoder = Cipher.getInstance(ALGORITHM);
-					
-					DESKeySpec desKeySpec = new DESKeySpec(this.secretKey);
-					SecretKeyFactory keyfactory = SecretKeyFactory.getInstance(ALGORITHM);
-					this.encoder.init(Cipher.ENCRYPT_MODE, keyfactory.generateSecret(desKeySpec));
-				}
-				
-				byte[] bytes = this.encoder.doFinal(cookie.getValue().getBytes());
+				byte[] bytes = this.getCipherEngine().encrypt(cookie.getValue().getBytes());
 				cookie.setValue(Base64.encodeBytes(bytes));
 			} catch (Exception e) {
 				this.logger.error("Fail to decode cookie, just skip this exception", e);
@@ -193,17 +201,7 @@ public class CookieManagerImpl implements CookieManager {
 		if ((cookie != null) && (cookie.getValue() != null)) {
 			
 			try {
-				// create decoding cipher if it isn't created yet
-				if (this.decoder == null) {
-					
-					this.decoder = Cipher.getInstance(ALGORITHM);
-					
-					DESKeySpec desKeySpec = new DESKeySpec(this.secretKey);
-					SecretKeyFactory keyfactory = SecretKeyFactory.getInstance(ALGORITHM);
-					this.decoder.init(Cipher.DECRYPT_MODE, keyfactory.generateSecret(desKeySpec));
-				}
-				
-				byte[] bytes = this.decoder.doFinal(Base64.decode(cookie.getValue()));
+				byte[] bytes = this.getCipherEngine().decrypt(Base64.decode(cookie.getValue()));
 				cookie.setValue(new String(bytes));
 			} catch (Exception e) {
 				this.logger.error("Fail to decode cookie, just skip this exception", e);
