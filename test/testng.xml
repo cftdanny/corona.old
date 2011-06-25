@@ -27,6 +27,18 @@
 		</classes>
 	</test>
 
+	<!-- All Test Cases for crypto -->
+	<test name="IO" >
+		<classes>
+			<class name="com.corona.test.crypto.DESCipherEngineTest" />
+			<class name="com.corona.test.crypto.DESedeCipherEngineTest" />
+			<class name="com.corona.test.crypto.AESCipherEngineTest" />
+			<class name="com.corona.test.crypto.RSACipherEngineTest" />
+			<class name="com.corona.test.crypto.RC4CipherEngineTest" />
+			<class name="com.corona.test.crypto.BlowfishCipherEngineTest" />
+		</classes>
+	</test>
+
 	<!-- All Test Cases for database -->
 	<test name="database" >
 		<classes>
