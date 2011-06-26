@@ -3,7 +3,6 @@
  */
 package com.corona.remote;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
 /**
@@ -20,8 +19,8 @@ public interface Request {
 	byte getCode();
 	
 	/**
-	 * @param out the output stream
-	 * @throws IOException if fail to serialize request to output stream
+	 * @param output the output stream to send data to server
+	 * @throws RemoteException if fail to send data to server
 	 */
-	void write(OutputStream out) throws IOException;
+	void write(OutputStream output) throws RemoteException;
 }

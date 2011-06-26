@@ -12,11 +12,21 @@ package com.corona.remote;
 public interface Client {
 
 	/**
-	 * @param name the user name
+	 * @return the client framework version
+	 */
+	byte getClientFrameworkVersion();
+	
+	/**
+	 * @return the server framework version
+	 */
+	byte getServerFrameworkVersion();
+	
+	/**
+	 * @param username the user name
 	 * @param password the password
 	 * @throws RemoteException if fail to log in to remote server
 	 */
-	void login(String name, String password) throws RemoteException;
+	void login(String username, String password) throws RemoteException;
 	
 	/**
 	 * @throws RemoteException if fail to log out from remote server

@@ -14,21 +14,6 @@ import java.util.Map;
 public final class ClientFactory {
 
 	/**
-	 * the application key
-	 */
-	public static final String SERVER_KEY = "server.key";
-	
-	/**
-	 * the client key
-	 */
-	public static final String CLIENT_KEY = "client.key";
-	
-	/**
-	 * the base request URL
-	 */
-	public static final String BASE_URL = "base.request.url";
-	
-	/**
 	 * utility class
 	 */
 	private ClientFactory() {

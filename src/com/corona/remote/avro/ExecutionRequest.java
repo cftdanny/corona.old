@@ -3,35 +3,24 @@
  */
 package com.corona.remote.avro;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
-import com.corona.remote.Request;
+import com.corona.remote.Constants;
+import com.corona.remote.RemoteException;
 
 /**
- * <p> </p>
+ * <p>This request is used to execute service in remote server </p>
  *
  * @author $Author$
  * @version $Id$
  */
-class AvroLoginRequest implements Request {
+class ExecutionRequest extends AbstractRequest {
 
-	/**
-	 * the client
-	 */
-	private AvroClient client;
-	
-	private String username;
-	
-	private String password;
-	
 	/**
 	 * @param client the client
 	 */
-	AvroLoginRequest(final AvroClient client, final String username, final String password) {
-		this.client = client;
-		this.username = username;
-		this.password = password;
+	ExecutionRequest(final AvroClient client) {
+		super(client);
 	}
 
 	/**
@@ -40,7 +29,7 @@ class AvroLoginRequest implements Request {
 	 */
 	@Override
 	public byte getCode() {
-		return 0;
+		return Constants.REQUEST.EXECUTE;
 	}
 
 	/**
@@ -48,6 +37,6 @@ class AvroLoginRequest implements Request {
 	 * @see com.corona.remote.Request#write(java.io.OutputStream)
 	 */
 	@Override
-	public void write(final OutputStream out) throws IOException {
+	public void write(final OutputStream output) throws RemoteException {
 	}
 }
