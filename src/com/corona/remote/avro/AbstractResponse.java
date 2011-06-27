@@ -75,4 +75,8 @@ abstract class AbstractResponse implements Response {
 			throw new RemoteException("Fail to decrypt data from response with server key");
 		}
 	}
+	
+	protected byte[] decryptWithClientKey() {
+		
+	}
 }

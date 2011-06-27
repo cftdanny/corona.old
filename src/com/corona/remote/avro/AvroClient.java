@@ -5,11 +5,18 @@ package com.corona.remote.avro;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.corona.io.Marshaller;
+import com.corona.io.Unmarshaller;
+import com.corona.io.avro.AvroMarshallerFactory;
+import com.corona.io.avro.AvroUnmarshallerFactory;
 import com.corona.remote.AbstractClient;
 import com.corona.remote.Configurator;
 import com.corona.remote.Connection;
 import com.corona.remote.Constants;
+import com.corona.remote.Context;
 import com.corona.remote.RemoteException;
 import com.corona.remote.Request;
 import com.corona.remote.Response;
@@ -26,6 +33,16 @@ public class AvroClient extends AbstractClient {
 	 * the server framework version
 	 */
 	private byte serverFrameworkVersion;
+
+	/**
+	 * all marshallers about source type
+	 */
+	private Map<Class<?>, Marshaller<?>> marshallers = new HashMap<Class<?>, Marshaller<?>>();
+	
+	/**
+	 * all unmarshaller about target type
+	 */
+	private Map<Class<?>, Unmarshaller<?>> unmarshallers = new HashMap<Class<?>, Unmarshaller<?>>();
 	
 	/**
 	 * the token that is assigned by server
@@ -81,11 +98,14 @@ public class AvroClient extends AbstractClient {
 	}
 
 	/**
+	 * @param <T> the target type will unmarshal to
 	 * @param input the input stream
+	 * @param unmarshaller the unmarshaller to unmarshal output to object
 	 * @return the response
 	 * @throws RemoteException if fail to read from stream or wrong
 	 */
-	private Response getResponse(final InputStream input) throws RemoteException {
+	private <T> Response getResponse(
+			final InputStream input, final Unmarshaller<T> unmarshaller) throws RemoteException {
 		
 		// get production or development mode from stream
 		int mode;
@@ -164,7 +184,7 @@ public class AvroClient extends AbstractClient {
 		request.write(connection.getOutputStream());
 		
 		// process server response
-		Response response = this.getResponse(connection.getInputStream());
+		Response response = this.getResponse(connection.getInputStream(), null);
 		switch (response.getCode()) {
 			case Constants.RESPONSE.LOGGED_IN:
 				return;
@@ -190,10 +210,48 @@ public class AvroClient extends AbstractClient {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.remote.Client#execute(java.lang.String, java.lang.Object)
+	 * @see com.corona.remote.Client#getContext(java.lang.Class, java.lang.Class)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <S, T> Context<S, T> getContext(final Class<S> sourceType, final Class<T> targetType) {
+		
+		Marshaller<S> marshaller = null;
+		if (sourceType != null) {
+		marshaller = (Marshaller<S>) this.marshallers.get(sourceType);
+			if (marshaller == null) {
+				marshaller = new AvroMarshallerFactory().create(sourceType);
+				this.marshallers.put(sourceType, marshaller);
+			}
+		}
+		
+		Unmarshaller<T> unmarshaller = null;
+		if (targetType != null) {
+			unmarshaller = (Unmarshaller<T>) this.unmarshallers.get(targetType);
+			if (unmarshaller == null) {
+				unmarshaller = new AvroUnmarshallerFactory().create(targetType);
+			}
+		}
+		
+		return new AvroContext<S, T>(marshaller, unmarshaller);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.remote.Client#execute(java.lang.String, com.corona.remote.Context, java.lang.Object)
 	 */
 	@Override
-	public Object execute(final String name, final Object argument) {
+	public <S, T> T execute(final String name, final Context<S, T> context, final S data) throws RemoteException {
+		
+		Connection connection = this.getConnection(this.getConfigurator().getLoginURL());
+		ExecutionRequest<S> request = new ExecutionRequest<S>(this, context, data);
+		request.write(connection.getOutputStream());
+
+		// process server response
+		Response response = this.getResponse(connection.getInputStream(), context.getUnmarshaller());
+		switch (response.getCode()) {
+			
+		}
 		return null;
 	}
 }

@@ -49,7 +49,6 @@ class LoginRequest extends AbstractRequest {
 		
 		// send production or development mode or action to server
 		this.sendModeAndAction(output);
-		// send client framework version to remote server
 		
 		// send client framework version, user name and password to remote server
 		try {

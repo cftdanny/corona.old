@@ -76,5 +76,20 @@ public interface Constants {
 		 * don't have access right to current request
 		 */
 		byte NO_ACCESS_RIGHT = 6;
+		
+		/**
+		 * execute OK and return data
+		 */
+		byte OK_WITH_DATA = 11;
+		
+		/**
+		 * execute OK but do not return data
+		 */
+		byte OK_WITHOUT_DATA = 12;
+		
+		/**
+		 * fail to execute and with error message
+		 */
+		byte FAIL_WITH_ERROR = 15;
 	}
 }
