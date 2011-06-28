@@ -80,16 +80,11 @@ public interface Constants {
 		/**
 		 * execute OK and return data
 		 */
-		byte OK_WITH_DATA = 11;
-		
-		/**
-		 * execute OK but do not return data
-		 */
-		byte OK_WITHOUT_DATA = 12;
-		
+		byte SUCCESS_EXECUTED = 11;
+
 		/**
 		 * fail to execute and with error message
 		 */
-		byte FAIL_WITH_ERROR = 15;
+		byte FAIL_EXECUTED = 12;
 	}
 }

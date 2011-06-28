@@ -5,6 +5,7 @@ package com.corona.remote.avro;
 
 import java.io.InputStream;
 
+import com.corona.remote.AbstractResponse;
 import com.corona.remote.Constants;
 import com.corona.remote.RemoteException;
 

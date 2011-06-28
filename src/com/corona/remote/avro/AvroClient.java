@@ -166,6 +166,24 @@ public class AvroClient extends AbstractClient {
 			case Constants.RESPONSE.NO_ACCESS_RIGHT:
 				throw new RemoteException("Client does not have access right to access this service");
 				
+			case Constants.RESPONSE.SUCCESS_EXECUTED:
+
+				SuccessExecutedResponse<T> withDataResponse = new SuccessExecutedResponse<T>(this, unmarshaller);
+				withDataResponse.read(input);
+				
+				if (withDataResponse.getToken() != null) {
+					this.token = withDataResponse.getToken();
+				}
+				
+				return withDataResponse;
+				
+			case Constants.RESPONSE.FAIL_EXECUTED:
+				
+				FailExecutedResponse failExecuteResponse = new FailExecutedResponse(this);
+				failExecuteResponse.read(input);
+				
+				throw new RemoteException(failExecuteResponse.getMessage());
+				
 			default:
 				throw new RemoteException("Invalid action code [{0}] received from remote server", action);
 		}
@@ -240,6 +258,7 @@ public class AvroClient extends AbstractClient {
 	 * {@inheritDoc}
 	 * @see com.corona.remote.Client#execute(java.lang.String, com.corona.remote.Context, java.lang.Object)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public <S, T> T execute(final String name, final Context<S, T> context, final S data) throws RemoteException {
 		
@@ -251,7 +270,11 @@ public class AvroClient extends AbstractClient {
 		Response response = this.getResponse(connection.getInputStream(), context.getUnmarshaller());
 		switch (response.getCode()) {
 			
+			case Constants.RESPONSE.SUCCESS_EXECUTED:
+				return ((SuccessExecutedResponse<T>) response).getValue();
+				
+			default:
+				throw new RemoteException("Do not know why server response with code [{0}]", response.getCode());
 		}
-		return null;
 	}
 }

@@ -1,18 +1,15 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.remote.avro;
+package com.corona.remote;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
 import com.corona.crypto.CipherException;
-import com.corona.remote.Constants;
-import com.corona.remote.RemoteException;
-import com.corona.remote.Request;
 
 /**
- * <p>The helper request for Apache Avro </p>
+ * <p>The helper request </p>
  *
  * @author $Author$
  * @version $Id$
@@ -22,19 +19,19 @@ public abstract class AbstractRequest implements Request {
 	/**
 	 * the client
 	 */
-	private AvroClient client;
+	private AbstractClient client;
 	
 	/**
 	 * @param client the client
 	 */
-	AbstractRequest(final AvroClient client) {
+	protected AbstractRequest(final AbstractClient client) {
 		this.client = client;
 	}
 	
 	/**
 	 * @return the client
 	 */
-	protected AvroClient getClient() {
+	protected AbstractClient getClient() {
 		return client;
 	}
 	
@@ -45,14 +42,14 @@ public abstract class AbstractRequest implements Request {
 	protected void sendModeAndAction(final OutputStream output) throws RemoteException {
 		
 		try {
-			if (this.client.isProductionMode()) {
+			if (this.client.hasClientCipher()) {
 				output.write(Constants.PRODUCTION_MODE);
 			} else {
 				output.write(Constants.DEVELOPMENT_MODE);
 			}
 			output.write(this.getCode());
 		} catch (IOException e) {
-			throw new RemoteException("Fail to send stream data to remote server", e);
+			throw new RemoteException("Fail to send data mode and action code to server", e);
 		}
 	}
 	
@@ -66,7 +63,21 @@ public abstract class AbstractRequest implements Request {
 		try {
 			return this.client.getServerCipher().encrypt(data);
 		} catch (CipherException e) {
-			throw new RemoteException("Fail to encrpt data with server key");
+			throw new RemoteException("Fail to encrpt data to be sent to server with server key");
+		}
+	}
+
+	/**
+	 * @param data the data to be encrypted with client key
+	 * @return the encrypted data
+	 * @throws RemoteException if fail to encrypt data
+	 */
+	protected byte[] encryptWithClientKey(final byte[] data) throws RemoteException {
+		
+		try {
+			return this.client.getClientCipher().encrypt(data);
+		} catch (CipherException e) {
+			throw new RemoteException("Fail to encrpt data to be sent to server with client key");
 		}
 	}
 }

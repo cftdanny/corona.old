@@ -54,6 +54,13 @@ public abstract class AbstractClient implements Client {
 	}
 
 	/**
+	 * @return whether client cipher is defined and assigned
+	 */
+	public boolean hasClientCipher() {
+		return this.configurator.getClientCipher() != null;
+	}
+	
+	/**
 	 * @param serviceName the service name
 	 * @return the connection for service
 	 * @exception RemoteException if fail to create connection

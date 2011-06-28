@@ -44,7 +44,7 @@ public abstract class AbstractConnection implements Connection {
 		try {
 			this.connection = new URL(configurator.getBaseURL() + serviceName).openConnection();
 		} catch (Exception e) {
-			throw new RemoteException("Fail to build connection [{0}/{1}] with service", 
+			throw new RemoteException("Fail to build connection to service [{0}/{1}] with remote server", 
 					e, configurator.getBaseURL(), serviceName
 			);
 		}
@@ -56,14 +56,14 @@ public abstract class AbstractConnection implements Connection {
 			this.inputStream = new GZIPInputStream(this.connection.getInputStream());
 			this.outputStream = new GZIPOutputStream(this.connection.getOutputStream());
 		} catch (Exception e) {
-			throw new RemoteException("Fail to create GZIP stream with connection to server", e);
+			throw new RemoteException("Fail to create GZIP input or output stream with remote server", e);
 		} finally {
 			
 			if (this.inputStream != null) {
 				try {
 					this.inputStream.close();
 				} catch (Exception e) {
-					throw new RemoteException("Fail to close input stream", e);
+					throw new RemoteException("Fail to close input GZIP stream", e);
 				}
 			}
 		}
@@ -97,13 +97,13 @@ public abstract class AbstractConnection implements Connection {
 		try {
 			this.inputStream.close();
 		} catch (IOException e) {
-			throw new RemoteException("Fail to close input stream", e);
+			throw new RemoteException("Fail to close input GZIP stream", e);
 		} finally {
 			
 			try {
 				this.outputStream.close();
 			} catch (Exception e) {
-				throw new RemoteException("Fail to close output stream", e);
+				throw new RemoteException("Fail to close output GZIP stream", e);
 			}
 		}
 	}

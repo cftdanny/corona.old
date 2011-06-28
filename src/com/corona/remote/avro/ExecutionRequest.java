@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.corona.remote.AbstractRequest;
 import com.corona.remote.Constants;
 import com.corona.remote.Context;
 import com.corona.remote.RemoteException;
@@ -53,6 +54,15 @@ class ExecutionRequest<S> extends AbstractRequest {
 
 	/**
 	 * {@inheritDoc}
+	 * @see com.corona.remote.AbstractRequest#getClient()
+	 */
+	@Override
+	protected AvroClient getClient() {
+		return (AvroClient) super.getClient();
+	}
+
+	/**
+	 * {@inheritDoc}
 	 * @see com.corona.remote.Request#write(java.io.OutputStream)
 	 */
 	@Override
@@ -67,26 +77,26 @@ class ExecutionRequest<S> extends AbstractRequest {
 			output.write((byte) bytes.length);
 			output.write(bytes);
 		} catch (IOException e) {
-			throw new RemoteException("Fail to send stream data to remote server", e);
+			throw new RemoteException("Fail to send client token to remote server", e);
 		}
 
 		// if data is null, don't need send data to remote server
 		if (this.data != null) {
 			
 			// send data to remote server
-			if (this.getClient().isProductionMode()) {
+			if (this.getClient().hasClientCipher()) {
 				// if production mode, need ecrypt data before send
 				try {
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
 					this.context.getMarshaller().marshal(baos, this.data);
 					
-					byte[] bytes = this.getClient().getClientCipher().encrypt(baos.toByteArray());
+					byte[] bytes = this.encryptWithClientKey(baos.toByteArray());
 					output.write(bytes);
 				} catch (Exception e) {
 					throw new RemoteException("Fail to marshal and ecrypt data object to remote server", e);
 				}
 			} else {
-				// if development mode, encryptor will be null, don't need encrypt
+				// if development mode, encryption cipher is null, don't need encrypt
 				try {
 					this.context.getMarshaller().marshal(output, this.data);
 				} catch (Exception e) {

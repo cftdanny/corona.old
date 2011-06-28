@@ -5,6 +5,7 @@ package com.corona.remote.avro;
 
 import java.io.InputStream;
 
+import com.corona.remote.AbstractResponse;
 import com.corona.remote.Constants;
 import com.corona.remote.RemoteException;
 
@@ -14,7 +15,7 @@ import com.corona.remote.RemoteException;
  * @author $Author$
  * @version $Id$
  */
-public class FailExecuteResponse extends AbstractResponse {
+class FailExecutedResponse extends AbstractResponse {
 
 	/**
 	 * the reason why can't logged in that sends from server
@@ -24,7 +25,7 @@ public class FailExecuteResponse extends AbstractResponse {
 	/**
 	 * @param client the client
 	 */
-	FailExecuteResponse(final AvroClient client) {
+	FailExecutedResponse(final AvroClient client) {
 		super(client);
 	}
 	
@@ -34,7 +35,7 @@ public class FailExecuteResponse extends AbstractResponse {
 	 */
 	@Override
 	public int getCode() {
-		return Constants.RESPONSE.FAIL_WITH_ERROR;
+		return Constants.RESPONSE.FAIL_EXECUTED;
 	}
 	
 	/**
@@ -50,6 +51,6 @@ public class FailExecuteResponse extends AbstractResponse {
 	 */
 	@Override
 	public void read(final InputStream input) throws RemoteException {
-		this.message = new String(this.decryptWithServerKey(this.getBytes(input)));
+		this.message = new String(this.decryptWithClientKey(this.getBytes(input)));
 	}
 }

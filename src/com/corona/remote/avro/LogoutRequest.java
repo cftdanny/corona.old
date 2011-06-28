@@ -6,6 +6,7 @@ package com.corona.remote.avro;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.corona.remote.AbstractRequest;
 import com.corona.remote.Constants;
 import com.corona.remote.RemoteException;
 
@@ -31,6 +32,15 @@ class LogoutRequest extends AbstractRequest {
 	@Override
 	public byte getCode() {
 		return Constants.REQUEST.LOGOUT;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.remote.AbstractRequest#getClient()
+	 */
+	@Override
+	protected AvroClient getClient() {
+		return (AvroClient) super.getClient();
 	}
 
 	/**
