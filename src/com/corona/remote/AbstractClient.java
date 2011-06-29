@@ -16,19 +16,19 @@ public abstract class AbstractClient implements Client {
 	/**
 	 * the configurator
 	 */
-	private Configurator configurator;
+	private ClientConfiguration configurator;
 	
 	/**
 	 * @param configurator the configurator
 	 */
-	protected AbstractClient(final Configurator configurator) {
+	protected AbstractClient(final ClientConfiguration configurator) {
 		this.configurator = configurator;
 	}
 	
 	/**
 	 * @return the client and server configurator
 	 */
-	public Configurator getConfigurator() {
+	public ClientConfiguration getConfigurator() {
 		return this.configurator;
 	}
 	

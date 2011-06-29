@@ -17,7 +17,21 @@ import com.corona.io.MarshallerFactory;
  * @author $Author$
  * @version $Id$
  */
-public class JaxbMarshallerFactory implements MarshallerFactory {
+public class JaxbMarshallerFactory extends MarshallerFactory {
+
+	/**
+	 * the factory name
+	 */
+	public static final String NAME = "jaxb";
+	
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.io.MarshallerFactory#getName()
+	 */
+	@Override
+	public String getName() {
+		return NAME;
+	}
 
 	/**
 	 * {@inheritDoc}

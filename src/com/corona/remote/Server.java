@@ -9,13 +9,24 @@ package com.corona.remote;
  * @author $Author$
  * @version $Id$
  */
-public interface Server {
+public class Server {
 
-	byte[] setClientEncryptionKey();
+	/**
+	 * the server configuration
+	 */
+	private ServerConfiguration configuration;
 	
-	byte[] setClientDecryptionKey();
+	/**
+	 * @return the server configuration
+	 */
+	public ServerConfiguration getConfiguration() {
+		return this.configuration;
+	}
 	
-	byte[] setServerEncryptionKey();
-	
-	byte[] setServerDecryptionKey();
+	/**
+	 * @param configuration the server configuration
+	 */
+	public void setConfiguration(final ServerConfiguration configuration) {
+		this.configuration = configuration;
+	}
 }

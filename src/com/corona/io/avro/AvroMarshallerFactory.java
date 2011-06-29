@@ -20,13 +20,27 @@ import com.corona.io.MarshallerFactory;
  * @author $Author$
  * @version $Id$
  */
-public class AvroMarshallerFactory implements MarshallerFactory {
-
+public class AvroMarshallerFactory extends MarshallerFactory {
+	
+	/**
+	 * the marshaller name
+	 */
+	public static final String NAME = "avro";
+	
 	/**
 	 * the reflect data
 	 */
 	private static final ReflectData REFLECT = ReflectData.get();
 	
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.io.MarshallerFactory#getName()
+	 */
+	@Override
+	public String getName() {
+		return NAME;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.io.MarshallerFactory#create(java.lang.Class)

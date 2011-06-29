@@ -16,7 +16,7 @@ import com.corona.crypto.CipherException;
  * @author $Author$
  * @version $Id$
  */
-public class Configurator {
+public class ClientConfiguration {
 
 	/**
 	 * the base URL for remote server

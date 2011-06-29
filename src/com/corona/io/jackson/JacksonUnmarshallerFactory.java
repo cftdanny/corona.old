@@ -16,12 +16,26 @@ import com.corona.io.UnmarshallerFactory;
  * @author $Author$
  * @version $Id$
  */
-public class JacksonUnmarshallerFactory implements UnmarshallerFactory {
+public class JacksonUnmarshallerFactory extends UnmarshallerFactory {
+
+	/**
+	 * the marshaller factory name
+	 */
+	public static final String NAME = "jackson";
 
 	/**
 	 * the jackson object mapper
 	 */
 	private static final ObjectMapper MAPPER = new ObjectMapper();
+	
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.io.UnmarshallerFactory#getName()
+	 */
+	@Override
+	public String getName() {
+		return NAME;
+	}
 
 	/**
 	 * {@inheritDoc}

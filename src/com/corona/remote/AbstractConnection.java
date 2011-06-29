@@ -35,17 +35,17 @@ public abstract class AbstractConnection implements Connection {
 	private OutputStream outputStream = null;
 	
 	/**
-	 * @param configurator the server configuration
+	 * @param config the server configuration
 	 * @param serviceName the service name
 	 * @exception RemoteException if fail to create connection
 	 */
-	protected AbstractConnection(final Configurator configurator, final String serviceName) throws RemoteException {
+	protected AbstractConnection(final ClientConfiguration config, final String serviceName) throws RemoteException {
 		
 		try {
-			this.connection = new URL(configurator.getBaseURL() + serviceName).openConnection();
+			this.connection = new URL(config.getBaseURL() + serviceName).openConnection();
 		} catch (Exception e) {
 			throw new RemoteException("Fail to build connection to service [{0}/{1}] with remote server", 
-					e, configurator.getBaseURL(), serviceName
+					e, config.getBaseURL(), serviceName
 			);
 		}
 		

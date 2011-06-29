@@ -10,7 +10,9 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.corona.io.Marshaller;
+import com.corona.io.MarshallerFactory;
 import com.corona.io.Unmarshaller;
+import com.corona.io.UnmarshallerFactory;
 import com.corona.io.avro.AvroMarshallerFactory;
 import com.corona.io.avro.AvroUnmarshallerFactory;
 
@@ -42,11 +44,11 @@ public class ReflectMarshallerAndUnmarshallerTest {
 		school2.setAddress("BEIJING");
 		user.getSchools().add(school2);
 		
-		Marshaller<User> marshaller = new AvroMarshallerFactory().create(User.class);
+		Marshaller<User> marshaller = MarshallerFactory.get("avro").create(User.class);
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(); 
 		marshaller.marshal(bos, user);
 		
-		Unmarshaller<User> unmarshaller = new AvroUnmarshallerFactory().create(User.class);
+		Unmarshaller<User> unmarshaller = UnmarshallerFactory.get("avro").create(User.class);
 		ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
 		
 		// test whether unmarshalled user is same as old user

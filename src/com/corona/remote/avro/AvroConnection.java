@@ -4,7 +4,7 @@
 package com.corona.remote.avro;
 
 import com.corona.remote.AbstractConnection;
-import com.corona.remote.Configurator;
+import com.corona.remote.ClientConfiguration;
 import com.corona.remote.RemoteException;
 
 /**
@@ -20,7 +20,7 @@ class AvroConnection extends AbstractConnection {
 	 * @param serviceName the service name
 	 * @throws RemoteException if fail to create connection
 	 */
-	AvroConnection(final Configurator configurator, final String serviceName) throws RemoteException {
+	AvroConnection(final ClientConfiguration configurator, final String serviceName) throws RemoteException {
 		super(configurator, serviceName);
 	}
 }

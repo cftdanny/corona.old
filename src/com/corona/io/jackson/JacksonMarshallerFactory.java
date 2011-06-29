@@ -16,13 +16,27 @@ import com.corona.io.MarshallerFactory;
  * @author $Author$
  * @version $Id$
  */
-public class JacksonMarshallerFactory implements MarshallerFactory {
+public class JacksonMarshallerFactory extends MarshallerFactory {
 
+	/**
+	 * the marshaller factory name
+	 */
+	public static final String NAME = "jackson";
+	
 	/**
 	 * the jackson object mapper
 	 */
 	private static final ObjectMapper MAPPER = new ObjectMapper();
 	
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.io.MarshallerFactory#getName()
+	 */
+	@Override
+	public String getName() {
+		return NAME;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.io.MarshallerFactory#create(java.lang.Class)

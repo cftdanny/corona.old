@@ -20,13 +20,27 @@ import com.corona.io.UnmarshallerFactory;
  * @author $Author$
  * @version $Id$
  */
-public class AvroUnmarshallerFactory implements UnmarshallerFactory {
+public class AvroUnmarshallerFactory extends UnmarshallerFactory {
+
+	/**
+	 * the marshaller name
+	 */
+	public static final String NAME = "avro";
 
 	/**
 	 * the reflect data
 	 */
 	private static final ReflectData REFLECT = ReflectData.get();
 	
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.io.UnmarshallerFactory#getName()
+	 */
+	@Override
+	public String getName() {
+		return NAME;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.io.UnmarshallerFactory#create(java.lang.Class)
