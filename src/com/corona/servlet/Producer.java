@@ -27,7 +27,7 @@ public interface Producer {
 	/**
 	 * @return the injection method that can be invoked in context manager 
 	 */
-	InjectMethod getDecoratedMethod();
+	InjectMethod getInjectMethod();
 	
 	/**
 	 * <p>Create HTTP response output by current context manager, root object. Usually, HTML output can be

@@ -30,8 +30,6 @@ import com.corona.servlet.MatchResult;
 import com.corona.servlet.Matcher;
 import com.corona.servlet.Producer;
 import com.corona.servlet.ProducerHint;
-import com.corona.servlet.annotation.ContentType;
-import com.corona.servlet.annotation.Expiration;
 import com.corona.servlet.annotation.Transactional;
 import com.corona.util.ServletUtil;
 
@@ -54,34 +52,14 @@ public class ProducerHandler extends AbstractHandler {
 	private Producer producer;
 	
 	/**
-	 * how to control HTTP response expires
-	 */
-	private Expiration expiration;
-	
-	/**
-	 * the HTTP content type that is annotated in method of component
-	 */
-	private ContentType contentType;
-	
-	/**
 	 * @param matcher the matcher
 	 * @param producer the producer to create HTTP response
 	 */
 	public ProducerHandler(final Matcher matcher, final Producer producer) {
 		super(matcher);
-		
 		this.producer = producer;
-		this.expiration = this.getProducerMethod().getAnnotation(Expiration.class);
-		this.contentType = this.getProducerMethod().getAnnotation(ContentType.class);
 	}
 
-	/**
-	 * @return the producer method in component
-	 */
-	private Method getProducerMethod() {
-		return this.producer.getDecoratedMethod().getMethod();
-	}
-	
 	/**
 	 * @param request the HTTP SERVLET request
 	 * @return the context manager factory that store in SERVLET context before
@@ -118,25 +96,6 @@ public class ProducerHandler extends AbstractHandler {
 		ProducerHint hint = new ProducerHint();
 		context.put(new Key<ProducerHint>(ProducerHint.class), hint);
 
-		// set HTTP expires by Expires annotation in producer method of component
-		if ((this.expiration == null) || (this.expiration.value() < 0)) {
-			
-			response.setHeader("Cache-Control", "no-cache");
-			response.setDateHeader("Expires", 0);
-			response.setDateHeader("Last-Modified", System.currentTimeMillis());
-		} else {
-			
-			Long current = System.currentTimeMillis();
-			response.setHeader("Cache-Control", "max-age=" + (this.expiration.value() / 1000));
-			response.setDateHeader("Expires", current + this.expiration.value());
-			response.setDateHeader("Last-Modified", current);
-		}
-
-		// set HTTP response content type if configured by annotation in producer method
-		if (this.contentType != null) {
-			response.setContentType(this.contentType.value());
-		}
-
 		// create context manager and resolve component from context manager factory
 		ContextManager contextManager = this.getContextManagerFactory(request).create(context);
 		Object component = contextManager.get(this.producer.getKey());
@@ -144,10 +103,10 @@ public class ProducerHandler extends AbstractHandler {
 		
 		// invoke annotated method and produce web content by template and method result 
 		Object outcome = null;
-		if (this.producer.getDecoratedMethod().getMethod().isAnnotationPresent(Transactional.class)) {
-			outcome = this.execute(contextManager, component, this.producer.getDecoratedMethod());
+		if (this.producer.getInjectMethod().getMethod().isAnnotationPresent(Transactional.class)) {
+			outcome = this.execute(contextManager, component, this.producer.getInjectMethod());
 		} else {
-			outcome = this.producer.getDecoratedMethod().invoke(contextManager, component);
+			outcome = this.producer.getInjectMethod().invoke(contextManager, component);
 		}
 		hint.setOutcome(outcome);
 		
@@ -156,7 +115,7 @@ public class ProducerHandler extends AbstractHandler {
 			this.producer.produce(contextManager, response, response.getOutputStream(), component, outcome);
 		} catch (Throwable e) {
 			
-			Method method = this.producer.getDecoratedMethod().getMethod();
+			Method method = this.producer.getInjectMethod().getMethod();
 			this.logger.error("Fail to produce web content by method [{0}]", e, method); 
 			throw new HandleException("Fail to produce web content by method [{0}]", e, method);
 		}

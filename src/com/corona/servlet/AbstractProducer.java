@@ -44,10 +44,10 @@ public abstract class AbstractProducer implements Producer {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.Producer#getDecoratedMethod()
+	 * @see com.corona.servlet.Producer#getInjectMethod()
 	 */
 	@Override
-	public InjectMethod getDecoratedMethod() {
+	public InjectMethod getInjectMethod() {
 		return this.method;
 	}
 }

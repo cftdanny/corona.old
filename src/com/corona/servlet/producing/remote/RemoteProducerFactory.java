@@ -3,6 +3,7 @@
  */
 package com.corona.servlet.producing.remote;
 
+import com.corona.context.ConfigurationException;
 import com.corona.context.InjectMethod;
 import com.corona.context.Key;
 import com.corona.servlet.Producer;
@@ -25,6 +26,10 @@ public class RemoteProducerFactory implements ProducerFactory<Remote> {
 	 */
 	@Override
 	public Producer create(final Key<?> key, final InjectMethod method) {
+		
+		if (!(method instanceof RemoteInjectMethod)) {
+			throw new ConfigurationException("Only @Remote injection is allowed for remote producer method.");
+		}
 		return new RemoteProducer(key, method);
 	}
 }
