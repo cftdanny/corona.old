@@ -1,0 +1,3 @@
+com.corona.io.avro.AvroUnmarshallerFactory
+com.corona.io.jaxb.JaxbUnmarshallerFactory
+com.corona.io.jackson.JacksonUnmarshallerFactory

@@ -6,9 +6,9 @@ package com.corona.remote;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.corona.crypto.CipherEngine;
-import com.corona.crypto.CipherEngineFactory;
-import com.corona.crypto.CipherException;
+import com.corona.crypto.Cypher;
+import com.corona.crypto.CypherFactory;
+import com.corona.crypto.CypherException;
 
 /**
  * <p>The configuration in order to exchange data with remote server </p>
@@ -26,12 +26,12 @@ public class ClientConfiguration {
 	/**
 	 * the cipher to encrypt and decrypt data for remote server
 	 */
-	private CipherEngine serverCipher;
+	private Cypher serverCipher;
 	
 	/**
 	 * the cipher to encrypt and decrypt data for local client
 	 */
-	private CipherEngine clientCipher;
+	private Cypher clientCipher;
 
 	/**
 	 * the log in URL
@@ -73,15 +73,15 @@ public class ClientConfiguration {
 		
 		this.serverCipher = null;
 		try {
-			this.serverCipher = CipherEngineFactory.create(algorithm);
-		} catch (CipherException e) {
+			this.serverCipher = CypherFactory.create(algorithm);
+		} catch (CypherException e) {
 			throw new RemoteException("Fail to create {0} cipher engine for server", e, algorithm);
 		}
 		
 		try {
 			this.serverCipher.setEncryptKey(encryptKey);
 			this.serverCipher.setDecryptKey(decryptKey);
-		} catch (CipherException e) {
+		} catch (CypherException e) {
 			throw new RemoteException("Fail to set encryption and decryption key for server", e);
 		}
 	}
@@ -89,7 +89,7 @@ public class ClientConfiguration {
 	/**
 	 * @return the server cipher
 	 */
-	public CipherEngine getServerCipher() {
+	public Cypher getServerCipher() {
 		return serverCipher;
 	}
 
@@ -104,15 +104,15 @@ public class ClientConfiguration {
 		
 		this.clientCipher = null;
 		try {
-			this.clientCipher = CipherEngineFactory.create(algorithm);
-		} catch (CipherException e) {
+			this.clientCipher = CypherFactory.create(algorithm);
+		} catch (CypherException e) {
 			throw new RemoteException("Fail to create {0} cipher engine for client", e, algorithm);
 		}
 		
 		try {
 			this.clientCipher.setEncryptKey(encryptKey);
 			this.clientCipher.setDecryptKey(decryptKey);
-		} catch (CipherException e) {
+		} catch (CypherException e) {
 			throw new RemoteException("Fail to set encryption and decryption key for client", e);
 		}
 	}
@@ -120,7 +120,7 @@ public class ClientConfiguration {
 	/**
 	 * @return the client cipher
 	 */
-	public CipherEngine getClientCipher() {
+	public Cypher getClientCipher() {
 		return clientCipher;
 	}
 	

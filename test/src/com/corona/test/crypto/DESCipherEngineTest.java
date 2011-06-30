@@ -6,9 +6,10 @@ package com.corona.test.crypto;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.corona.crypto.CipherEngine;
-import com.corona.crypto.CipherEngineFactory;
-import com.corona.crypto.Key;
+import com.corona.crypto.Cypher;
+import com.corona.crypto.CypherFactory;
+import com.corona.crypto.CertifiedKey;
+import com.corona.crypto.DESCypherFactory;
 
 /**
  * <p>This test is used to test DESCipherEngine </p>
@@ -23,11 +24,8 @@ public class DESCipherEngineTest {
 	 */
 	@Test public void testEncryptAndDecrypt() throws Exception {
 		
-		CipherEngine cipher = CipherEngineFactory.create(CipherEngineFactory.DES);
-		
-		Key key = cipher.generateKey();
-		cipher.setDecryptKey(key.getDecryptionKey());
-		cipher.setEncryptKey(key.getEncryptionKey());
+		CertifiedKey key = CypherFactory.get(DESCypherFactory.NAME).generateKey();
+		Cypher cipher = CypherFactory.get(DESCypherFactory.NAME).create(key);
 		
 		String source = "1234567890123456"; 
 		byte[] encrypted = cipher.encrypt(source.getBytes());

@@ -11,7 +11,7 @@ import com.corona.util.Base64;
  * @author $Author$
  * @version $Id$
  */
-public class Key {
+public class CertifiedKey {
 
 	/**
 	 * the encryption key
@@ -26,14 +26,14 @@ public class Key {
 	/**
 	 * @param key the encryption and decryption key
 	 */
-	public Key(final byte[] key) {
+	public CertifiedKey(final byte[] key) {
 		this(key, key);
 	}
 
 	/**
 	 * @param key the encryption and decryption key
 	 */
-	public Key(final String key) {
+	public CertifiedKey(final String key) {
 		this(key, key);
 	}
 
@@ -41,7 +41,7 @@ public class Key {
 	 * @param encryptionKey the encryption key
 	 * @param decryptionKey the decryption key
 	 */
-	public Key(final byte[] encryptionKey, final byte[] decryptionKey) {
+	public CertifiedKey(final byte[] encryptionKey, final byte[] decryptionKey) {
 		this.encryptionKey = encryptionKey;
 		this.decryptionKey = decryptionKey;
 	}
@@ -50,7 +50,7 @@ public class Key {
 	 * @param encryptionKey the encryption key
 	 * @param decryptionKey the decryption key
 	 */
-	public Key(final String encryptionKey, final String decryptionKey) {
+	public CertifiedKey(final String encryptionKey, final String decryptionKey) {
 		
 		try {
 			if (encryptionKey != null) {

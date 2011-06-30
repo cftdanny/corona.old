@@ -3,7 +3,7 @@
  */
 package com.corona.remote;
 
-import com.corona.crypto.CipherEngine;
+import com.corona.crypto.Cypher;
 
 /**
  * <p>The helper class of client </p>
@@ -42,14 +42,14 @@ public abstract class AbstractClient implements Client {
 	/**
 	 * @return the cipher engine for server
 	 */
-	public CipherEngine getServerCipher() {
+	public Cypher getServerCipher() {
 		return this.configurator.getServerCipher();
 	}
 	
 	/**
 	 * @return the cipher engine for client
 	 */
-	public CipherEngine getClientCipher() {
+	public Cypher getClientCipher() {
 		return this.configurator.getClientCipher();
 	}
 

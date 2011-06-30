@@ -8,13 +8,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
-
 import com.corona.context.annotation.Inject;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
-import com.corona.servlet.annotation.ContentType;
-import com.corona.servlet.annotation.Expiration;
 import com.corona.util.ContextUtil;
 
 /**
@@ -35,16 +31,6 @@ public class AbstractInjectMethod implements InjectMethod {
 	 * the annotated property
 	 */
 	private Method method;
-
-	/**
-	 * how to control HTTP response expires
-	 */
-	private Expiration expiration;
-	
-	/**
-	 * the HTTP content type that is annotated in method of component
-	 */
-	private ContentType contentType;
 
 	/**
 	 * the annotated parameters
@@ -88,10 +74,6 @@ public class AbstractInjectMethod implements InjectMethod {
 			
 			this.injectPrameters.add(factory.create(contextManagerFactory, parameterType, annotations));
 		}
-
-		// get expiration or content type if it is annotated
-		this.expiration = this.method.getAnnotation(Expiration.class);
-		this.contentType = this.method.getAnnotation(ContentType.class);
 	}
 	
 	/**
@@ -117,26 +99,6 @@ public class AbstractInjectMethod implements InjectMethod {
 	@Override
 	public Object invoke(final ContextManager contextManager, final Object component) {
 		
-		// set HTTP expires by Expires annotation in producer method of component
-		HttpServletResponse response = contextManager.get(HttpServletResponse.class);
-		if ((this.expiration == null) || (this.expiration.value() < 0)) {
-			
-			response.setHeader("Cache-Control", "no-cache");
-			response.setDateHeader("Expires", 0);
-			response.setDateHeader("Last-Modified", System.currentTimeMillis());
-		} else {
-			
-			Long current = System.currentTimeMillis();
-			response.setHeader("Cache-Control", "max-age=" + (this.expiration.value() / 1000));
-			response.setDateHeader("Expires", current + this.expiration.value());
-			response.setDateHeader("Last-Modified", current);
-		}
-
-		// set HTTP response content type if configured by annotation in producer method
-		if (this.contentType != null) {
-			response.setContentType(this.contentType.value());
-		}
-
 		// get all arguments value for method
 		List<Object> arguments = new ArrayList<Object>();
 		for (InjectParameter parameter : this.injectPrameters) {

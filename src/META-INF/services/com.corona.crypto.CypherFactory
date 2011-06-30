@@ -1,0 +1,6 @@
+com.corona.crypto.AESCypherFactory
+com.corona.crypto.BlowfishCypherFactory
+com.corona.crypto.DESCypherFactory
+com.corona.crypto.DESedeCypherFactory
+com.corona.crypto.RC4CypherFactory
+com.corona.crypto.RSACypherFactory

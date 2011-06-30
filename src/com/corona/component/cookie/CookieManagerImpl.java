@@ -13,10 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.corona.context.ContextManager;
 import com.corona.context.annotation.Inject;
-import com.corona.crypto.CipherEngine;
-import com.corona.crypto.CipherEngineFactory;
-import com.corona.crypto.CipherException;
-import com.corona.crypto.Key;
+import com.corona.crypto.Cypher;
+import com.corona.crypto.CypherFactory;
+import com.corona.crypto.CypherException;
+import com.corona.crypto.CertifiedKey;
+import com.corona.crypto.RC4CypherFactory;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 import com.corona.util.Base64;
@@ -33,7 +34,7 @@ public class CookieManagerImpl implements CookieManager {
 	/**
 	 * the encrypt and decrypt algorithm
 	 */
-	private static final String ALGORITHM = CipherEngineFactory.RC4;
+	private static final String ALGORITHM = RC4CypherFactory.NAME;
 	
 	/**
 	 * the logger
@@ -63,9 +64,9 @@ public class CookieManagerImpl implements CookieManager {
 	};
 	
 	/**
-	 * the cipher engine
+	 * the cypher
 	 */
-	private CipherEngine cipherEngine;
+	private Cypher cypher;
 	
 	/**
 	 * <p>This main is used to create DES key, only for testing purpose </p>
@@ -75,8 +76,7 @@ public class CookieManagerImpl implements CookieManager {
 	 */
 	public static void main(final String[] args) throws Exception {
 	
-		CipherEngine cipherEngine = CipherEngineFactory.create(ALGORITHM);
-		Key key = cipherEngine.generateKey();
+		CertifiedKey key = CypherFactory.get(ALGORITHM).generateKey();
 
 		System.out.println("Public Key:");
 		System.out.print("\t");
@@ -159,18 +159,17 @@ public class CookieManagerImpl implements CookieManager {
 	}
 	
 	/**
-	 * @return the cipher engine to encrypt or decrypt data
-	 * @throws CipherException if fail to create cipher engine
+	 * @return the cypher to encrypt or decrypt data
+	 * @throws CypherException if fail to create cipher engine
 	 */
-	private CipherEngine getCipherEngine() throws CipherException {
+	private Cypher getCypher() throws CypherException {
 		
-		if (this.cipherEngine == null) {
-			this.cipherEngine = CipherEngineFactory.create(ALGORITHM);
-			
-			this.cipherEngine.setEncryptKey(this.secretKey);
-			this.cipherEngine.setDecryptKey(this.secretKey);
+		if (this.cypher == null) {
+			this.cypher = CypherFactory.get(ALGORITHM).create(
+					new CertifiedKey(this.secretKey)
+			);
 		}
-		return this.cipherEngine;
+		return this.cypher;
 	}
 	
 	/**
@@ -182,7 +181,7 @@ public class CookieManagerImpl implements CookieManager {
 		if ((cookie != null) && (cookie.getValue() != null)) {
 			
 			try {
-				byte[] bytes = this.getCipherEngine().encrypt(cookie.getValue().getBytes());
+				byte[] bytes = this.getCypher().encrypt(cookie.getValue().getBytes());
 				cookie.setValue(Base64.encodeBytes(bytes));
 			} catch (Exception e) {
 				this.logger.error("Fail to decode cookie, just skip this exception", e);
@@ -201,7 +200,7 @@ public class CookieManagerImpl implements CookieManager {
 		if ((cookie != null) && (cookie.getValue() != null)) {
 			
 			try {
-				byte[] bytes = this.getCipherEngine().decrypt(Base64.decode(cookie.getValue()));
+				byte[] bytes = this.getCypher().decrypt(Base64.decode(cookie.getValue()));
 				cookie.setValue(new String(bytes));
 			} catch (Exception e) {
 				this.logger.error("Fail to decode cookie, just skip this exception", e);

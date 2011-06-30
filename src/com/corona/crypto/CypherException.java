@@ -11,7 +11,7 @@ import java.text.MessageFormat;
  * @author $Author$
  * @version $Id$
  */
-public class CipherException extends Exception {
+public class CypherException extends Exception {
 
 	/**
 	 * Serial Version UID
@@ -22,7 +22,7 @@ public class CipherException extends Exception {
 	 * @param pattern the message or pattern pattern
 	 * @param arguments the argument value in pattern
 	 */
-	public CipherException(final String pattern, final Object... arguments) {
+	public CypherException(final String pattern, final Object... arguments) {
 		super(MessageFormat.format(pattern, arguments));
 	}
 	
@@ -31,7 +31,7 @@ public class CipherException extends Exception {
 	 * @param pattern the message or pattern pattern
 	 * @param arguments the argument value in pattern
 	 */
-	public CipherException(final String pattern, final Throwable cause, final Object... arguments) {
+	public CypherException(final String pattern, final Throwable cause, final Object... arguments) {
 		super(MessageFormat.format(pattern, arguments), cause);
 	}
 }

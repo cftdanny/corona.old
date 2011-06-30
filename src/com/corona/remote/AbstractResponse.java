@@ -7,7 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.corona.crypto.CipherException;
+import com.corona.crypto.CypherException;
 
 /**
  * <p>The helper response </p>
@@ -89,7 +89,7 @@ public abstract class AbstractResponse implements Response {
 		
 		try {
 			return this.client.getServerCipher().decrypt(data);
-		} catch (CipherException e) {
+		} catch (CypherException e) {
 			throw new RemoteException("Fail to decrypt data from server by server decryption key");
 		}
 	}
@@ -103,7 +103,7 @@ public abstract class AbstractResponse implements Response {
 		
 		try {
 			return this.client.getClientCipher().decrypt(data);
-		} catch (CipherException e) {
+		} catch (CypherException e) {
 			throw new RemoteException("Fail to decrypt data from server with client decryption key");
 		}
 	}

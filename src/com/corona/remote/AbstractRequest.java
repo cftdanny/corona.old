@@ -6,7 +6,7 @@ package com.corona.remote;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import com.corona.crypto.CipherException;
+import com.corona.crypto.CypherException;
 
 /**
  * <p>The helper request </p>
@@ -62,7 +62,7 @@ public abstract class AbstractRequest implements Request {
 		
 		try {
 			return this.client.getServerCipher().encrypt(data);
-		} catch (CipherException e) {
+		} catch (CypherException e) {
 			throw new RemoteException("Fail to encrpt data to be sent to server with server key");
 		}
 	}
@@ -76,7 +76,7 @@ public abstract class AbstractRequest implements Request {
 		
 		try {
 			return this.client.getClientCipher().encrypt(data);
-		} catch (CipherException e) {
+		} catch (CypherException e) {
 			throw new RemoteException("Fail to encrpt data to be sent to server with client key");
 		}
 	}
