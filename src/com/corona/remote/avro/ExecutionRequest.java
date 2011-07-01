@@ -84,7 +84,7 @@ class ExecutionRequest<S> extends AbstractRequest {
 		if (this.data != null) {
 			
 			// send data to remote server
-			if (this.getClient().hasClientCipher()) {
+			if (this.getClient().hasClientCypher()) {
 				// if production mode, need ecrypt data before send
 				try {
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();

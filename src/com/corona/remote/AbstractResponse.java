@@ -88,7 +88,7 @@ public abstract class AbstractResponse implements Response {
 	protected byte[] decryptWithServerKey(final byte[] data) throws RemoteException {
 		
 		try {
-			return this.client.getServerCipher().decrypt(data);
+			return this.client.getServerCypher().decrypt(data);
 		} catch (CypherException e) {
 			throw new RemoteException("Fail to decrypt data from server by server decryption key");
 		}
@@ -102,7 +102,7 @@ public abstract class AbstractResponse implements Response {
 	protected byte[] decryptWithClientKey(final byte[] data) throws RemoteException {
 		
 		try {
-			return this.client.getClientCipher().decrypt(data);
+			return this.client.getClientCypher().decrypt(data);
 		} catch (CypherException e) {
 			throw new RemoteException("Fail to decrypt data from server with client decryption key");
 		}

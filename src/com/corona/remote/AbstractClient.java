@@ -16,19 +16,19 @@ public abstract class AbstractClient implements Client {
 	/**
 	 * the configurator
 	 */
-	private ClientConfiguration configurator;
+	private Configuration configurator;
 	
 	/**
 	 * @param configurator the configurator
 	 */
-	protected AbstractClient(final ClientConfiguration configurator) {
+	protected AbstractClient(final Configuration configurator) {
 		this.configurator = configurator;
 	}
 	
 	/**
 	 * @return the client and server configurator
 	 */
-	public ClientConfiguration getConfigurator() {
+	public Configuration getConfigurator() {
 		return this.configurator;
 	}
 	
@@ -42,22 +42,22 @@ public abstract class AbstractClient implements Client {
 	/**
 	 * @return the cipher engine for server
 	 */
-	public Cypher getServerCipher() {
-		return this.configurator.getServerCipher();
+	public Cypher getServerCypher() {
+		return this.configurator.getServerCypher();
 	}
 	
 	/**
 	 * @return the cipher engine for client
 	 */
-	public Cypher getClientCipher() {
-		return this.configurator.getClientCipher();
+	public Cypher getClientCypher() {
+		return this.configurator.getClientCypher();
 	}
 
 	/**
 	 * @return whether client cipher is defined and assigned
 	 */
-	public boolean hasClientCipher() {
-		return this.configurator.getClientCipher() != null;
+	public boolean hasClientCypher() {
+		return this.configurator.getClientCypher() != null;
 	}
 	
 	/**

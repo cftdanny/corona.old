@@ -3,30 +3,32 @@
  */
 package com.corona.remote;
 
+import com.corona.crypto.Cypher;
+
 /**
- * <p>The remote server that to handle request from remote client and produce response to remote client </p>
+ * <p>The server in order to exchange data with remote client </p>
  *
  * @author $Author$
  * @version $Id$
  */
-public class Server {
+public interface Server {
 
 	/**
-	 * the server configuration
+	 * @return the server cypher
+	 * @throws RemoteException if fail to create server cypher
 	 */
-	private ServerConfiguration configuration;
+	Cypher getServerCypher() throws RemoteException;
 	
 	/**
-	 * @return the server configuration
+	 * @param token the token assigned for client
+	 * @return the client cypher
+	 * @throws RemoteException if fail to create client cypher
 	 */
-	public ServerConfiguration getConfiguration() {
-		return this.configuration;
-	}
+	Cypher getClientCypher(String token) throws RemoteException;
+
+	String login(String username, String password);
 	
-	/**
-	 * @param configuration the server configuration
-	 */
-	public void setConfiguration(final ServerConfiguration configuration) {
-		this.configuration = configuration;
-	}
+	void logout(String token);
+	
+	String getToken(String token);
 }

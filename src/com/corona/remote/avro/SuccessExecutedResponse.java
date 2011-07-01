@@ -100,7 +100,7 @@ class SuccessExecutedResponse<T> extends AbstractResponse {
 		if (data.length > 0) {
 			
 			ByteArrayInputStream bais;
-			if (this.getClient().hasClientCipher()) {
+			if (this.getClient().hasClientCypher()) {
 				bais = new ByteArrayInputStream(this.decryptWithClientKey(data));
 			} else {
 				bais = new ByteArrayInputStream(data);

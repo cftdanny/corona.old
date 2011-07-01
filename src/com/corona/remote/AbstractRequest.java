@@ -42,7 +42,7 @@ public abstract class AbstractRequest implements Request {
 	protected void sendModeAndAction(final OutputStream output) throws RemoteException {
 		
 		try {
-			if (this.client.hasClientCipher()) {
+			if (this.client.hasClientCypher()) {
 				output.write(Constants.PRODUCTION_MODE);
 			} else {
 				output.write(Constants.DEVELOPMENT_MODE);
@@ -61,7 +61,7 @@ public abstract class AbstractRequest implements Request {
 	protected byte[] encryptWithServerKey(final byte[] data) throws RemoteException {
 		
 		try {
-			return this.client.getServerCipher().encrypt(data);
+			return this.client.getServerCypher().encrypt(data);
 		} catch (CypherException e) {
 			throw new RemoteException("Fail to encrpt data to be sent to server with server key");
 		}
@@ -75,7 +75,7 @@ public abstract class AbstractRequest implements Request {
 	protected byte[] encryptWithClientKey(final byte[] data) throws RemoteException {
 		
 		try {
-			return this.client.getClientCipher().encrypt(data);
+			return this.client.getClientCypher().encrypt(data);
 		} catch (CypherException e) {
 			throw new RemoteException("Fail to encrpt data to be sent to server with client key");
 		}

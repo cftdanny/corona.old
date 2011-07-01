@@ -13,7 +13,7 @@ import com.corona.io.Unmarshaller;
 import com.corona.io.avro.AvroMarshallerFactory;
 import com.corona.io.avro.AvroUnmarshallerFactory;
 import com.corona.remote.AbstractClient;
-import com.corona.remote.ClientConfiguration;
+import com.corona.remote.Configuration;
 import com.corona.remote.Connection;
 import com.corona.remote.Constants;
 import com.corona.remote.Context;
@@ -53,7 +53,7 @@ public class AvroClient extends AbstractClient {
 	 * @param configurator the configurator
 	 * @exception RemoteException if fail to create client
 	 */
-	AvroClient(final ClientConfiguration configurator) throws RemoteException {
+	AvroClient(final Configuration configurator) throws RemoteException {
 		super(configurator);
 	}
 
@@ -78,7 +78,7 @@ public class AvroClient extends AbstractClient {
 	 * @return whether it is production mode
 	 */
 	boolean isProductionMode() {
-		return this.getClientCipher() != null;
+		return this.getClientCypher() != null;
 	}
 	
 	/**

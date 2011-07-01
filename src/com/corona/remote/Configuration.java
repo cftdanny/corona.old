@@ -6,6 +6,7 @@ package com.corona.remote;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.corona.crypto.CertifiedKey;
 import com.corona.crypto.Cypher;
 import com.corona.crypto.CypherFactory;
 import com.corona.crypto.CypherException;
@@ -16,7 +17,7 @@ import com.corona.crypto.CypherException;
  * @author $Author$
  * @version $Id$
  */
-public class ClientConfiguration {
+public class Configuration {
 
 	/**
 	 * the base URL for remote server
@@ -26,12 +27,12 @@ public class ClientConfiguration {
 	/**
 	 * the cipher to encrypt and decrypt data for remote server
 	 */
-	private Cypher serverCipher;
+	private Cypher serverCypher;
 	
 	/**
 	 * the cipher to encrypt and decrypt data for local client
 	 */
-	private Cypher clientCipher;
+	private Cypher clientCypher;
 
 	/**
 	 * the log in URL
@@ -64,64 +65,47 @@ public class ClientConfiguration {
 	
 	/**
 	 * @param algorithm the algorithm for server cipher
-	 * @param encryptKey the encryption key
-	 * @param decryptKey the decryption key
+	 * @param key the key
 	 * @throws RemoteException if fail to create server cipher
 	 */
-	public void createServerCipher(
-			final String algorithm, final byte[] encryptKey, final byte[] decryptKey) throws RemoteException {
+	public void createServerCipher(final String algorithm, final CertifiedKey key) throws RemoteException {
 		
-		this.serverCipher = null;
+		this.serverCypher = null;
 		try {
-			this.serverCipher = CypherFactory.create(algorithm);
+			this.serverCypher = CypherFactory.get(algorithm).create(key);
 		} catch (CypherException e) {
-			throw new RemoteException("Fail to create {0} cipher engine for server", e, algorithm);
-		}
-		
-		try {
-			this.serverCipher.setEncryptKey(encryptKey);
-			this.serverCipher.setDecryptKey(decryptKey);
-		} catch (CypherException e) {
-			throw new RemoteException("Fail to set encryption and decryption key for server", e);
+			throw new RemoteException("Fail to create {0} cypher by server key", e, algorithm);
 		}
 	}
 	
 	/**
 	 * @return the server cipher
 	 */
-	public Cypher getServerCipher() {
-		return serverCipher;
+	public Cypher getServerCypher() {
+		return serverCypher;
 	}
 
 	/**
 	 * @param algorithm the algorithm for client cipher
-	 * @param encryptKey the encryption key
-	 * @param decryptKey the decryption key
+	 * @param key the key
 	 * @throws RemoteException if fail to create client cipher
 	 */
 	public void createClientCipher(
-			final String algorithm, final byte[] encryptKey, final byte[] decryptKey) throws RemoteException {
+			final String algorithm, final CertifiedKey key) throws RemoteException {
 		
-		this.clientCipher = null;
+		this.clientCypher = null;
 		try {
-			this.clientCipher = CypherFactory.create(algorithm);
+			this.clientCypher = CypherFactory.get(algorithm).create(key);
 		} catch (CypherException e) {
-			throw new RemoteException("Fail to create {0} cipher engine for client", e, algorithm);
-		}
-		
-		try {
-			this.clientCipher.setEncryptKey(encryptKey);
-			this.clientCipher.setDecryptKey(decryptKey);
-		} catch (CypherException e) {
-			throw new RemoteException("Fail to set encryption and decryption key for client", e);
+			throw new RemoteException("Fail to create {0} cypher by client key", e, algorithm);
 		}
 	}
 	
 	/**
 	 * @return the client cipher
 	 */
-	public Cypher getClientCipher() {
-		return clientCipher;
+	public Cypher getClientCypher() {
+		return clientCypher;
 	}
 	
 	/**

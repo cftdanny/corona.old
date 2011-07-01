@@ -39,7 +39,7 @@ public abstract class AbstractConnection implements Connection {
 	 * @param serviceName the service name
 	 * @exception RemoteException if fail to create connection
 	 */
-	protected AbstractConnection(final ClientConfiguration config, final String serviceName) throws RemoteException {
+	protected AbstractConnection(final Configuration config, final String serviceName) throws RemoteException {
 		
 		try {
 			this.connection = new URL(config.getBaseURL() + serviceName).openConnection();
