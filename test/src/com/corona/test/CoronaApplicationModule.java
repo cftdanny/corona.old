@@ -5,9 +5,12 @@ package com.corona.test;
 
 import com.corona.component.cookie.CookieManager;
 import com.corona.component.cookie.CookieManagerImpl;
+import com.corona.remote.Server;
 import com.corona.servlet.Handler;
 import com.corona.servlet.WebStartModule;
 import com.corona.servlet.handling.resource.ResourceHandler;
+import com.corona.test.remote.DemoServer;
+import com.corona.test.remote.DemoService;
 import com.corona.test.servlet.ComponentHandlerHtml;
 import com.corona.test.servlet.CookieHtml;
 import com.corona.test.servlet.IndexExcel;
@@ -52,6 +55,9 @@ public class CoronaApplicationModule extends WebStartModule {
 		
 		// INJECTION
 		this.configureInjection();
+		
+		// REMOTING
+		this.configureRemoting();
 	}
 
 	/**
@@ -134,5 +140,13 @@ public class CoronaApplicationModule extends WebStartModule {
 		this.bind(ParamSimpleInjection.class).to(ParamSimpleInjection.class);
 		this.bind(ParamBeanInjection.class).to(ParamBeanInjection.class);
 		this.bind(ParamMatchInjection.class).to(ParamMatchInjection.class);
+	}
+	
+	/**
+	 * configure remoting service
+	 */
+	private void configureRemoting() {
+		this.bind(Server.class).to(DemoServer.class);
+		this.bind(DemoService.class).to(DemoService.class);
 	}
 }

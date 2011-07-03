@@ -25,10 +25,21 @@ public interface Server {
 	 * @throws RemoteException if fail to create client cypher
 	 */
 	Cypher getClientCypher(String token) throws RemoteException;
-
-	String login(String username, String password);
 	
-	void logout(String token);
-	
+	/**
+	 * @param token the current token
+	 * @return the new token
+	 */
 	String getToken(String token);
+	
+	/**
+	 * @return whether allow client to send development request
+	 */
+	boolean isEableDevelopmentMode();
+	
+	/**
+	 * @param version the client version
+	 * @return whether server supports the version of client
+	 */
+	boolean isSupportedVersion(final byte version);
 }

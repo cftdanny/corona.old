@@ -1,13 +1,9 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.remote.avro;
+package com.corona.remote;
 
 import java.io.OutputStream;
-
-import com.corona.remote.AbstractRequest;
-import com.corona.remote.Constants;
-import com.corona.remote.RemoteException;
 
 /**
  * <p>The log in request </p>
@@ -15,7 +11,7 @@ import com.corona.remote.RemoteException;
  * @author $Author$
  * @version $Id$
  */
-class LoginRequest extends AbstractRequest {
+class ClientLoginRequest extends AbstractRequest {
 
 	/**
 	 * the user identity
@@ -27,14 +23,14 @@ class LoginRequest extends AbstractRequest {
 	 * @param username the user name
 	 * @param password the password
 	 */
-	LoginRequest(final AvroClient client, final String username, final String password) {
+	ClientLoginRequest(final Client client, final String username, final String password) {
 		super(client);
 		this.identity = username + "/" + password;
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.remote.Request#getCode()
+	 * @see com.corona.remote.AbstractRequest#getCode()
 	 */
 	@Override
 	public byte getCode() {
@@ -43,20 +39,17 @@ class LoginRequest extends AbstractRequest {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.remote.Request#write(java.io.OutputStream)
+	 * @see com.corona.remote.AbstractRequest#write(java.io.OutputStream)
 	 */
 	@Override
 	public void write(final OutputStream output) throws RemoteException {
 		
-		// send production or development mode or action to server
-		this.sendModeAndAction(output);
-		
-		// send client framework version, user name and password to remote server
+		// send client library version, user name and password to remote server
 		try {
-			output.write(this.getClient().getClientFrameworkVersion());
+			output.write(this.getClient().getClientLibraryVersion());
 			output.write(this.encryptWithServerKey(this.identity.getBytes()));
 		} catch (Exception e) {
-			throw new RemoteException("Fail to write stream data to remote server", e);
+			throw new RemoteException("Fail to send log in request data to server", e);
 		}
 	}
 }

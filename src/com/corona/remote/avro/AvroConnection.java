@@ -3,7 +3,7 @@
  */
 package com.corona.remote.avro;
 
-import com.corona.remote.AbstractConnection;
+import com.corona.remote.Connection;
 import com.corona.remote.Configuration;
 import com.corona.remote.RemoteException;
 
@@ -13,7 +13,7 @@ import com.corona.remote.RemoteException;
  * @author $Author$
  * @version $Id$
  */
-class AvroConnection extends AbstractConnection {
+class AvroConnection extends Connection {
 
 	/**
 	 * @param configurator the server configurator

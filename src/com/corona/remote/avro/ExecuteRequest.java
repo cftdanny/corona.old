@@ -19,7 +19,7 @@ import com.corona.remote.RemoteException;
  * @version $Id$
  * @param <S> the source type
  */
-class ExecutionRequest<S> extends AbstractRequest {
+class ExecuteRequest<S> extends AbstractRequest {
 
 	/**
 	 * the context
@@ -36,7 +36,7 @@ class ExecutionRequest<S> extends AbstractRequest {
 	 * @param context the context
 	 * @param data the data
 	 */
-	ExecutionRequest(final AvroClient client, final Context<S, ?> context, final S data) {
+	ExecuteRequest(final AvroClient client, final Context<S, ?> context, final S data) {
 		super(client);
 		
 		this.context = context;
@@ -45,7 +45,7 @@ class ExecutionRequest<S> extends AbstractRequest {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.remote.Request#getCode()
+	 * @see com.corona.remote.ClientRequest#getCode()
 	 */
 	@Override
 	public byte getCode() {
@@ -63,7 +63,7 @@ class ExecutionRequest<S> extends AbstractRequest {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.remote.Request#write(java.io.OutputStream)
+	 * @see com.corona.remote.ClientRequest#write(java.io.OutputStream)
 	 */
 	@Override
 	public void write(final OutputStream output) throws RemoteException {

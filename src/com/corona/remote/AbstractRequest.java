@@ -9,50 +9,32 @@ import java.io.OutputStream;
 import com.corona.crypto.CypherException;
 
 /**
- * <p>The helper request </p>
+ * <p>The helper class of request </p>
  *
  * @author $Author$
  * @version $Id$
  */
-public abstract class AbstractRequest implements Request {
+abstract class AbstractRequest implements ClientRequest {
 
 	/**
 	 * the client
 	 */
-	private AbstractClient client;
+	private Client client;
 	
 	/**
 	 * @param client the client
 	 */
-	protected AbstractRequest(final AbstractClient client) {
+	protected AbstractRequest(final Client client) {
 		this.client = client;
 	}
 	
 	/**
 	 * @return the client
 	 */
-	protected AbstractClient getClient() {
+	protected Client getClient() {
 		return client;
 	}
-	
-	/**
-	 * @param output the output stream that is used to send data to server
-	 * @throws RemoteException if fail to send data to server
-	 */
-	protected void sendModeAndAction(final OutputStream output) throws RemoteException {
-		
-		try {
-			if (this.client.hasClientCypher()) {
-				output.write(Constants.PRODUCTION_MODE);
-			} else {
-				output.write(Constants.DEVELOPMENT_MODE);
-			}
-			output.write(this.getCode());
-		} catch (IOException e) {
-			throw new RemoteException("Fail to send data mode and action code to server", e);
-		}
-	}
-	
+
 	/**
 	 * @param data the data to be encrypted with server key
 	 * @return the encrypted data
@@ -61,7 +43,7 @@ public abstract class AbstractRequest implements Request {
 	protected byte[] encryptWithServerKey(final byte[] data) throws RemoteException {
 		
 		try {
-			return this.client.getServerCypher().encrypt(data);
+			return this.client.getConfiguration().getServerCypher().encrypt(data);
 		} catch (CypherException e) {
 			throw new RemoteException("Fail to encrpt data to be sent to server with server key");
 		}
@@ -75,9 +57,49 @@ public abstract class AbstractRequest implements Request {
 	protected byte[] encryptWithClientKey(final byte[] data) throws RemoteException {
 		
 		try {
-			return this.client.getClientCypher().encrypt(data);
+			return this.client.getConfiguration().getClientCypher().encrypt(data);
 		} catch (CypherException e) {
 			throw new RemoteException("Fail to encrpt data to be sent to server with client key");
 		}
 	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.remote.ClientRequest#write(com.corona.remote.Connection)
+	 */
+	@Override
+	public void write(final Connection connection) throws RemoteException {
+		
+		OutputStream output = connection.getOutputStream();
+		try {
+			try {
+				output.write(Constants.IDENTIFIER);
+				output.write(this.getCode());
+			} catch (IOException e) {
+				throw new RemoteException("Fail to send identifier and action code to server", e);
+			}
+			this.write(output);
+		} catch (RemoteException e) {
+			
+			throw e;
+		} finally {
+			
+			try {
+				output.close();
+			} catch (IOException e) {
+				throw new RemoteException("Fail to close input stream to server", e);
+			}
+		}
+	}
+	
+	/**
+	 * @return the request code
+	 */
+	abstract byte getCode();
+
+	/**
+	 * @param output the output stream
+	 * @throws RemoteException if fail to write request to server stream
+	 */
+	abstract void write(final OutputStream output) throws RemoteException;
 }

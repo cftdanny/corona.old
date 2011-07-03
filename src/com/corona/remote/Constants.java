@@ -12,14 +12,9 @@ package com.corona.remote;
 public interface Constants {
 
 	/**
-	 * exchanging data between server and client in production mode
+	 * the 
 	 */
-	byte PRODUCTION_MODE = 80;
-	
-	/**
-	 * exchanging data between server and client in development mode
-	 */
-	byte DEVELOPMENT_MODE = 90;
+	byte IDENTIFIER = -10;
 
 	/**
 	 * <p>All codes for request </p>

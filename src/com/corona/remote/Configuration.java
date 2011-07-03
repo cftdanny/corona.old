@@ -3,13 +3,8 @@
  */
 package com.corona.remote;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.corona.crypto.CertifiedKey;
 import com.corona.crypto.Cypher;
-import com.corona.crypto.CypherFactory;
-import com.corona.crypto.CypherException;
+import com.corona.io.avro.AvroMarshallerFactory;
 
 /**
  * <p>The configuration in order to exchange data with remote server </p>
@@ -20,19 +15,24 @@ import com.corona.crypto.CypherException;
 public class Configuration {
 
 	/**
-	 * the base URL for remote server
+	 * the protocol that is used to marshal object and unmarshall stream
 	 */
-	private String baseURL;
+	private String protocol = AvroMarshallerFactory.NAME;
 	
 	/**
-	 * the cipher to encrypt and decrypt data for remote server
+	 * the cypher to encrypt and decrypt data server specified data
 	 */
 	private Cypher serverCypher;
 	
 	/**
-	 * the cipher to encrypt and decrypt data for local client
+	 * the cypher to encrypt and decrypt data client specified data
 	 */
 	private Cypher clientCypher;
+
+	/**
+	 * the base URL for remote server
+	 */
+	private String baseURL;
 
 	/**
 	 * the log in URL
@@ -45,10 +45,19 @@ public class Configuration {
 	private String logoutURL = "/logout";
 	
 	/**
-	 * the properties
+	 * @return the protocol that is used to marshal object and unmarshall stream
 	 */
-	private Map<String, Object> properties = new HashMap<String, Object>();
+	public String getProtocol() {
+		return protocol;
+	}
 	
+	/**
+	 * @param protocol the protocol that is used to marshal object and unmarshall stream to set
+	 */
+	public void setProtocol(final String protocol) {
+		this.protocol = protocol;
+	}
+
 	/**
 	 * @return the base URL for remote server
 	 */
@@ -64,50 +73,33 @@ public class Configuration {
 	}
 	
 	/**
-	 * @param algorithm the algorithm for server cipher
-	 * @param key the key
-	 * @throws RemoteException if fail to create server cipher
-	 */
-	public void createServerCipher(final String algorithm, final CertifiedKey key) throws RemoteException {
-		
-		this.serverCypher = null;
-		try {
-			this.serverCypher = CypherFactory.get(algorithm).create(key);
-		} catch (CypherException e) {
-			throw new RemoteException("Fail to create {0} cypher by server key", e, algorithm);
-		}
-	}
-	
-	/**
-	 * @return the server cipher
+	 * @return the cypher to encrypt or decrypt data server specified data
 	 */
 	public Cypher getServerCypher() {
 		return serverCypher;
 	}
 
 	/**
-	 * @param algorithm the algorithm for client cipher
-	 * @param key the key
-	 * @throws RemoteException if fail to create client cipher
+	 * @param serverCypher the cypher to encrypt or decrypt data server specified data
 	 */
-	public void createClientCipher(
-			final String algorithm, final CertifiedKey key) throws RemoteException {
-		
-		this.clientCypher = null;
-		try {
-			this.clientCypher = CypherFactory.get(algorithm).create(key);
-		} catch (CypherException e) {
-			throw new RemoteException("Fail to create {0} cypher by client key", e, algorithm);
-		}
+	public void setServerCypher(final Cypher serverCypher) {
+		this.serverCypher = serverCypher;
 	}
-	
+
 	/**
-	 * @return the client cipher
+	 * @return the cypher to encrypt or decrypt data client specified data
 	 */
 	public Cypher getClientCypher() {
 		return clientCypher;
 	}
 	
+	/**
+	 * @param clientCypher the cypher to encrypt or decrypt data client specified data
+	 */
+	public void setClientCypher(final Cypher clientCypher) {
+		this.clientCypher = clientCypher;
+	}
+
 	/**
 	 * @return the log in URL
 	 */
@@ -134,21 +126,5 @@ public class Configuration {
 	 */
 	public void setLogoutURL(final String logoutURL) {
 		this.logoutURL = logoutURL;
-	}
-
-	/**
-	 * @param name the property name
-	 * @return the property value
-	 */
-	public Object getProperty(final String name) {
-		return this.properties.get(name);
-	}
-	
-	/**
-	 * @param name the property name
-	 * @param value the property value
-	 */
-	public void setProperty(final String name, final Object value) {
-		this.properties.put(name, value);
 	}
 }

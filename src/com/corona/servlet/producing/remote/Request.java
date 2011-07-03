@@ -5,26 +5,49 @@ package com.corona.servlet.producing.remote;
 
 import java.io.InputStream;
 
-import com.corona.servlet.ProduceException;
+import com.corona.remote.RemoteException;
 
 /**
- * <p>The class that is used to convert request stream </p>
+ * <p>The request from remote client </p>
  *
  * @author $Author$
  * @version $Id$
  */
 interface Request {
-
-	static final byte LOGIN = 1;
 	
-	static final byte LOGOUT = 2;
-	
-	static final byte EXECUTE = 3;
+	/**
+	 * the production mode
+	 */
+	byte PRODUCTION = 80;
 
+	/**
+	 * the development mode
+	 */
+	byte DEVELOPMENT = 90;
+	
+	/**
+	 * the log in request
+	 */
+	byte LOGIN = 1;
+	
+	/**
+	 * the log out request
+	 */
+	byte LOGOUT = 2;
+	
+	/**
+	 * execute command request
+	 */
+	byte EXECUTE = 3;
+	
 	/**
 	 * @return the code
 	 */
 	byte getCode();
 	
-	void read(InputStream input) throws ProduceException;
+	/**
+	 * @param input the input stream from remote client
+	 * @throws RemoteException if fail to read data from client stream to this request
+	 */
+	void read(InputStream input) throws RemoteException;
 }

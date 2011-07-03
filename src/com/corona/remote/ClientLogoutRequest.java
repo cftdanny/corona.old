@@ -1,14 +1,10 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.remote.avro;
+package com.corona.remote;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
-import com.corona.remote.AbstractRequest;
-import com.corona.remote.Constants;
-import com.corona.remote.RemoteException;
 
 /**
  * <p>this request is used to send a log out request to server </p>
@@ -16,12 +12,12 @@ import com.corona.remote.RemoteException;
  * @author $Author$
  * @version $Id$
  */
-class LogoutRequest extends AbstractRequest {
+class ClientLogoutRequest extends AbstractRequest {
 
 	/**
 	 * @param client the client
 	 */
-	LogoutRequest(final AvroClient client) {
+	ClientLogoutRequest(final Client client) {
 		super(client);
 	}
 
@@ -36,28 +32,16 @@ class LogoutRequest extends AbstractRequest {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.remote.AbstractRequest#getClient()
-	 */
-	@Override
-	protected AvroClient getClient() {
-		return (AvroClient) super.getClient();
-	}
-
-	/**
-	 * {@inheritDoc}
 	 * @see com.corona.remote.ClientRequest#write(java.io.OutputStream)
 	 */
 	@Override
 	public void write(final OutputStream output) throws RemoteException {
 		
-		// send production or development mode or action to server
-		this.sendModeAndAction(output);
-		
 		// send for logged out token to remote server
 		try {
 			output.write(this.encryptWithServerKey(this.getClient().getToken().getBytes()));
 		} catch (IOException e) {
-			throw new RemoteException("Fail to send stream data to remote server", e);
+			throw new RemoteException("Fail to send log out request data to server", e);
 		}
 	}
 }

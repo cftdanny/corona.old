@@ -17,8 +17,9 @@ import com.corona.remote.Configuration;
 import com.corona.remote.Connection;
 import com.corona.remote.Constants;
 import com.corona.remote.Context;
+import com.corona.remote.ClientLoginRequest;
 import com.corona.remote.RemoteException;
-import com.corona.remote.Request;
+import com.corona.remote.ClientRequest;
 import com.corona.remote.Response;
 
 /**
@@ -198,7 +199,7 @@ public class AvroClient extends AbstractClient {
 		
 		// send log in request to server with user name and password
 		Connection connection = this.getConnection(this.getConfigurator().getLoginURL());
-		Request request = new LoginRequest(this, username, password);
+		ClientRequest request = new ClientLoginRequest(this, username, password);
 		request.write(connection.getOutputStream());
 		
 		// process server response
@@ -263,7 +264,7 @@ public class AvroClient extends AbstractClient {
 	public <S, T> T execute(final String name, final Context<S, T> context, final S data) throws RemoteException {
 		
 		Connection connection = this.getConnection(this.getConfigurator().getLoginURL());
-		ExecutionRequest<S> request = new ExecutionRequest<S>(this, context, data);
+		ExecuteRequest<S> request = new ExecuteRequest<S>(this, context, data);
 		request.write(connection.getOutputStream());
 
 		// process server response

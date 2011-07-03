@@ -43,4 +43,9 @@ public @interface Remote {
 	 * how to marshal data object 
 	 */
 	String value() default AVRO;
+	
+	/**
+	 * the remote server name 
+	 */
+	String server() default "";
 }

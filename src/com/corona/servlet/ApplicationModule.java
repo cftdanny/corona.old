@@ -4,6 +4,7 @@
 package com.corona.servlet;
 
 import com.corona.context.InjectFieldFactory;
+import com.corona.context.InjectMethodFactory;
 import com.corona.context.InjectParameterFactory;
 import com.corona.context.InjectPropertyFactory;
 import com.corona.context.annotation.Application;
@@ -20,6 +21,7 @@ import com.corona.servlet.annotation.Param;
 import com.corona.servlet.annotation.Path;
 import com.corona.servlet.annotation.Pdf;
 import com.corona.servlet.annotation.Regex;
+import com.corona.servlet.annotation.Remote;
 import com.corona.servlet.annotation.Resource;
 import com.corona.servlet.annotation.Same;
 import com.corona.servlet.annotation.Service;
@@ -50,6 +52,8 @@ import com.corona.servlet.producing.freemaker.FreeMakerEngineImpl;
 import com.corona.servlet.producing.freemaker.FreeMakerProducerFactory;
 import com.corona.servlet.producing.json.JsonProducerFactory;
 import com.corona.servlet.producing.pdf.PdfProducerFactory;
+import com.corona.servlet.producing.remote.RemoteInjectMethodFactory;
+import com.corona.servlet.producing.remote.RemoteProducerFactory;
 import com.corona.servlet.producing.resource.ResourceProducerFactory;
 import com.corona.servlet.producing.service.ServiceProducerFactory;
 import com.corona.servlet.producing.xml.XmlProducerFactory;
@@ -149,5 +153,11 @@ public class ApplicationModule extends WebKernelModule {
 
 		// configure Resource producer
 		this.bindExtension(ProducerFactory.class).as(Resource.class).to(new ResourceProducerFactory());
+
+		// configure @Remote injection for inject method and content producer
+		this.bindExtension(InjectMethodFactory.class).as(Remote.class).to(
+				new RemoteInjectMethodFactory()
+		);
+		this.bindExtension(ProducerFactory.class).as(Remote.class).to(new RemoteProducerFactory());
 	}
 }
