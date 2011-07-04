@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import com.corona.io.Marshaller;
 import com.corona.remote.Constants;
 import com.corona.remote.RemoteException;
+import com.corona.remote.Server;
 
 /**
  * <p>Client request has been executed and send result from server to client </p>
@@ -17,7 +18,7 @@ import com.corona.remote.RemoteException;
  * @version $Id$
  * @param <T> the type of producing outcome
  */
-class ExecutedResponse<T> extends AbstractResponse {
+class ServerExecutedResponse<T> extends AbstractServerResponse {
 
 	/**
 	 * the outcome
@@ -35,17 +36,19 @@ class ExecutedResponse<T> extends AbstractResponse {
 	private Marshaller<T> marshaller;
 	
 	/**
+	 * @param server the server
 	 * @param outcome the outcome
 	 * @param marshaller the marshaller
 	 */
-	ExecutedResponse(final Marshaller<T> marshaller, final T outcome) {
+	ServerExecutedResponse(final Server server, final Marshaller<T> marshaller, final T outcome) {
+		super(server);
 		this.marshaller = marshaller;
 		this.outcome = outcome;
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.producing.remote.Response#getCode()
+	 * @see com.corona.servlet.producing.remote.ServerResponse#getCode()
 	 */
 	@Override
 	public byte getCode() {
@@ -54,14 +57,13 @@ class ExecutedResponse<T> extends AbstractResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.producing.remote.Response#write(java.io.OutputStream)
+	 * @see com.corona.servlet.producing.remote.ServerResponse#write(java.io.OutputStream)
 	 */
 	@Override
 	public void write(final OutputStream output) throws RemoteException {
 		
-		this.writeModeAndAction(output);
-		
 		// write token if there is a new token is created
+		super.write(output);
 		if (this.token != null) {
 			byte[] data = this.encryptWithServerKey(this.token.getBytes());
 			try {
@@ -73,14 +75,14 @@ class ExecutedResponse<T> extends AbstractResponse {
 			}
 		}
 		
-		// write producing outcome to client stream if it has
+		// write outcome to client output stream if it has
 		if (this.outcome != null) {
 			try {
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				this.marshaller.marshal(baos, this.outcome);
-				output.write(this.encryptWithClientKey(this.token, baos.toByteArray()));
+				ByteArrayOutputStream array = new ByteArrayOutputStream();
+				this.marshaller.marshal(array, this.outcome);
+				output.write(this.encryptWithClientKey(this.token, array.toByteArray()));
 			} catch (Exception e) {
-				throw new RemoteException("Fail to marshal and encrypt response data to client", e);
+				throw new RemoteException("Fail to marshal and encrypt server response to client output stream", e);
 			}
 		}
 	}

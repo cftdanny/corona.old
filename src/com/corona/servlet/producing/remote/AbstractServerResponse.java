@@ -11,12 +11,12 @@ import com.corona.remote.RemoteException;
 import com.corona.remote.Server;
 
 /**
- * <p>The helper of response </p>
+ * <p>The helper class for server response </p>
  *
  * @author $Author$
  * @version $Id$
  */
-abstract class AbstractResponse implements Response {
+abstract class AbstractServerResponse implements ServerResponse {
 
 	/**
 	 * the server
@@ -24,23 +24,36 @@ abstract class AbstractResponse implements Response {
 	private Server server;
 	
 	/**
+	 * @param server the server
+	 */
+	AbstractServerResponse(final Server server) {
+		this.server = server;
+	}
+	
+	/**
 	 * @return the server
 	 */
-	public Server getServer() {
+	Server getServer() {
 		return server;
 	}
 
 	/**
-	 * @param output the output
-	 * @throws RemoteException if fail to write mode and action
+	 * @return the action code
 	 */
-	protected void writeModeAndAction(final OutputStream output) throws RemoteException {
+	protected abstract byte getCode();
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.servlet.producing.remote.ServerResponse#write(java.io.OutputStream)
+	 */
+	@Override
+	public void write(final OutputStream output) throws RemoteException {
 		
 		try {
 			output.write(Constants.IDENTIFIER);
 			output.write(this.getCode());
 		} catch (Exception e) {
-			throw new RemoteException("Fail to write mode and action to response stream", e);
+			throw new RemoteException("Fail to write identifier and action code to client output stream", e);
 		}
 	}
 	
@@ -54,7 +67,7 @@ abstract class AbstractResponse implements Response {
 		try {
 			return this.server.getServerCypher().encrypt(data);
 		} catch (CypherException e) {
-			throw new RemoteException("Fail to encrpt data to be sent to client with server key");
+			throw new RemoteException("Fail to encrpt data to be sent to client output stream with server key");
 		}
 	}
 
@@ -69,7 +82,7 @@ abstract class AbstractResponse implements Response {
 		try {
 			return this.server.getClientCypher(token).encrypt(data);
 		} catch (CypherException e) {
-			throw new RemoteException("Fail to encrpt data to be sent to client with client key");
+			throw new RemoteException("Fail to encrpt data to be sent to client output stream with client key");
 		}
 	}
 }

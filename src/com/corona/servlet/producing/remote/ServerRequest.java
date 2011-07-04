@@ -13,32 +13,7 @@ import com.corona.remote.RemoteException;
  * @author $Author$
  * @version $Id$
  */
-interface Request {
-	
-	/**
-	 * the production mode
-	 */
-	byte PRODUCTION = 80;
-
-	/**
-	 * the development mode
-	 */
-	byte DEVELOPMENT = 90;
-	
-	/**
-	 * the log in request
-	 */
-	byte LOGIN = 1;
-	
-	/**
-	 * the log out request
-	 */
-	byte LOGOUT = 2;
-	
-	/**
-	 * execute command request
-	 */
-	byte EXECUTE = 3;
+interface ServerRequest {
 	
 	/**
 	 * @return the code

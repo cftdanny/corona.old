@@ -7,7 +7,7 @@ import java.io.InputStream;
 
 import com.corona.remote.Constants;
 import com.corona.remote.RemoteException;
-import com.corona.remote.Response;
+import com.corona.remote.ClientResponse;
 
 /**
  * <p>User has logged in into server </p>
@@ -15,11 +15,11 @@ import com.corona.remote.Response;
  * @author $Author$
  * @version $Id$
  */
-class LogoutResponse implements Response {
+class LogoutResponse implements ClientResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.remote.Response#getCode()
+	 * @see com.corona.remote.ClientResponse#getCode()
 	 */
 	@Override
 	public int getCode() {
@@ -28,7 +28,7 @@ class LogoutResponse implements Response {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.remote.Response#read(java.io.InputStream)
+	 * @see com.corona.remote.ClientResponse#read(java.io.InputStream)
 	 */
 	@Override
 	public void read(final InputStream input) throws RemoteException {

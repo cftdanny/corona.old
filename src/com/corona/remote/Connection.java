@@ -3,6 +3,7 @@
  */
 package com.corona.remote;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
@@ -77,7 +78,7 @@ class Connection {
 		if (this.outputStream == null) {
 			try {
 				this.outputStream = new GZIPOutputStream(this.connection.getOutputStream());
-			} catch (Exception e) {
+			} catch (IOException e) {
 				throw new RemoteException("Fail to create GZIP output stream with remote server", e);
 			}
 		}

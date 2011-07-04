@@ -5,6 +5,7 @@ package com.corona.servlet.producing.remote;
 
 import java.io.InputStream;
 
+import com.corona.remote.Constants;
 import com.corona.remote.RemoteException;
 import com.corona.remote.Server;
 
@@ -14,7 +15,7 @@ import com.corona.remote.Server;
  * @author $Author$
  * @version $Id$
  */
-class LogoutRequest extends AbstractRequest {
+class ServerLogoutRequest extends AbstractServerRequest {
 
 	/**
 	 * the token
@@ -24,7 +25,7 @@ class LogoutRequest extends AbstractRequest {
 	/**
 	 * @param server the server
 	 */
-	LogoutRequest(final Server server) {
+	ServerLogoutRequest(final Server server) {
 		super(server);
 	}
 	
@@ -37,19 +38,21 @@ class LogoutRequest extends AbstractRequest {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.producing.remote.Request#getCode()
+	 * @see com.corona.servlet.producing.remote.ServerRequest#getCode()
 	 */
 	@Override
 	public byte getCode() {
-		return Request.LOGOUT;
+		return Constants.REQUEST.LOGOUT;
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.producing.remote.Request#read(java.io.InputStream)
+	 * @see com.corona.servlet.producing.remote.ServerRequest#read(java.io.InputStream)
 	 */
 	@Override
 	public void read(final InputStream input) throws RemoteException {
-		this.token = new String(this.decryptWithServerKey(this.getBytes(input)));
+		
+		byte[] bytes = this.getBytes(input);
+		this.token = new String(this.decryptWithServerKey(bytes));
 	}
 }

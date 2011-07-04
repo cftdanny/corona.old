@@ -47,9 +47,11 @@ class ClientLoginRequest extends AbstractRequest {
 		// send client library version, user name and password to remote server
 		try {
 			output.write(this.getClient().getClientLibraryVersion());
-			output.write(this.encryptWithServerKey(this.identity.getBytes()));
+			
+			byte[] data = this.encryptWithServerKey(this.identity.getBytes());
+			output.write(data);
 		} catch (Exception e) {
-			throw new RemoteException("Fail to send log in request data to server", e);
+			throw new RemoteException("Fail to write log in request data to client output stream", e);
 		}
 	}
 }

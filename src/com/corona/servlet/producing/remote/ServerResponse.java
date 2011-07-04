@@ -13,12 +13,7 @@ import com.corona.remote.RemoteException;
  * @author $Author$
  * @version $Id$
  */
-public interface Response {
-
-	/**
-	 * @return the code
-	 */
-	byte getCode();
+public interface ServerResponse {
 	
 	/**
 	 * @param output the output

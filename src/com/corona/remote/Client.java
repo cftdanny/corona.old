@@ -18,7 +18,7 @@ import com.corona.io.MarshallerFactory;
 public class Client {
 	
 	/**
-	 * the configurator
+	 * the configuration
 	 */
 	private Configuration configuration;
 	
@@ -26,6 +26,11 @@ public class Client {
 	 * the current token
 	 */
 	private String token;
+	
+	/**
+	 * the server library version
+	 */
+	private byte serverLibraryVersion = -1;
 	
 	/**
 	 * all marshallers
@@ -50,9 +55,23 @@ public class Client {
 	 * @return the client framework version
 	 */
 	public byte getClientLibraryVersion() {
-		return (byte) 10;
+		return Constants.LIBRARY_VESION;
 	}
 	
+	/**
+	 * @return the server library version
+	 */
+	public byte getServerLibraryVersion() {
+		return serverLibraryVersion;
+	}
+	
+	/**
+	 * @param serverLibraryVersion the server library version to set
+	 */
+	void setServerLibraryVersion(final byte serverLibraryVersion) {
+		this.serverLibraryVersion = serverLibraryVersion;
+	}
+
 	/**
 	 * @return the token that is assigned by server
 	 */
@@ -98,7 +117,7 @@ public class Client {
 		request.write(connection);
 		
 		// receive response from server
-		Response response = ClientResponseFactory.getResponse(this, connection);
+		ClientResponse response = ClientResponseFactory.getResponse(this, connection);
 	}
 	
 	/**
@@ -114,7 +133,7 @@ public class Client {
 		request.write(connection);
 		
 		// receive response from server
-		Response response = ClientResponseFactory.getResponse(this, connection);
+		ClientResponse response = ClientResponseFactory.getResponse(this, connection);
 	}
 	
 	/**

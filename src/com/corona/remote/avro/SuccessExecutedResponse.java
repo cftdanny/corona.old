@@ -48,7 +48,7 @@ class SuccessExecutedResponse<T> extends AbstractResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.remote.Response#getCode()
+	 * @see com.corona.remote.ClientResponse#getCode()
 	 */
 	@Override
 	public int getCode() {
@@ -71,7 +71,7 @@ class SuccessExecutedResponse<T> extends AbstractResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.remote.Response#read(java.io.InputStream)
+	 * @see com.corona.remote.ClientResponse#read(java.io.InputStream)
 	 */
 	@Override
 	public void read(final InputStream input) throws RemoteException {

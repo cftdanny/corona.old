@@ -55,7 +55,7 @@ class ClientExecuteRequest<T> extends AbstractRequest {
 			output.write((byte) bytes.length);
 			output.write(bytes);
 		} catch (IOException e) {
-			throw new RemoteException("Fail to send token in execute request to server", e);
+			throw new RemoteException("Fail to write token to client output stream", e);
 		}
 
 		// if data is not null, will marshal data and send to server
@@ -69,7 +69,7 @@ class ClientExecuteRequest<T> extends AbstractRequest {
 				byte[] bytes = this.encryptWithClientKey(array.toByteArray());
 				output.write(bytes);
 			} catch (Exception e) {
-				throw new RemoteException("Fail to send execute request data to server", e);
+				throw new RemoteException("Fail to write request data to client output stream", e);
 			}
 		}
 	}

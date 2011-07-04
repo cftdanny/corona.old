@@ -15,7 +15,7 @@ import com.corona.crypto.CypherException;
  * @author $Author$
  * @version $Id$
  */
-public abstract class AbstractResponse implements Response {
+public abstract class AbstractResponse implements ClientResponse {
 
 	/**
 	 * the client
@@ -88,7 +88,7 @@ public abstract class AbstractResponse implements Response {
 	protected byte[] decryptWithServerKey(final byte[] data) throws RemoteException {
 		
 		try {
-			return this.client.getServerCypher().decrypt(data);
+			return this.client.getConfiguration().getServerCypher().decrypt(data);
 		} catch (CypherException e) {
 			throw new RemoteException("Fail to decrypt data from server by server decryption key");
 		}
@@ -102,7 +102,7 @@ public abstract class AbstractResponse implements Response {
 	protected byte[] decryptWithClientKey(final byte[] data) throws RemoteException {
 		
 		try {
-			return this.client.getClientCypher().decrypt(data);
+			return this.client.getConfiguration().getClientCypher().decrypt(data);
 		} catch (CypherException e) {
 			throw new RemoteException("Fail to decrypt data from server with client decryption key");
 		}

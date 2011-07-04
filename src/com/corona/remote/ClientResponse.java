@@ -11,7 +11,7 @@ import java.io.InputStream;
  * @author $Author$
  * @version $Id$
  */
-public interface Response {
+public interface ClientResponse {
 
 	/**
 	 * @return the response code
@@ -19,7 +19,7 @@ public interface Response {
 	int getCode();
 	
 	/**
-	 * @param input the input from remote server 
+	 * @param input the client input stream 
 	 * @throws RemoteException if fail to read data from server
 	 */
 	void read(InputStream input) throws RemoteException;

@@ -12,12 +12,12 @@ import com.corona.remote.RemoteException;
 import com.corona.remote.Server;
 
 /**
- * <p>the helper class for request </p>
+ * <p>the helper class for server request </p>
  *
  * @author $Author$
  * @version $Id$
  */
-abstract class AbstractRequest implements Request {
+abstract class AbstractServerRequest implements ServerRequest {
 
 	/**
 	 * the server
@@ -27,7 +27,7 @@ abstract class AbstractRequest implements Request {
 	/**
 	 * @param server the server
 	 */
-	AbstractRequest(final Server server) {
+	AbstractServerRequest(final Server server) {
 		this.server = server;
 	}
 
@@ -53,13 +53,13 @@ abstract class AbstractRequest implements Request {
 				int b = input.read();
 				if (b == -1) {
 					throw new RemoteException(
-							"Need [{0}] bytes from client, but only read [{1}] bytes right now", length, i
+							"Need [{0}] bytes from client input stream, but only can read [{1}] bytes", length, i
 					);
 				}
 				baos.write(b);
 			}
 		} catch (IOException e) {
-			throw new RemoteException("Fail to read data sent from client", e);
+			throw new RemoteException("Fail to read data from client input stream", e);
 		}
 		return baos.toByteArray();
 	}
@@ -77,7 +77,7 @@ abstract class AbstractRequest implements Request {
 				baos.write(b);
 			}
 		} catch (IOException e) {
-			throw new RemoteException("Fail to read data sent from client", e);
+			throw new RemoteException("Fail to read data from client input stream", e);
 		}
 		return baos.toByteArray();
 	}
@@ -92,7 +92,7 @@ abstract class AbstractRequest implements Request {
 		try {
 			return this.server.getServerCypher().decrypt(data);
 		} catch (CypherException e) {
-			throw new RemoteException("Fail to decrypt data from server by server decryption key");
+			throw new RemoteException("Fail to decrypt data from client input stream by server key", e);
 		}
 	}
 }

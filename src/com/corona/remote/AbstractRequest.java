@@ -45,7 +45,7 @@ abstract class AbstractRequest implements ClientRequest {
 		try {
 			return this.client.getConfiguration().getServerCypher().encrypt(data);
 		} catch (CypherException e) {
-			throw new RemoteException("Fail to encrpt data to be sent to server with server key");
+			throw new RemoteException("Fail to encrpt data to client output stream with server key");
 		}
 	}
 
@@ -59,7 +59,7 @@ abstract class AbstractRequest implements ClientRequest {
 		try {
 			return this.client.getConfiguration().getClientCypher().encrypt(data);
 		} catch (CypherException e) {
-			throw new RemoteException("Fail to encrpt data to be sent to server with client key");
+			throw new RemoteException("Fail to encrpt data to client output stream with client key");
 		}
 	}
 
@@ -71,12 +71,13 @@ abstract class AbstractRequest implements ClientRequest {
 	public void write(final Connection connection) throws RemoteException {
 		
 		OutputStream output = connection.getOutputStream();
+		this.write(output);
 		try {
 			try {
 				output.write(Constants.IDENTIFIER);
 				output.write(this.getCode());
 			} catch (IOException e) {
-				throw new RemoteException("Fail to send identifier and action code to server", e);
+				throw new RemoteException("Fail to write identifier and action code to client output stream", e);
 			}
 			this.write(output);
 		} catch (RemoteException e) {
@@ -87,7 +88,7 @@ abstract class AbstractRequest implements ClientRequest {
 			try {
 				output.close();
 			} catch (IOException e) {
-				throw new RemoteException("Fail to close input stream to server", e);
+				throw new RemoteException("Fail to close client output stream", e);
 			}
 		}
 	}

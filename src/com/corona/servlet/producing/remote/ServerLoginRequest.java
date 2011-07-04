@@ -6,6 +6,7 @@ package com.corona.servlet.producing.remote;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.corona.remote.Constants;
 import com.corona.remote.RemoteException;
 import com.corona.remote.Server;
 
@@ -15,12 +16,12 @@ import com.corona.remote.Server;
  * @author $Author$
  * @version $Id$
  */
-class LoginRequest extends AbstractRequest {
+class ServerLoginRequest extends AbstractServerRequest {
 
 	/**
-	 * the client version
+	 * the client library version
 	 */
-	private byte version = 10;
+	private byte clientLibraryVersion = 10;
 	
 	/**
 	 * the user name
@@ -35,15 +36,15 @@ class LoginRequest extends AbstractRequest {
 	/**
 	 * @param server the server
 	 */
-	LoginRequest(final Server server) {
+	ServerLoginRequest(final Server server) {
 		super(server);
 	}
 	
 	/**
-	 * @return the client version
+	 * @return the client library version
 	 */
-	public byte getVersion() {
-		return version;
+	public byte getClientLibraryVersion() {
+		return clientLibraryVersion;
 	}
 	
 	/**
@@ -62,34 +63,35 @@ class LoginRequest extends AbstractRequest {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.producing.remote.Request#getCode()
+	 * @see com.corona.servlet.producing.remote.ServerRequest#getCode()
 	 */
 	@Override
 	public byte getCode() {
-		return Request.LOGIN;
+		return Constants.REQUEST.LOGIN;
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.producing.remote.Request#read(java.io.InputStream)
+	 * @see com.corona.servlet.producing.remote.ServerRequest#read(java.io.InputStream)
 	 */
 	@Override
 	public void read(final InputStream input) throws RemoteException {
 		
-		// read version from remote client
+		// read version from client input stream
 		int i = -1;
 		try {
 			i = input.read();
 		} catch (IOException e) {
-			throw new RemoteException("Fail to read data from client stream", e);
+			throw new RemoteException("Fail to read client library version from client input stream", e);
 		}
 		if (i == -1) {
-			throw new RemoteException("Should read version from client stream but can't");
+			throw new RemoteException("Should read client library version from client input stream but can't");
 		}
-		this.version = (byte) i;
+		this.clientLibraryVersion = (byte) i;
 		
-		// read user name and password from remote client
-		String[] values = new String(this.decryptWithServerKey(this.getBytes(input))).split("/");
+		// read user name and password from client input stream
+		byte[] bytes = this.getBytes(input);
+		String[] values = new String(this.decryptWithServerKey(bytes)).split("/");
 		if (values.length == 1) {
 			this.username = values[0];
 			this.password = null;

@@ -12,6 +12,11 @@ package com.corona.remote;
 public interface Constants {
 
 	/**
+	 * the framework library version
+	 */
+	byte LIBRARY_VESION = 10;
+	
+	/**
 	 * the 
 	 */
 	byte IDENTIFIER = -10;
@@ -81,5 +86,10 @@ public interface Constants {
 		 * fail to execute and with error message
 		 */
 		byte FAIL_EXECUTED = 12;
+		
+		/**
+		 * server internal error with error message
+		 */
+		byte INTERNAL_ERROR = 13;
 	}
 }

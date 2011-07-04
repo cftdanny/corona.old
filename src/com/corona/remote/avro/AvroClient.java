@@ -20,7 +20,7 @@ import com.corona.remote.Context;
 import com.corona.remote.ClientLoginRequest;
 import com.corona.remote.RemoteException;
 import com.corona.remote.ClientRequest;
-import com.corona.remote.Response;
+import com.corona.remote.ClientResponse;
 
 /**
  * <p>The implementation of client by Apache Avro </p>
@@ -105,7 +105,7 @@ public class AvroClient extends AbstractClient {
 	 * @return the response
 	 * @throws RemoteException if fail to read from stream or wrong
 	 */
-	private <T> Response getResponse(
+	private <T> ClientResponse getResponse(
 			final InputStream input, final Unmarshaller<T> unmarshaller) throws RemoteException {
 		
 		// get production or development mode from stream
@@ -203,7 +203,7 @@ public class AvroClient extends AbstractClient {
 		request.write(connection.getOutputStream());
 		
 		// process server response
-		Response response = this.getResponse(connection.getInputStream(), null);
+		ClientResponse response = this.getResponse(connection.getInputStream(), null);
 		switch (response.getCode()) {
 			case Constants.RESPONSE.LOGGED_IN:
 				return;
@@ -268,7 +268,7 @@ public class AvroClient extends AbstractClient {
 		request.write(connection.getOutputStream());
 
 		// process server response
-		Response response = this.getResponse(connection.getInputStream(), context.getUnmarshaller());
+		ClientResponse response = this.getResponse(connection.getInputStream(), context.getUnmarshaller());
 		switch (response.getCode()) {
 			
 			case Constants.RESPONSE.SUCCESS_EXECUTED:

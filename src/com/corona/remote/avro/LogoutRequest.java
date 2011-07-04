@@ -16,7 +16,7 @@ import com.corona.remote.RemoteException;
  * @author $Author$
  * @version $Id$
  */
-class LogoutRequest extends AbstractRequest {
+class LogoutRequest extends AbstractServerRequest {
 
 	/**
 	 * @param client the client

@@ -19,7 +19,7 @@ import com.corona.remote.RemoteException;
  * @version $Id$
  * @param <S> the source type
  */
-class ExecuteRequest<S> extends AbstractRequest {
+class ExecuteRequest<S> extends AbstractServerRequest {
 
 	/**
 	 * the context

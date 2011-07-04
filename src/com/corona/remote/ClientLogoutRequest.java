@@ -39,9 +39,10 @@ class ClientLogoutRequest extends AbstractRequest {
 		
 		// send for logged out token to remote server
 		try {
-			output.write(this.encryptWithServerKey(this.getClient().getToken().getBytes()));
+			byte[] data = this.encryptWithServerKey(this.getClient().getToken().getBytes());
+			output.write(data);
 		} catch (IOException e) {
-			throw new RemoteException("Fail to send log out request data to server", e);
+			throw new RemoteException("Fail to send log out request data to client output stream", e);
 		}
 	}
 }
