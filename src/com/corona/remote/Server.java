@@ -33,11 +33,6 @@ public interface Server {
 	String getToken(String token);
 	
 	/**
-	 * @return whether allow client to send development request
-	 */
-	boolean isEableDevelopmentMode();
-	
-	/**
 	 * @param version the client version
 	 * @return whether server supports the version of client
 	 */

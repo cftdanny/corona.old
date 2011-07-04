@@ -7,6 +7,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.corona.io.Unmarshaller;
+
 /**
  * <p>Read output from remote server and convert it to response </p>
  *
@@ -25,10 +27,13 @@ final class ClientResponseFactory {
 	/**
 	 * @param client the client
 	 * @param connection the connection
+	 * @param unmarshaller the unmarshaller
 	 * @return the response from server
 	 * @exception RemoteException if fail to read server data to response
 	 */
-	static ClientResponse getResponse(final Client client, final Connection connection) throws RemoteException {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	static ClientResponse getResponse(
+			final Client client, final Connection connection, final Unmarshaller unmarshaller) throws RemoteException {
 
 		// open input stream from server in order to read data sent by server
 		InputStream input = connection.getInputStream();
@@ -62,13 +67,47 @@ final class ClientResponseFactory {
 		}
 		
 		// create response according to action code
+		ClientResponse response;
 		switch (action) {
 			
+			case Constants.RESPONSE.SUCCESS_EXECUTED:
+				response = new ClientExecutedResponse(client, unmarshaller);
+				break;
+				
+			case Constants.RESPONSE.FAIL_EXECUTED:
+				response = new ClientFailExecuteResponse(client);
+				break;
+				
+			case Constants.RESPONSE.INTERNAL_ERROR:
+				response = new ClientInternalErrorResponse(client);
+				break;
+			
+			case Constants.RESPONSE.LOGGED_IN:
+				response = new ClientLoggedInResponse(client);
+				break;
+			
+			case Constants.RESPONSE.CANT_LOGGED_IN:
+				response = new ClientCantLoggedInResponse(client);
+				break;
+				
+			case Constants.RESPONSE.LOGGED_OUT:
+				response = new ClientLogoutResponse();
+				break;
+				
+			case Constants.RESPONSE.INVALID_REQUEST:
+				response = new ClientInvalidActionResponse(client);
+				break;
+				
 			default:
 				throw new RemoteException(
-						"Invalid action [{0}], source: {1}", identifier, getStreamAsString(input, identifier, action)
+						"Invalid action [{0}], source: {1}", action, getStreamAsString(input, identifier, action)
 				);
 		}
+		
+		// read response data from client input stream
+		response.read(input);
+		
+		return response;
 	}
 	
 	/**

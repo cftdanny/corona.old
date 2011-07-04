@@ -27,6 +27,11 @@ public interface Constants {
 	public interface REQUEST {
 	
 		/**
+		 * the invalid request code
+		 */
+		byte INVALID = -1;
+		
+		/**
 		 * send log in request to server
 		 */
 		byte LOGIN = 1;
@@ -46,7 +51,7 @@ public interface Constants {
 	 * <p>All codes from response </p>
 	 */
 	public interface RESPONSE {
-		
+
 		/**
 		 * user has been logged in
 		 */
@@ -63,33 +68,23 @@ public interface Constants {
 		byte LOGGED_OUT = 3;
 		
 		/**
-		 * the request is invalid
-		 */
-		byte INVALID_REQUEST = 4;
-		
-		/**
-		 * client is not logged to server
-		 */
-		byte NOT_LOGGED = 5;
-		
-		/**
-		 * don't have access right to current request
-		 */
-		byte NO_ACCESS_RIGHT = 6;
-		
-		/**
 		 * execute OK and return data
 		 */
-		byte SUCCESS_EXECUTED = 11;
+		byte SUCCESS_EXECUTED = 4;
 
 		/**
 		 * fail to execute and with error message
 		 */
-		byte FAIL_EXECUTED = 12;
+		byte FAIL_EXECUTED = 5;
+		
+		/**
+		 * the request is invalid
+		 */
+		byte INVALID_REQUEST = 6;
 		
 		/**
 		 * server internal error with error message
 		 */
-		byte INTERNAL_ERROR = 13;
+		byte INTERNAL_ERROR = 7;
 	}
 }

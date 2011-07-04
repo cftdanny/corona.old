@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.remote.avro;
+package com.corona.remote;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -9,9 +9,6 @@ import java.io.InputStream;
 
 import com.corona.io.UnmarshalException;
 import com.corona.io.Unmarshaller;
-import com.corona.remote.AbstractResponse;
-import com.corona.remote.Constants;
-import com.corona.remote.RemoteException;
 
 /**
  * <p>Process response from server that return with data and maybe, new token </p>
@@ -20,7 +17,7 @@ import com.corona.remote.RemoteException;
  * @version $Id$
  * @param <T> the target type
  */
-class SuccessExecutedResponse<T> extends AbstractResponse {
+class ClientExecutedResponse<T> extends AbstractResponse {
 
 	/**
 	 * the token
@@ -41,7 +38,7 @@ class SuccessExecutedResponse<T> extends AbstractResponse {
 	 * @param client the client
 	 * @param unmarshaller the unmarshaller to unmarshal return data  
 	 */
-	SuccessExecutedResponse(final AvroClient client, final Unmarshaller<T> unmarshaller) {
+	ClientExecutedResponse(final Client client, final Unmarshaller<T> unmarshaller) {
 		super(client);
 		this.unmarshaller = unmarshaller;
 	}
@@ -76,39 +73,33 @@ class SuccessExecutedResponse<T> extends AbstractResponse {
 	@Override
 	public void read(final InputStream input) throws RemoteException {
 		
-		// read token length byte
+		// read token length byte, should read high length and low length
 		int length;
 		try {
-			length = input.read();
+			int hilength = input.read();
+			int lolength = input.read();
+			if ((hilength == -1) || (lolength == -1)) {
+				throw new RemoteException("Should can read token lenght but client input stream is empty");
+			}
+			length = hilength * 256 + lolength;
 		} catch (IOException e) {
-			throw new RemoteException("Fail to read data from input stream return by server", e);
+			throw new RemoteException("Fail to read token length from client input stream", e);
 		}
 			
-		// should not -1, if > 0, will read new token
-		if (length == -1) {
-			throw new RemoteException(
-					"Should can read data from input stream return by server, but read nothing"
-			);
-		} else if (length > 0) {
-			
-			byte[] bytes = this.getBytes(input, length);
-			this.token = new String(this.decryptWithServerKey(bytes));
-		}
+		// read token from client by token length read before
+		byte[] data = this.getBytes(input, length);
+		this.token = new String(this.decryptWithServerKey(data));
 		
-		// marshal returned data from server to object
-		byte[] data = this.getBytes(input);
+		// read response data from client input stream
+		data = this.getBytes(input);
 		if (data.length > 0) {
 			
-			ByteArrayInputStream bais;
-			if (this.getClient().hasClientCypher()) {
-				bais = new ByteArrayInputStream(this.decryptWithClientKey(data));
-			} else {
-				bais = new ByteArrayInputStream(data);
-			}
+			// decrypt response data with client key and unmarshal to response object 
+			data = this.decryptWithClientKey(data);
 			try {
-				this.value = this.unmarshaller.unmarshal(bais);
+				this.value = this.unmarshaller.unmarshal(new ByteArrayInputStream(data));
 			} catch (UnmarshalException e) {
-				throw new RemoteException("Fail to unmarshal data return by server to object", e);
+				throw new RemoteException("Fail to decrypt or unmarshal client input stream to response object", e);
 			}
 		}
 	}

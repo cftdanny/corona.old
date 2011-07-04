@@ -84,4 +84,6 @@ class Connection {
 		}
 		return this.outputStream;
 	}
+	
+	void closeInputStream
 }

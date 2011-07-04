@@ -71,7 +71,6 @@ abstract class AbstractRequest implements ClientRequest {
 	public void write(final Connection connection) throws RemoteException {
 		
 		OutputStream output = connection.getOutputStream();
-		this.write(output);
 		try {
 			try {
 				output.write(Constants.IDENTIFIER);

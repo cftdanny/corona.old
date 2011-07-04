@@ -1,13 +1,10 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.remote.avro;
+package com.corona.remote;
 
+import java.io.IOException;
 import java.io.InputStream;
-
-import com.corona.remote.AbstractResponse;
-import com.corona.remote.Constants;
-import com.corona.remote.RemoteException;
 
 /**
  * <p>User has logged in into server </p>
@@ -15,17 +12,17 @@ import com.corona.remote.RemoteException;
  * @author $Author$
  * @version $Id$
  */
-class InvalidRequestResponse extends AbstractResponse {
+class ClientInvalidActionResponse extends AbstractResponse {
 
 	/**
-	 * the reason why can't logged in that sends from server
+	 * the invalid request action code
 	 */
-	private String message;
+	private byte invalidCode;
 	
 	/**
 	 * @param client the client
 	 */
-	InvalidRequestResponse(final AvroClient client) {
+	ClientInvalidActionResponse(final Client client) {
 		super(client);
 	}
 	
@@ -39,10 +36,10 @@ class InvalidRequestResponse extends AbstractResponse {
 	}
 	
 	/**
-	 * @return the reason why can't logged in that sends from server
+	 * @return the invalid request action code
 	 */
-	public String getMessage() {
-		return message;
+	public byte getInvalidCode() {
+		return invalidCode;
 	}
 
 	/**
@@ -51,6 +48,15 @@ class InvalidRequestResponse extends AbstractResponse {
 	 */
 	@Override
 	public void read(final InputStream input) throws RemoteException {
-		this.message = new String(this.decryptWithServerKey(this.getBytes(input)));
+		
+		try {
+			int code = input.read();
+			if (code == -1) {
+				throw new RemoteException("Should can read invalid request code but client input stream is empty");
+			}
+			this.invalidCode = (byte) code;
+		} catch (IOException e) {
+			throw new RemoteException("Fail to read invalid request code from client input stream", e);
+		}
 	}
 }

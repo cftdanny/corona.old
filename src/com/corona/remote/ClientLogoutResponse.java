@@ -1,13 +1,9 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.remote.avro;
+package com.corona.remote;
 
 import java.io.InputStream;
-
-import com.corona.remote.Constants;
-import com.corona.remote.RemoteException;
-import com.corona.remote.ClientResponse;
 
 /**
  * <p>User has logged in into server </p>
@@ -15,7 +11,7 @@ import com.corona.remote.ClientResponse;
  * @author $Author$
  * @version $Id$
  */
-class LogoutResponse implements ClientResponse {
+class ClientLogoutResponse implements ClientResponse {
 
 	/**
 	 * {@inheritDoc}

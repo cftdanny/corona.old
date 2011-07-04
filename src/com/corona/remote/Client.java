@@ -8,6 +8,8 @@ import java.util.Map;
 
 import com.corona.io.Marshaller;
 import com.corona.io.MarshallerFactory;
+import com.corona.io.Unmarshaller;
+import com.corona.io.UnmarshallerFactory;
 
 /**
  * <p>The client that is used to exchange information with remote server </p>
@@ -36,6 +38,11 @@ public class Client {
 	 * all marshallers
 	 */
 	private Map<Class<?>, Marshaller<?>> marshallers = new HashMap<Class<?>, Marshaller<?>>();
+	
+	/**
+	 * all unmarshallers
+	 */
+	private Map<Class<?>, Unmarshaller<?>> unmarshallers = new HashMap<Class<?>, Unmarshaller<?>>();
 	
 	/**
 	 * @param configuration the configuration
@@ -117,7 +124,22 @@ public class Client {
 		request.write(connection);
 		
 		// receive response from server
-		ClientResponse response = ClientResponseFactory.getResponse(this, connection);
+		ClientResponse response = ClientResponseFactory.getResponse(this, connection, null);
+		switch (response.getCode()) {
+			
+			case Constants.RESPONSE.LOGGED_IN:
+				this.token = ((ClientLoggedInResponse) response).getToken();
+				this.serverLibraryVersion = ((ClientLoggedInResponse) response).getServerLibraryVersion();
+				break;
+				
+			case Constants.RESPONSE.CANT_LOGGED_IN:
+				throw new RemoteException(((ClientCantLoggedInResponse) response).getMessage());
+				
+			default:
+				throw new RemoteException(
+						"Unexpect response [{0}:{1}] received from server", response.getCode(), response.getClass() 
+				);
+		}
 	}
 	
 	/**
@@ -132,19 +154,70 @@ public class Client {
 		ClientRequest request = new ClientLogoutRequest(this);
 		request.write(connection);
 		
-		// receive response from server
-		ClientResponse response = ClientResponseFactory.getResponse(this, connection);
+		// receive response from server and should be logged out
+		ClientResponse response = ClientResponseFactory.getResponse(this, connection, null);
+		if (response.getCode() != Constants.RESPONSE.LOGGED_OUT) {
+			throw new RemoteException(
+					"Unexpect response [{0}:{1}] received from server", response.getCode(), response.getClass() 
+			);
+		}
 	}
-	
+
+	/**
+	 * @param <T> the class type
+	 * @param type the class type
+	 * @return the marshaller about the class type
+	 */
+	@SuppressWarnings("unchecked")
+	private <T> Unmarshaller<T> getUnmarshaller(final Class<T> type) {
+		
+		Unmarshaller<T> unmarshaller = (Unmarshaller<T>) this.unmarshallers.get(type);
+		if (unmarshaller == null) {
+			unmarshaller = UnmarshallerFactory.get(this.configuration.getProtocol()).create(type);
+			this.unmarshallers.put(type, unmarshaller);
+		}
+		return unmarshaller;
+	}
+
 	/**
 	 * @param <S> the source type
 	 * @param <T> the target type
 	 * @param name the function to be called
 	 * @param argument the argument for function 
+	 * @param returnType the class type of return value
 	 * @return the result
 	 * @exception RemoteException if fail to execute command in remote server
 	 */
-	<S, T> T execute(final String name, final S argument) throws RemoteException {
-		return null;
+	@SuppressWarnings("unchecked")
+	<S, T> T execute(final String name, final S argument, final Class<T> returnType) throws RemoteException {
+
+		// create URL connection to connect remote server
+		Connection connection = this.getConnection(this.configuration.getLoginURL());
+		
+		// send request to server in order to execute it
+		ClientRequest request = new ClientExecuteRequest<S>(this, argument);
+		request.write(connection);
+
+		// if there is return type, get or create unmarshaller for it
+		Unmarshaller<T> unmarshaller = null;
+		if (returnType != null) {
+			unmarshaller = this.getUnmarshaller(returnType);
+		}
+		
+		// receive response from server and should be logged out
+		ClientResponse response = ClientResponseFactory.getResponse(this, connection, unmarshaller);
+		if (response.getCode() != Constants.RESPONSE.SUCCESS_EXECUTED) {
+			throw new RemoteException(
+					"Unexpect response [{0}:{1}] received from server", response.getCode(), response.getClass() 
+			);
+		}
+
+		// cast response to successfully executed response
+		ClientExecutedResponse<T> executed = (ClientExecutedResponse<T>) response;
+		if (executed.getToken() != null) {
+			this.token = executed.getToken();
+		}
+		
+		return executed.getValue();
 	}
 }

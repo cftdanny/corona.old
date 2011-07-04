@@ -11,34 +11,34 @@ import com.corona.remote.RemoteException;
 import com.corona.remote.Server;
 
 /**
- * <p>This response is used to response client that client has been logged in </p>
+ * <p>This response will send message to client that there is an internal error in server side </p>
  *
  * @author $Author$
  * @version $Id$
  */
-class ServerLoggedInResponse extends AbstractServerResponse {
+class ServerInvalidActionResponse extends AbstractServerResponse {
 
 	/**
-	 * the token
+	 * the invalid request code
 	 */
-	private String token;
+	private byte invalidCode;
 	
 	/**
 	 * @param server the server
-	 * @param token the token
+	 * @param invalidCode the invalid request code
 	 */
-	ServerLoggedInResponse(final Server server, final String token) {
+	ServerInvalidActionResponse(final Server server, final byte invalidCode) {
 		super(server);
-		this.token = token;
+		this.invalidCode = invalidCode;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.servlet.producing.remote.AbstractServerResponse#getCode()
 	 */
 	@Override
 	protected byte getCode() {
-		return Constants.RESPONSE.LOGGED_IN;
+		return Constants.RESPONSE.INVALID_REQUEST;
 	}
 
 	/**
@@ -48,22 +48,11 @@ class ServerLoggedInResponse extends AbstractServerResponse {
 	@Override
 	public void write(final OutputStream output) throws RemoteException {
 		
-		// write assigned token to client output stream
 		super.write(output);
-		
-		// write server library version
 		try {
-			output.write(Constants.LIBRARY_VESION);
+			output.write(this.invalidCode);
 		} catch (IOException e) {
-			throw new RemoteException("Fail to write server library version to client output stream", e);
-		}
-		
-		// write assigned to client token
-		try {
-			byte[] data = this.getServer().getServerCypher().encrypt(this.token.getBytes());
-			output.write(data);
-		} catch (Exception e) {
-			throw new RemoteException("Fail to write token assigned to client output stream", e);
+			throw new RemoteException("Fail to write invalid code to client output stream", e);
 		}
 	}
 }

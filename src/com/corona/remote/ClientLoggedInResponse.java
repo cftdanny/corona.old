@@ -6,10 +6,6 @@ package com.corona.remote;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.corona.remote.AbstractResponse;
-import com.corona.remote.Constants;
-import com.corona.remote.RemoteException;
-
 /**
  * <p>User has logged in into server </p>
  *
@@ -66,18 +62,18 @@ class ClientLoggedInResponse extends AbstractResponse {
 	public void read(final InputStream input) throws RemoteException {
 		
 		// read first byte from server response, it should server framework version
-		int b;
 		try {
-			b = input.read();
+			int b = input.read();
 			if (b == -1) {
-				throw new RemoteException("Need more data from server, but it reaches end of stream");
+				throw new RemoteException("Should read server library version but client input stream is empty");
 			}
+			this.serverLibraryVersion = (byte) b;
 		} catch (IOException e) {
-			throw new RemoteException("Fail to read data that is sent from server response", e);
+			throw new RemoteException("Fail to read server library version from client input stream", e);
 		}
-		this.serverLibraryVersion = (byte) b;
 		
 		// read token from server response
-		this.token = new String(this.decryptWithServerKey(this.getBytes(input)));
+		byte[] data = this.getBytes(input);
+		this.token = new String(this.decryptWithServerKey(data));
 	}
 }

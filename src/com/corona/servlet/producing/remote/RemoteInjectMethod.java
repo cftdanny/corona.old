@@ -131,16 +131,25 @@ class RemoteInjectMethod implements InjectMethod {
 					}
 					
 				case Constants.REQUEST.LOGIN:
-					String token = this.login(component, (ServerLoginRequest) request);
-					if (token != null) {
-						return new ServerLoggedInResponse(server, token);
+					if (server.isSupportedVersion(((ServerLoginRequest) request).getClientLibraryVersion())) {
+						String token = this.login(component, (ServerLoginRequest) request);
+						if (token != null) {
+							return new ServerLoggedInResponse(server, token);
+						} else {
+							return new ServerCantLoggedInResponse(server, "Invalid user name or password to log in");
+						}
 					} else {
-						return new ServerCantLoggedInResponse(server);
+						return new ServerCantLoggedInResponse(server, "Client libray version is not supported");
 					}
 					
-				default:
+				case Constants.REQUEST.LOGOUT:
 					this.logout(component, (ServerLogoutRequest) request);
 					return new ServerLoggedOutResponse(server);
+					
+				default:
+					return new ServerInvalidActionResponse(
+							server, ((ServerInvalidActionRequest) request).getInvalidCode()
+					);
 			}
 		} catch (Exception e) {
 			return new ServerFailExecuteResponse(server, e);
@@ -251,8 +260,8 @@ class RemoteInjectMethod implements InjectMethod {
 				break;
 				
 			default:
-				this.logger.error("Invalid action code [{0}], must be EXECUTE, LOGIN or LOGOUT", action);
-				throw new RemoteException("Invalid action code [{0}], must be EXECUTE, LOGIN or LOGOUT", action);
+				request = new ServerInvalidActionRequest(server, (byte) action);
+				break;
 		}
 		
 		// read request specified data from client input stream

@@ -1,21 +1,17 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.remote.avro;
+package com.corona.remote;
 
 import java.io.InputStream;
 
-import com.corona.remote.AbstractResponse;
-import com.corona.remote.Constants;
-import com.corona.remote.RemoteException;
-
 /**
- * <p>User has logged in into server </p>
+ * <p>Fail to execute command and return exception message </p>
  *
  * @author $Author$
  * @version $Id$
  */
-class CantLoggedResponse extends AbstractResponse {
+class ClientFailExecuteResponse extends AbstractResponse {
 
 	/**
 	 * the reason why can't logged in that sends from server
@@ -25,7 +21,7 @@ class CantLoggedResponse extends AbstractResponse {
 	/**
 	 * @param client the client
 	 */
-	CantLoggedResponse(final AvroClient client) {
+	ClientFailExecuteResponse(final Client client) {
 		super(client);
 	}
 	
@@ -35,7 +31,7 @@ class CantLoggedResponse extends AbstractResponse {
 	 */
 	@Override
 	public int getCode() {
-		return Constants.RESPONSE.CANT_LOGGED_IN;
+		return Constants.RESPONSE.FAIL_EXECUTED;
 	}
 	
 	/**
@@ -51,6 +47,8 @@ class CantLoggedResponse extends AbstractResponse {
 	 */
 	@Override
 	public void read(final InputStream input) throws RemoteException {
-		this.message = new String(this.decryptWithServerKey(this.getBytes(input)));
+
+		byte[] data = this.getBytes(input);
+		this.message = new String(this.decryptWithServerKey(data));
 	}
 }

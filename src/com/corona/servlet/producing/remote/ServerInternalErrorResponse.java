@@ -29,6 +29,7 @@ class ServerInternalErrorResponse extends AbstractServerResponse {
 	 */
 	ServerInternalErrorResponse(final Server server, final String error) {
 		super(server);
+		this.error = error;
 	}
 
 	/**

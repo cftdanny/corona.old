@@ -20,11 +20,6 @@ import com.corona.crypto.CypherException;
 public abstract class AbstractServer implements Server {
 
 	/**
-	 * whether allow client sends development mode request
-	 */
-	private boolean eableDevelopmentMode = false;
-	
-	/**
 	 * the supported client versions
 	 */
 	private Set<Byte> supportedVersions = new HashSet<Byte>();
@@ -96,22 +91,6 @@ public abstract class AbstractServer implements Server {
 			this.serverCypher = this.getCypher(this.serverKey);
 		}
 		return this.serverCypher;
-	}
-	
-	/**
-	 * @param eableDevelopmentMode whether allow client sends development mode request
-	 */
-	public void setEableDevelopmentMode(final boolean eableDevelopmentMode) {
-		this.eableDevelopmentMode = eableDevelopmentMode;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * @see com.corona.remote.Server#isEableDevelopmentMode()
-	 */
-	@Override
-	public boolean isEableDevelopmentMode() {
-		return this.eableDevelopmentMode;
 	}
 	
 	/**

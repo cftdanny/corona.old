@@ -30,7 +30,6 @@ public class DemoServer extends AbstractServer {
 	 */
 	public DemoServer() {
 		
-		this.setEableDevelopmentMode(true);
 		this.getSupportedVersions().add((byte) 10);
 		
 		this.setAlgorithm("DES");
