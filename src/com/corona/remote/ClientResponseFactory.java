@@ -106,8 +106,26 @@ final class ClientResponseFactory {
 		
 		// read response data from client input stream
 		response.read(input);
-		
-		return response;
+		switch (response.getCode()) {
+			
+			case Constants.RESPONSE.FAIL_EXECUTED:
+				throw new RemoteException("Execute request fail with error message: {0}", 
+						((ClientFailExecuteResponse) response).getMessage()
+				);
+				
+			case Constants.RESPONSE.INTERNAL_ERROR:
+				throw new RemoteException("Execute request fail with internal error: {0}", 
+						((ClientInternalErrorResponse) response).getMessage()
+				);
+			
+			case Constants.RESPONSE.INVALID_REQUEST:
+				throw new RemoteException("Request code [{0}] send to server is invalid", 
+						((ClientInvalidActionResponse) response).getInvalidCode()
+				);
+				
+			default:
+				return response;
+		}
 	}
 	
 	/**

@@ -13,4 +13,5 @@ import com.corona.servlet.Restrictors;
  */
 class ComponentRestirctor extends Restrictors {
 
+	// TODO: HOW TO IMPLEMENT IT
 }

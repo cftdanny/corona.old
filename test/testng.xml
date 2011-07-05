@@ -71,4 +71,11 @@
 			<class name="com.corona.test.servlet.param.ParamMethodInjectionTest" />
 		</classes>
 	</test>
+	
+		<!-- All Test Case for Web Producer -->
+	<test name="remote">
+		<classes>
+			<class name="com.corona.test.remote.RemoteBasicTest" />
+		</classes>
+	</test>
 </suite>

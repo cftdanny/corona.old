@@ -37,11 +37,14 @@ class ServerExecutedResponse<T> extends AbstractServerResponse {
 	
 	/**
 	 * @param server the server
+	 * @param token the new token
 	 * @param outcome the outcome
 	 * @param marshaller the marshaller
 	 */
-	ServerExecutedResponse(final Server server, final Marshaller<T> marshaller, final T outcome) {
+	ServerExecutedResponse(final Server server, final String token, final Marshaller<T> marshaller, final T outcome) {
 		super(server);
+		
+		this.token = token;
 		this.marshaller = marshaller;
 		this.outcome = outcome;
 	}
@@ -65,22 +68,30 @@ class ServerExecutedResponse<T> extends AbstractServerResponse {
 		// write token if there is a new token is created
 		super.write(output);
 		if (this.token != null) {
-			byte[] data = this.encryptWithServerKey(this.token.getBytes());
+			byte[] encryptedToken = this.encryptWithServerKey(this.token.getBytes());
 			try {
-				output.write((byte) (data.length / 256));
-				output.write((byte) (data.length % 256));
-				output.write(data);
+				output.write((byte) (encryptedToken.length / 256));
+				output.write((byte) (encryptedToken.length % 256));
+				output.write(encryptedToken);
 			} catch (Exception e) {
-				throw new RemoteException("Fail to write token to remote client stream", e);
+				throw new RemoteException("Fail to write token length and token to remote client stream", e);
+			}
+		} else {
+			try {
+				output.write(new byte[] {0, 0});
+			} catch (Exception e) {
+				throw new RemoteException("Fail to write empty token length to remote client stream", e);
 			}
 		}
 		
 		// write outcome to client output stream if it has
 		if (this.outcome != null) {
 			try {
-				ByteArrayOutputStream array = new ByteArrayOutputStream();
-				this.marshaller.marshal(array, this.outcome);
-				output.write(this.encryptWithClientKey(this.token, array.toByteArray()));
+				ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
+				this.marshaller.marshal(dataStream, this.outcome);
+				
+				byte[] encryptedData = this.encryptWithClientKey(this.token, dataStream.toByteArray());
+				output.write(encryptedData);
 			} catch (Exception e) {
 				throw new RemoteException("Fail to marshal and encrypt server response to client output stream", e);
 			}

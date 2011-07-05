@@ -35,4 +35,19 @@ public class DemoService {
 	public void logout(final String token) {
 		
 	}
+	
+	/**
+	 * @param source source
+	 * @return the result
+	 */
+	@Same("/calculate")
+	@Remote
+	public Result calculate(final Source source) {
+		
+		Result result = new Result();
+		result.setC(source.getA() + source.getB());
+		result.setD(source.getA() - source.getB());
+		
+		return result;
+	}
 }

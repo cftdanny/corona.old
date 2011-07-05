@@ -85,5 +85,31 @@ class Connection {
 		return this.outputStream;
 	}
 	
-	void closeInputStream
+	/**
+	 * @throws RemoteException if fail to close client output stream
+	 */
+	void closeOutputStream() throws RemoteException {
+		
+		if (this.outputStream != null) {
+			try {
+				this.outputStream.close();
+			} catch (IOException e) {
+				throw new RemoteException("Fail to close client output stream", e);
+			}
+		}
+	}
+	
+	/**
+	 * @throws RemoteException if fail to close client input stream
+	 */
+	void closeInputStream() throws RemoteException {
+		
+		if (this.inputStream != null) {
+			try {
+				this.inputStream.close();
+			} catch (IOException e) {
+				throw new RemoteException("Fail to close client input stream", e);
+			}
+		}		
+	}
 }

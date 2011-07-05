@@ -87,17 +87,19 @@ class ClientExecutedResponse<T> extends AbstractResponse {
 		}
 			
 		// read token from client by token length read before
-		byte[] data = this.getBytes(input, length);
-		this.token = new String(this.decryptWithServerKey(data));
+		if (length > 0) {
+			byte[] decryptedToken = this.getBytes(input, length);
+			this.token = new String(this.decryptWithServerKey(decryptedToken));
+		}
 		
 		// read response data from client input stream
-		data = this.getBytes(input);
-		if (data.length > 0) {
+		byte[] decryptedData = this.getBytes(input);
+		if (decryptedData.length > 0) {
 			
 			// decrypt response data with client key and unmarshal to response object 
-			data = this.decryptWithClientKey(data);
+			decryptedData = this.decryptWithClientKey(decryptedData);
 			try {
-				this.value = this.unmarshaller.unmarshal(new ByteArrayInputStream(data));
+				this.value = this.unmarshaller.unmarshal(new ByteArrayInputStream(decryptedData));
 			} catch (UnmarshalException e) {
 				throw new RemoteException("Fail to decrypt or unmarshal client input stream to response object", e);
 			}

@@ -94,7 +94,6 @@ public class Template {
 		return (String) TemplateRuntime.execute(this.getCompiledTemplate(), context, variableMap);
 	}
 
-
 	/**
 	 * @param variableMap the variables map
 	 * @return the result string context

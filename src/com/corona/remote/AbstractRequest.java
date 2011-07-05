@@ -72,24 +72,12 @@ abstract class AbstractRequest implements ClientRequest {
 		
 		OutputStream output = connection.getOutputStream();
 		try {
-			try {
-				output.write(Constants.IDENTIFIER);
-				output.write(this.getCode());
-			} catch (IOException e) {
-				throw new RemoteException("Fail to write identifier and action code to client output stream", e);
-			}
-			this.write(output);
-		} catch (RemoteException e) {
-			
-			throw e;
-		} finally {
-			
-			try {
-				output.close();
-			} catch (IOException e) {
-				throw new RemoteException("Fail to close client output stream", e);
-			}
+			output.write(Constants.IDENTIFIER);
+			output.write(this.getCode());
+		} catch (IOException e) {
+			throw new RemoteException("Fail to write identifier and action code to client output stream", e);
 		}
+		this.write(output);
 	}
 	
 	/**

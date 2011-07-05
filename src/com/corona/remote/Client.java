@@ -82,7 +82,7 @@ public class Client {
 	/**
 	 * @return the token that is assigned by server
 	 */
-	String getToken() {
+	public String getToken() {
 		return token;
 	}
 
@@ -106,7 +106,7 @@ public class Client {
 	 * @throws RemoteException if fail to create connection
 	 */
 	private Connection getConnection(final String uri) throws RemoteException {
-		return new Connection(this.configuration, this.configuration.getLoginURL());
+		return new Connection(this.configuration, uri);
 	}
 	
 	/**
@@ -121,24 +121,33 @@ public class Client {
 		
 		// send request to server in order to execute it
 		ClientRequest request = new ClientLoginRequest(this, username, password);
-		request.write(connection);
+		try {
+			request.write(connection);
+		} finally {
+			connection.closeOutputStream();
+		}
 		
 		// receive response from server
-		ClientResponse response = ClientResponseFactory.getResponse(this, connection, null);
-		switch (response.getCode()) {
-			
-			case Constants.RESPONSE.LOGGED_IN:
-				this.token = ((ClientLoggedInResponse) response).getToken();
-				this.serverLibraryVersion = ((ClientLoggedInResponse) response).getServerLibraryVersion();
-				break;
+		ClientResponse response;
+		try {
+			response = ClientResponseFactory.getResponse(this, connection, null);
+			switch (response.getCode()) {
 				
-			case Constants.RESPONSE.CANT_LOGGED_IN:
-				throw new RemoteException(((ClientCantLoggedInResponse) response).getMessage());
-				
-			default:
-				throw new RemoteException(
-						"Unexpect response [{0}:{1}] received from server", response.getCode(), response.getClass() 
-				);
+				case Constants.RESPONSE.LOGGED_IN:
+					this.token = ((ClientLoggedInResponse) response).getToken();
+					this.serverLibraryVersion = ((ClientLoggedInResponse) response).getServerLibraryVersion();
+					break;
+					
+				case Constants.RESPONSE.CANT_LOGGED_IN:
+					throw new RemoteException(((ClientCantLoggedInResponse) response).getMessage());
+					
+				default:
+					throw new RemoteException(
+							"Unexpect response [{0}:{1}] received from server", response.getCode(), response.getClass() 
+					);
+			}
+		} finally {
+			connection.closeInputStream();
 		}
 	}
 	
@@ -148,18 +157,27 @@ public class Client {
 	public void logout() throws RemoteException {
 		
 		// create URL connection to connect remote server
-		Connection connection = this.getConnection(this.configuration.getLoginURL());
+		Connection connection = this.getConnection(this.configuration.getLogoutURL());
 		
 		// send request to server in order to execute it
 		ClientRequest request = new ClientLogoutRequest(this);
-		request.write(connection);
+		try {
+			request.write(connection);
+		} finally {
+			connection.closeOutputStream();
+		}
 		
 		// receive response from server and should be logged out
-		ClientResponse response = ClientResponseFactory.getResponse(this, connection, null);
-		if (response.getCode() != Constants.RESPONSE.LOGGED_OUT) {
-			throw new RemoteException(
-					"Unexpect response [{0}:{1}] received from server", response.getCode(), response.getClass() 
-			);
+		ClientResponse response;
+		try {
+			response = ClientResponseFactory.getResponse(this, connection, null);
+			if (response.getCode() != Constants.RESPONSE.LOGGED_OUT) {
+				throw new RemoteException(
+						"Unexpect response [{0}:{1}] received from server", response.getCode(), response.getClass() 
+				);
+			}
+		} finally {
+			connection.closeInputStream();
 		}
 	}
 
@@ -189,14 +207,18 @@ public class Client {
 	 * @exception RemoteException if fail to execute command in remote server
 	 */
 	@SuppressWarnings("unchecked")
-	<S, T> T execute(final String name, final S argument, final Class<T> returnType) throws RemoteException {
+	public <S, T> T execute(final String name, final S argument, final Class<T> returnType) throws RemoteException {
 
 		// create URL connection to connect remote server
-		Connection connection = this.getConnection(this.configuration.getLoginURL());
+		Connection connection = this.getConnection(name);
 		
 		// send request to server in order to execute it
 		ClientRequest request = new ClientExecuteRequest<S>(this, argument);
-		request.write(connection);
+		try {
+			request.write(connection);
+		} finally {
+			connection.closeOutputStream();
+		}
 
 		// if there is return type, get or create unmarshaller for it
 		Unmarshaller<T> unmarshaller = null;
@@ -205,11 +227,16 @@ public class Client {
 		}
 		
 		// receive response from server and should be logged out
-		ClientResponse response = ClientResponseFactory.getResponse(this, connection, unmarshaller);
-		if (response.getCode() != Constants.RESPONSE.SUCCESS_EXECUTED) {
-			throw new RemoteException(
-					"Unexpect response [{0}:{1}] received from server", response.getCode(), response.getClass() 
-			);
+		ClientResponse response;
+		try {
+			response = ClientResponseFactory.getResponse(this, connection, unmarshaller);
+			if (response.getCode() != Constants.RESPONSE.SUCCESS_EXECUTED) {
+				throw new RemoteException(
+						"Unexpect response [{0}:{1}] received from server", response.getCode(), response.getClass() 
+				);
+			}
+		} finally {
+			connection.closeInputStream();
 		}
 
 		// cast response to successfully executed response

@@ -50,10 +50,11 @@ class ClientExecuteRequest<T> extends AbstractRequest {
 	public void write(final OutputStream output) throws RemoteException {
 
 		// send token to remote server
+		byte[] encryptedToken = this.encryptWithServerKey(this.getClient().getToken().getBytes());
 		try {
-			byte[] bytes = this.encryptWithServerKey(this.getClient().getToken().getBytes());
-			output.write((byte) bytes.length);
-			output.write(bytes);
+			output.write((byte) (encryptedToken.length / 256));
+			output.write((byte) (encryptedToken.length % 256));
+			output.write(encryptedToken);
 		} catch (IOException e) {
 			throw new RemoteException("Fail to write token to client output stream", e);
 		}
@@ -63,11 +64,11 @@ class ClientExecuteRequest<T> extends AbstractRequest {
 			
 			Marshaller<T> marshaller = (Marshaller<T>) this.getClient().getMarshaller(data.getClass());
 			try {
-				ByteArrayOutputStream array = new ByteArrayOutputStream();
-				marshaller.marshal(array, this.data);
+				ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
+				marshaller.marshal(dataStream, this.data);
 				
-				byte[] bytes = this.encryptWithClientKey(array.toByteArray());
-				output.write(bytes);
+				byte[] encryptedData = this.encryptWithClientKey(dataStream.toByteArray());
+				output.write(encryptedData);
 			} catch (Exception e) {
 				throw new RemoteException("Fail to write request data to client output stream", e);
 			}

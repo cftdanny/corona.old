@@ -59,6 +59,7 @@ class ComponentMatcher implements Matcher {
 	@Override
 	public MatchResult match(final String path, final HttpServletRequest request) {
 		
+		// test whether request path will be handled by children handler (component handler) or not
 		if (path.startsWith(this.basePath)) {
 			
 			String childPath = path.substring(this.basePath.length());
@@ -74,6 +75,8 @@ class ComponentMatcher implements Matcher {
 				}
 			}
 		} 
+		
+		// this request path doesn't handle by this component handler
 		return null;
 	}
 }

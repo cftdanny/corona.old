@@ -125,9 +125,14 @@ class RemoteInjectMethod implements InjectMethod {
 				case Constants.REQUEST.EXECUTE:
 					Object outcome = this.execute(component, (ServerExecuteRequest) request);
 					if (outcome != null) {
-						return new ServerExecutedResponse(server, this.getMarshaller(), outcome);
+						return new ServerExecutedResponse(
+								server, server.getToken(((ServerExecuteRequest) request).getToken()), 
+								this.getMarshaller(), outcome
+						);
 					} else {
-						return new ServerExecutedResponse(server, null, null);
+						return new ServerExecutedResponse(
+								server, server.getToken(((ServerExecuteRequest) request).getToken()), null, null
+						);
 					}
 					
 				case Constants.REQUEST.LOGIN:
@@ -189,7 +194,7 @@ class RemoteInjectMethod implements InjectMethod {
 	@SuppressWarnings("rawtypes")
 	private Marshaller getMarshaller() {
 		
-		if (this.marshaller != null) {
+		if (this.marshaller == null) {
 			this.marshaller = MarshallerFactory.get(this.protocol).create(this.method.getReturnType());
 		}
 		return this.marshaller;

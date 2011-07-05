@@ -3,6 +3,7 @@
  */
 package com.corona.test.remote;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.corona.crypto.CypherFactory;
@@ -16,7 +17,7 @@ import com.corona.remote.Configuration;
  * @author $Author$
  * @version $Id$
  */
-public class RemoteTest extends AbstractWebsiteTest {
+public class RemoteBasicTest extends AbstractWebsiteTest {
 
 	/**
 	 * @throws Exception if fail
@@ -36,5 +37,20 @@ public class RemoteTest extends AbstractWebsiteTest {
 		
 		Client client = new Client(cfg);
 		client.login("danny", "");
+		
+		// test whether token is danny
+		Assert.assertEquals(client.getToken(), "danny");
+		
+		// test execute command
+		Source source = new Source();
+		source.setA(10);
+		source.setB(5);
+		
+		Result result = client.execute("/calculate", source, Result.class);
+		Assert.assertEquals(result.getC(), 15);
+		Assert.assertEquals(5, result.getD());
+		
+		// log out
+		client.logout();
 	}
 }
