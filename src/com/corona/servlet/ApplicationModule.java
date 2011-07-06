@@ -12,6 +12,7 @@ import com.corona.servlet.annotation.Chart;
 import com.corona.servlet.annotation.CookieParam;
 import com.corona.servlet.annotation.Excel;
 import com.corona.servlet.annotation.FreeMaker;
+import com.corona.servlet.annotation.HasParam;
 import com.corona.servlet.annotation.Head;
 import com.corona.servlet.annotation.HttpMethod;
 import com.corona.servlet.annotation.Jndi;
@@ -57,6 +58,7 @@ import com.corona.servlet.producing.remote.RemoteProducerFactory;
 import com.corona.servlet.producing.resource.ResourceProducerFactory;
 import com.corona.servlet.producing.service.ServiceProducerFactory;
 import com.corona.servlet.producing.xml.XmlProducerFactory;
+import com.corona.servlet.restricting.hasparam.HasParamRestrictorFactory;
 import com.corona.servlet.restricting.httpmethod.HttpMethodRestrictorFactory;
 
 /**
@@ -123,6 +125,7 @@ public class ApplicationModule extends WebKernelModule {
 
 		// configure built-in restrict factory for SERVLET
 		this.bindExtension(RestrictorFactory.class).as(HttpMethod.class).to(new HttpMethodRestrictorFactory());
+		this.bindExtension(RestrictorFactory.class).as(HasParam.class).to(new HasParamRestrictorFactory());
 		
 		// configure built-in matcher factory for SERVLET
 		this.bindExtension(MatcherFactory.class).as(Head.class).to(new HeadMatcherFactory());
