@@ -11,7 +11,7 @@
 	</test>
 
 	<!-- All Test Cases for Expression -->
-	<test name="context" >
+	<test name="expression" >
 		<classes>
 			<class name="com.corona.test.expression.ExpressionTest" />
 			<class name="com.corona.test.expression.TemplateTest" />
@@ -28,7 +28,7 @@
 	</test>
 
 	<!-- All Test Cases for crypto -->
-	<test name="IO" >
+	<test name="crypto" >
 		<classes>
 			<class name="com.corona.test.crypto.DESCipherEngineTest" />
 			<class name="com.corona.test.crypto.DESedeCipherEngineTest" />

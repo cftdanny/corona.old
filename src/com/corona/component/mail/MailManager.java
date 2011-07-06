@@ -11,4 +11,9 @@ package com.corona.component.mail;
  */
 public interface MailManager {
 
+	/**
+	 * @param message the mail message to be sent
+	 * @throws MailException if fail to send mail
+	 */
+	void send(Message message) throws MailException;
 }

@@ -3,14 +3,19 @@
  */
 package com.corona.expression;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.Map;
 
-import org.mvel2.templates.CompiledTemplate;
-import org.mvel2.templates.TemplateCompiler;
-import org.mvel2.templates.TemplateRuntime;
+import com.corona.util.ResourceUtil;
+
+import freemarker.cache.StringTemplateLoader;
+import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapper;
 
 /**
- * <p>The template is used to generate String by template source code. </p>
+ * <p>Template implement by FreeMaker </p>
  *
  * @author $Author$
  * @version $Id$
@@ -18,71 +23,88 @@ import org.mvel2.templates.TemplateRuntime;
 public class Template {
 
 	/**
-	 * the source code of template
+	 * the compiled FreeMaker template
 	 */
-	private String template;
+	private freemarker.template.Template template;
 	
 	/**
-	 * the compiled template
-	 */
-	private CompiledTemplate compiledTemplate;
-	
-	/**
-	 * @param template the source code of template
+	 * @param template the FreeMaker template
 	 */
 	public Template(final String template) {
-		this.template = template;
+		
+		Configuration configuration = new Configuration();
+
+		configuration.setObjectWrapper(new DefaultObjectWrapper());
+		configuration.setTemplateLoader(new StringTemplateLoader());
+
+		try {
+			this.template = new freemarker.template.Template("", new StringReader(template), configuration);
+		} catch (IOException e) {
+			this.template = null;
+		}
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * @see java.lang.Object#toString()
+	 * @param type the class that is used to load resource template
+	 * @param resource the resource name
 	 */
-	@Override
-	public String toString() {
-		return this.template;
+	public Template(final Class<?> type, final String resource) {
+		this(ResourceUtil.load(type, resource));
 	}
-	
+
 	/**
-	 * @param template the source code of template
-	 * @return the compiled template
+	 * @param template the template source code
+	 * @return the template
 	 */
 	public static Template getTemplate(final String template) {
 		return new Template(template);
 	}
 	
 	/**
-	 * @return the compiled template
+	 * @return the string template loader
 	 */
-	public Template compile() {
-		this.getCompiledTemplate();
-		return this;
+	private StringTemplateLoader getTemplateLoader() {
+		return (StringTemplateLoader) this.template.getConfiguration().getTemplateLoader();
 	}
 	
 	/**
-	 * @return the compiled template
+	 * @param name the template name
+	 * @param source the template source
 	 */
-	private CompiledTemplate getCompiledTemplate() {
-		
-		if (this.compiledTemplate == null) {
-			this.compiledTemplate = TemplateCompiler.compileTemplate(this.template);
-		}
-		return this.compiledTemplate;
+	public void install(final String name, final String source) {
+		this.getTemplateLoader().putTemplate(name, source);
+	}
+	
+	/**
+	 * @param name the template name
+	 * @param type the class that is used to load resource template
+	 * @param resource the resource name
+	 */
+	public void install(final String name, final Class<?> type, final String resource) {
+		this.install(name, ResourceUtil.load(type, resource));
 	}
 
 	/**
-	 * @return the result string context
+	 * @param context the context
+	 * @return the result
 	 */
-	public String execute() {
-		return (String) TemplateRuntime.execute(this.getCompiledTemplate());
+	private String execute(final DataModel context) {
+		
+		StringWriter writer = new StringWriter();
+		try {
+			this.template.process(context, writer);
+		} catch (Exception e) {
+			throw new TemplateException(e);
+		}
+		return writer.toString();
 	}
-
+	
 	/**
 	 * @param context the root context
 	 * @return the result string context
 	 */
 	public String execute(final Object context) {
-		return (String) TemplateRuntime.execute(this.getCompiledTemplate(), context);
+		return this.execute(new DataModel(context, null));
 	}
 
 	/**
@@ -91,7 +113,7 @@ public class Template {
 	 * @return the result string context
 	 */
 	public String execute(final Object context, final Map<String, ?> variableMap) {
-		return (String) TemplateRuntime.execute(this.getCompiledTemplate(), context, variableMap);
+		return this.execute(new DataModel(context, variableMap));
 	}
 
 	/**
@@ -99,6 +121,6 @@ public class Template {
 	 * @return the result string context
 	 */
 	public String execute(final Map<String, ?> variableMap) {
-		return (String) TemplateRuntime.execute(this.getCompiledTemplate(), variableMap);
+		return this.execute(new DataModel(null, variableMap));
 	}
 }

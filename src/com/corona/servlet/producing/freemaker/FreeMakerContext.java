@@ -83,10 +83,17 @@ public class FreeMakerContext extends BeanModel {
 	@Override
 	public TemplateModel get(final String name) throws TemplateModelException {
 		
-		TemplateModel model = super.get(name);
-		if (model != null) {
-			return model;
-		} else if ("request".equals(name)) {
+		// if root object isn't null, will try to get variable by property name
+		if (this.getWrappedObject() != null) {
+			
+			TemplateModel model = super.get(name);
+			if (model != null) {
+				return model;
+			}
+		}
+
+		// otherwise, try to get from fix variable, predefined variable or context 
+		if ("request".equals(name)) {
 			return this.wrap(this.getRequest());
 		} else if ("response".equals(name)) {
 			return this.wrap(this.getResponse());

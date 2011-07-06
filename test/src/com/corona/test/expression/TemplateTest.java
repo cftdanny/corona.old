@@ -38,23 +38,32 @@ public class TemplateTest {
 	/**
 	 * simple template
 	 */
-	@Test void testSimpleTemplate() {
+	@Test public void testOnlyRootObjectWithTemplate() {
 		
-		Template template = Template.getTemplate("Shanghai @{name} = @{weight} * @{height}");
+		Template template = Template.getTemplate("Shanghai ${name} = ${width} * ${height}");
 		Assert.assertEquals(template.execute(this.house), "Shanghai SHA = 10 * 10");
 	}
 	
 	/**
 	 * complicate template
 	 */
-	@Test void testComplicate() {
+	@Test public void testRootObjectAndMapContextWithTemplate() {
 		
-		Template template = new Template("HOUSE : @{name} = @{weight * height}/@{unit}");
+		Template template = new Template("HOUSE : ${name} = ${width * height}/${unit}");
 		Map<String, Object> vars = new HashMap<String, Object>();
 		vars.put("unit", "M2");
-		Assert.assertEquals(template.execute(house, vars), "HOUSE : SHA = 1000/M2");
+		Assert.assertEquals(template.execute(house, vars), "HOUSE : SHA = 100/M2");
+	}
+
+	/**
+	 * Test only map context
+	 */
+	@Test public void testOnlyMapContextWithTemplate() {
 		
-		template = Template.getTemplate("@{unit} = M * M");
+		Map<String, Object> vars = new HashMap<String, Object>();
+		vars.put("unit", "M2");
+
+		Template template = Template.getTemplate("${unit} = M * M");
 		Assert.assertEquals(template.execute(vars), "M2 = M * M");
 	}
 }
