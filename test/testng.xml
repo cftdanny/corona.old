@@ -69,6 +69,10 @@
 			<class name="com.corona.test.servlet.param.ParamBeanInjectionTest" />
 			<class name="com.corona.test.servlet.param.ParamSimpleInjectionTest" />
 			<class name="com.corona.test.servlet.param.ParamMethodInjectionTest" />
+
+			<class name="com.corona.test.servlet.request.JsonRequestByFieldTest" />
+			<class name="com.corona.test.servlet.request.JsonRequestByPropertyTest" />
+			<class name="com.corona.test.servlet.request.JsonRequestByParamTest" />
 		</classes>
 	</test>
 	

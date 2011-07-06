@@ -17,6 +17,7 @@ import com.corona.servlet.annotation.Head;
 import com.corona.servlet.annotation.HttpMethod;
 import com.corona.servlet.annotation.Jndi;
 import com.corona.servlet.annotation.Json;
+import com.corona.servlet.annotation.JsonRequest;
 import com.corona.servlet.annotation.MatchParam;
 import com.corona.servlet.annotation.Param;
 import com.corona.servlet.annotation.Path;
@@ -35,6 +36,9 @@ import com.corona.servlet.injecting.cookieparam.CookieParamInjectPropertyFactory
 import com.corona.servlet.injecting.jndi.JndiInjectFieldFactory;
 import com.corona.servlet.injecting.jndi.JndiInjectParameterFactory;
 import com.corona.servlet.injecting.jndi.JndiInjectPropertyFactory;
+import com.corona.servlet.injecting.json.JsonRequestInjectFieldFactory;
+import com.corona.servlet.injecting.json.JsonRequestInjectParameterFactory;
+import com.corona.servlet.injecting.json.JsonRequestInjectPropertyFactory;
 import com.corona.servlet.injecting.matchparam.MatchParamInjectFieldFactory;
 import com.corona.servlet.injecting.matchparam.MatchParamInjectParameterFactory;
 import com.corona.servlet.injecting.matchparam.MatchParamInjectPropertyFactory;
@@ -121,6 +125,17 @@ public class ApplicationModule extends WebKernelModule {
 		);
 		this.bindExtension(InjectPropertyFactory.class).as(Jndi.class).to(
 				new JndiInjectPropertyFactory()
+		);
+
+		// configure @JsonRequest injection for field, property and parameter
+		this.bindExtension(InjectFieldFactory.class).as(JsonRequest.class).to(
+				new JsonRequestInjectFieldFactory()
+		);
+		this.bindExtension(InjectParameterFactory.class).as(JsonRequest.class).to(
+				new JsonRequestInjectParameterFactory()
+		);
+		this.bindExtension(InjectPropertyFactory.class).as(JsonRequest.class).to(
+				new JsonRequestInjectPropertyFactory()
 		);
 
 		// configure built-in restrict factory for SERVLET

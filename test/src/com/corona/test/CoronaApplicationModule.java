@@ -25,6 +25,9 @@ import com.corona.test.servlet.SessionVariableHtml;
 import com.corona.test.servlet.param.ParamBeanInjection;
 import com.corona.test.servlet.param.ParamMatchInjection;
 import com.corona.test.servlet.param.ParamSimpleInjection;
+import com.corona.test.servlet.request.JsonRequestByFieldBean;
+import com.corona.test.servlet.request.JsonRequestByParamBean;
+import com.corona.test.servlet.request.JsonRequestByPropertyBean;
 
 /**
  * <p>This module is used to define all components for application, both for testing and production. </p>
@@ -140,6 +143,10 @@ public class CoronaApplicationModule extends WebStartModule {
 		this.bind(ParamSimpleInjection.class).to(ParamSimpleInjection.class);
 		this.bind(ParamBeanInjection.class).to(ParamBeanInjection.class);
 		this.bind(ParamMatchInjection.class).to(ParamMatchInjection.class);
+		
+		this.bind(JsonRequestByParamBean.class).to(JsonRequestByParamBean.class);
+		this.bind(JsonRequestByFieldBean.class).to(JsonRequestByFieldBean.class);
+		this.bind(JsonRequestByPropertyBean.class).to(JsonRequestByPropertyBean.class);
 	}
 	
 	/**
