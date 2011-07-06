@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.activation.DataHandler;
 import javax.mail.Address;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
@@ -16,7 +17,9 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import com.corona.util.StringUtil;
 
@@ -60,11 +63,15 @@ public abstract class AbstractMailManager implements MailManager {
 			}
 			
 			// create mime mail message
+			mimemessage.setSentDate(message.getSentDate());
 			mimemessage.setSubject(message.getSubject());
 			if (!StringUtil.isBlank(message.getTo())) {
 				mimemessage.addRecipients(RecipientType.TO, this.getAddresses(message.getTo()));
 			}
-			mimemessage.setText(message.getText());
+			if (!StringUtil.isBlank(message.getCc())) {
+				mimemessage.addRecipients(RecipientType.CC, this.getAddresses(message.getCc()));
+			}
+			mimemessage.setContent(this.getMimeMultipart(message));
 		} catch (Exception e) {
 			throw new MailException("Fail to create mail message to be sent to SMTP server", e);
 		}
@@ -74,6 +81,31 @@ public abstract class AbstractMailManager implements MailManager {
 		} catch (MessagingException e) {
 			throw new MailException("Fail to send mail to SMTP server", e);
 		}
+	}
+	
+	/**
+	 * @param message the message
+	 * @return the message part
+	 * @throws MessagingException if fail to create mail part
+	 */
+	private MimeMultipart getMimeMultipart(final Message message) throws MessagingException {
+		
+		MimeMultipart multipart = new MimeMultipart();
+		
+		MimeBodyPart bodyPart = new MimeBodyPart();
+		bodyPart.setContent(message.getContent(), message.getContentType());
+		multipart.addBodyPart(bodyPart);
+		
+		for (Attachment attachment : message.getAttachments()) {
+			
+			MimeBodyPart childPart = new MimeBodyPart();
+			childPart.setFileName(attachment.getFileName());
+			childPart.setDataHandler(new DataHandler(attachment.getDataSource()));
+			
+			multipart.addBodyPart(childPart);
+		}
+		
+		return multipart;
 	}
 	
 	/**

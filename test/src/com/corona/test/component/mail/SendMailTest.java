@@ -5,6 +5,7 @@ package com.corona.test.component.mail;
 
 import org.testng.annotations.Test;
 
+import com.corona.component.mail.Attachment;
 import com.corona.component.mail.InternetMailManager;
 import com.corona.component.mail.Message;
 
@@ -27,13 +28,17 @@ public class SendMailTest {
 		mailManager.setSmtpPort(587);
 		mailManager.getProperties().put("mail.smtp.starttls.enable", "true");
 		
-		mailManager.setUsername("");
-		mailManager.setPassword("");
+		mailManager.setUsername("1111@222.com");
+		mailManager.setPassword("XXX");
 		
 		Message message = new Message();
 		message.setSubject("Test");
-		message.setText("test");
-		message.setTo("");
+		message.setHtml("test");
+		message.setTo("AAA <BBB@hotmail.com>");
+		message.setCc("CCC@hotmail.com");
+		
+		message.addAttachment(new Attachment("1.txt", "asfasd"));
+		message.addAttachment(new Attachment("2.html", new byte[] {32, 44, 83}, "text/html"));
 		
 		mailManager.send(message);
 	}
