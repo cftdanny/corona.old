@@ -6,7 +6,7 @@ package com.corona.test.component.mail;
 import org.testng.annotations.Test;
 
 import com.corona.component.mail.Attachment;
-import com.corona.component.mail.InternetMailManager;
+import com.corona.component.mail.InternetMailSender;
 import com.corona.component.mail.Message;
 
 /**
@@ -22,10 +22,10 @@ public class SendMailTest {
 	 */
 	@Test public void tesSendMail() throws Exception {
 		
-		InternetMailManager mailManager = new InternetMailManager();
+		InternetMailSender mailManager = new InternetMailSender();
 		
-		mailManager.setSmtpServerName("smtp.gmail.com");
-		mailManager.setSmtpPort(587);
+		mailManager.setHostName("smtp.gmail.com");
+		mailManager.setPort(587);
 		mailManager.getProperties().put("mail.smtp.starttls.enable", "true");
 		
 		mailManager.setUsername("1111@222.com");

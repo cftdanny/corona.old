@@ -12,7 +12,7 @@ import javax.naming.InitialContext;
  * @author $Author$
  * @version $Id$
  */
-public class NamingMailManager extends AbstractMailManager {
+public class NamingMailSender extends AbstractMailSender {
 
 	/**
 	 * the JNDI name to lookup java mail
@@ -21,7 +21,7 @@ public class NamingMailManager extends AbstractMailManager {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.component.mail.AbstractMailManager#getSession()
+	 * @see com.corona.component.mail.AbstractMailSender#getSession()
 	 */
 	@Override
 	protected Session getSession() throws MailException {

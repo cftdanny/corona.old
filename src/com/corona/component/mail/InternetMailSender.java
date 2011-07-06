@@ -17,7 +17,7 @@ import com.corona.util.StringUtil;
  * @author $Author$
  * @version $Id$
  */
-public class InternetMailManager extends AbstractMailManager {
+public class InternetMailSender extends AbstractMailSender {
 	
 	/**
 	 * the user name
@@ -37,21 +37,21 @@ public class InternetMailManager extends AbstractMailManager {
 	/**
 	 * @return the SMTP server name for mail service
 	 */
-	public String getSmtpServerName() {
+	public String getHostName() {
 		return this.properties.getProperty("mail.smtp.host");
 	}
 
 	/**
-	 * @param smtpServerName the SMTP server name for mail service to set
+	 * @param hostName the SMTP server name for mail service to set
 	 */
-	public void setSmtpServerName(final String smtpServerName) {
-		this.properties.put("mail.smtp.host", smtpServerName);
+	public void setHostName(final String hostName) {
+		this.properties.put("mail.smtp.host", hostName);
 	}
 	
 	/**
 	 * @return the SMTP port for mail service
 	 */
-	public int getSmtpPort() {
+	public int getPort() {
 		
 		if (this.properties.contains("mail.smtp.port")) {
 			return Integer.parseInt(this.properties.getProperty("mail.smtp.port"));
@@ -61,10 +61,10 @@ public class InternetMailManager extends AbstractMailManager {
 	}
 	
 	/**
-	 * @param smtpPort the SMTP port for mail service to set
+	 * @param port the SMTP port for mail service to set
 	 */
-	public void setSmtpPort(final int smtpPort) {
-		this.properties.put("mail.smtp.port", Integer.toString(smtpPort));
+	public void setPort(final int port) {
+		this.properties.put("mail.smtp.port", Integer.toString(port));
 	}
 
 	/**
@@ -79,39 +79,6 @@ public class InternetMailManager extends AbstractMailManager {
 	 */
 	public void setFrom(final String from) {
 		this.properties.put("mail.smtp.from", from);
-	}
-
-	/**
-	 * @return the POP3 server name for mail service
-	 */
-	public String getPop3ServerName() {
-		return this.properties.getProperty("mail.pop3.host");
-	}
-	
-	/**
-	 * @param pop3ServerName the POP3 server name for mail service to set
-	 */
-	public void setPop3ServerName(final String pop3ServerName) {
-		this.properties.put("mail.pop3.host", pop3ServerName);
-	}
-
-	/**
-	 * @return the POP3 port for mail service
-	 */
-	public int getPop3Port() {
-
-		if (this.properties.contains("mail.pop3.port")) {
-			return Integer.parseInt(this.properties.getProperty("mail.pop3.port"));
-		} else {
-			return 110;
-		}
-	}
-	
-	/**
-	 * @param pop3Port the POP3 port for mail service to set
-	 */
-	public void setPop3Port(final int pop3Port) {
-		this.properties.put("mail.pop3.port", Integer.toString(pop3Port));
 	}
 
 	/**
@@ -170,7 +137,7 @@ public class InternetMailManager extends AbstractMailManager {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.component.mail.AbstractMailManager#getSession()
+	 * @see com.corona.component.mail.AbstractMailSender#getSession()
 	 */
 	@Override
 	protected Session getSession() throws MailException {

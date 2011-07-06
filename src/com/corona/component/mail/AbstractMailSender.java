@@ -24,12 +24,12 @@ import javax.mail.internet.MimeMultipart;
 import com.corona.util.StringUtil;
 
 /**
- * <p>The default internet mail manager </p>
+ * <p>The default internet mail sender </p>
  *
  * @author $Author$
  * @version $Id$
  */
-public abstract class AbstractMailManager implements MailManager {
+public abstract class AbstractMailSender implements MailSender {
 
 	/**
 	 * the mail address with name
@@ -44,7 +44,7 @@ public abstract class AbstractMailManager implements MailManager {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.component.mail.MailManager#send(com.corona.component.mail.Message)
+	 * @see com.corona.component.mail.MailSender#send(com.corona.component.mail.Message)
 	 */
 	@Override
 	public void send(final Message message) throws MailException {

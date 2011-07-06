@@ -4,12 +4,12 @@
 package com.corona.component.mail;
 
 /**
- * <p>This mail manager is used to send mail or receive mail </p>
+ * <p>This mail sender is used to send mail </p>
  *
  * @author $Author$
  * @version $Id$
  */
-public interface MailManager {
+public interface MailSender {
 
 	/**
 	 * @param message the mail message to be sent
