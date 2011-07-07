@@ -40,10 +40,8 @@ public class JaxbMarshallerFactory extends MarshallerFactory {
 	@Override
 	public <T> Marshaller<T> create(final Class<T> type) {
 		
-		JAXBContext context;
 		try {
-			context = JAXBContext.newInstance(type);
-			return new JaxbMarshaller<T>(context.createMarshaller());
+			return new JaxbMarshaller<T>(JAXBContext.newInstance(type).createMarshaller());
 		} catch (JAXBException e) {
 			throw new IllegalArgumentException("Fail to create JAXB context or marshaller", e);
 		}

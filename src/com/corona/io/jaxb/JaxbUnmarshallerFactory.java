@@ -40,10 +40,8 @@ public class JaxbUnmarshallerFactory extends UnmarshallerFactory {
 	@Override
 	public <T> Unmarshaller<T> create(final Class<T> type) {
 		
-		JAXBContext context;
 		try {
-			context = JAXBContext.newInstance(type);
-			return new JaxbUnmarshaller<T>(context.createUnmarshaller());
+			return new JaxbUnmarshaller<T>(JAXBContext.newInstance(type).createUnmarshaller(), type);
 		} catch (JAXBException e) {
 			throw new IllegalArgumentException("Fail to create JAXB context or unmarshaller", e);
 		}

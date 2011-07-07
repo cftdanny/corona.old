@@ -32,6 +32,11 @@ public class ApplicationServlet implements Servlet, Serializable {
 	private static final long serialVersionUID = -1259616986665281178L;
 
 	/**
+	 * The multipart flag
+	 */
+	private static final String MULTIPART = "multipart/";
+	
+	/**
 	 * the SERVLET configuration
 	 */
 	private transient ServletConfig servletConfig;
@@ -89,6 +94,23 @@ public class ApplicationServlet implements Servlet, Serializable {
 			this.getServletContext().log("Application handlers is not loaded, configure and load it first");
 			throw new ServletException("Application handlers is not loaded, configure and load it first");
 		}
+	}
+
+	/**
+	 * @param request the request
+	 * @return whether request is multipart request
+	 */
+	private boolean isMultipartRequest(HttpServletRequest request) {
+		
+		if (!"post".equals(request.getMethod().toLowerCase())) {
+			return false;
+		}
+	      
+		String contentType = request.getContentType();
+		if (contentType == null) {
+			return false;
+		} 
+		return contentType.toLowerCase().startsWith(MULTIPART);
 	}
 
 	/**

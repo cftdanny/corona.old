@@ -30,6 +30,7 @@ import com.corona.servlet.annotation.Service;
 import com.corona.servlet.annotation.Session;
 import com.corona.servlet.annotation.Tail;
 import com.corona.servlet.annotation.Xml;
+import com.corona.servlet.annotation.XmlRequest;
 import com.corona.servlet.injecting.cookieparam.CookieParamInjectFieldFactory;
 import com.corona.servlet.injecting.cookieparam.CookieParamInjectParameterFactory;
 import com.corona.servlet.injecting.cookieparam.CookieParamInjectPropertyFactory;
@@ -45,6 +46,9 @@ import com.corona.servlet.injecting.matchparam.MatchParamInjectPropertyFactory;
 import com.corona.servlet.injecting.param.ParamInjectFieldFactory;
 import com.corona.servlet.injecting.param.ParamInjectParameterFactory;
 import com.corona.servlet.injecting.param.ParamInjectPropertyFactory;
+import com.corona.servlet.injecting.xml.XmlRequestInjectFieldFactory;
+import com.corona.servlet.injecting.xml.XmlRequestInjectParameterFactory;
+import com.corona.servlet.injecting.xml.XmlRequestInjectPropertyFactory;
 import com.corona.servlet.matching.HeadMatcherFactory;
 import com.corona.servlet.matching.PathMatcherFactory;
 import com.corona.servlet.matching.RegexMatcherFactory;
@@ -136,6 +140,17 @@ public class ApplicationModule extends WebKernelModule {
 		);
 		this.bindExtension(InjectPropertyFactory.class).as(JsonRequest.class).to(
 				new JsonRequestInjectPropertyFactory()
+		);
+
+		// configure @XmlRequest injection for field, property and parameter
+		this.bindExtension(InjectFieldFactory.class).as(XmlRequest.class).to(
+				new XmlRequestInjectFieldFactory()
+		);
+		this.bindExtension(InjectParameterFactory.class).as(XmlRequest.class).to(
+				new XmlRequestInjectParameterFactory()
+		);
+		this.bindExtension(InjectPropertyFactory.class).as(XmlRequest.class).to(
+				new XmlRequestInjectPropertyFactory()
 		);
 
 		// configure built-in restrict factory for SERVLET

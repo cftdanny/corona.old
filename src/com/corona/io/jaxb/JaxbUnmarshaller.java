@@ -7,6 +7,8 @@ import java.io.InputStream;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.transform.stream.StreamSource;
 
 import com.corona.io.UnmarshalException;
 
@@ -25,12 +27,19 @@ public class JaxbUnmarshaller<T> implements com.corona.io.Unmarshaller<T> {
 	private Unmarshaller unmarshaller;
 	
 	/**
-	 * @param unmarshaller the JAXB unmarshaller
+	 * the unmarshalling to type
 	 */
-	JaxbUnmarshaller(final Unmarshaller unmarshaller) {
-		this.unmarshaller = unmarshaller;
-	}
+	private Class<T> type;
 	
+	/**
+	 * @param unmarshaller the JAXB unmarshaller
+	 * @param type the unmarshalling to type
+	 */
+	JaxbUnmarshaller(final Unmarshaller unmarshaller, final Class<T> type) {
+		this.unmarshaller = unmarshaller;
+		this.type = type;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.io.Unmarshaller#unmarshal(java.io.InputStream)
@@ -40,7 +49,11 @@ public class JaxbUnmarshaller<T> implements com.corona.io.Unmarshaller<T> {
 	public T unmarshal(final InputStream in) throws UnmarshalException {
 		
 		try {
-			return (T) this.unmarshaller.unmarshal(in);
+			if (this.type.isAnnotationPresent(XmlRootElement.class)) {
+				return (T) this.unmarshaller.unmarshal(in);
+			} else {
+				return this.unmarshaller.unmarshal(new StreamSource(in), type).getValue();
+			}
 		} catch (JAXBException e) {
 			throw new UnmarshalException("Fail to unmarshal input stream into object", e);
 		}

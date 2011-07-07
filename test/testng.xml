@@ -73,6 +73,10 @@
 			<class name="com.corona.test.servlet.request.JsonRequestByFieldTest" />
 			<class name="com.corona.test.servlet.request.JsonRequestByPropertyTest" />
 			<class name="com.corona.test.servlet.request.JsonRequestByParamTest" />
+			
+			<class name="com.corona.test.servlet.request.XmlRequestByFieldTest" />
+			<class name="com.corona.test.servlet.request.XmlRequestByPropertyTest" />
+			<class name="com.corona.test.servlet.request.XmlRequestByParamTest" />
 		</classes>
 	</test>
 	
