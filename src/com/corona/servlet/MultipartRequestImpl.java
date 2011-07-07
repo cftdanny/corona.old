@@ -3,17 +3,9 @@
  */
 package com.corona.servlet;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.rmi.server.UID;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -25,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
- * This request is used to support upload file from client web browser.
+ * <p>This request is used to support upload file from client web browser. </p>
  * 
  * @author $Author$
  * @version $Id$
@@ -48,6 +40,11 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 	private static final String PARAM_CONTENT_TYPE = "Content-Type";
 
 	/**
+	 * parameter value pattern
+	 */
+	private static final Pattern PARAM_VALUE_PATTERN = Pattern.compile("^\\s*([^\\s=]+)\\s*[=:]\\s*(.+)\\s*$");
+
+	/**
 	 * buffer size
 	 */
 	private static final int BUFFER_SIZE = 2048;
@@ -56,6 +53,21 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 	 * chunk size
 	 */
 	private static final int CHUNK_SIZE = 512;
+
+	/**
+	 * CR
+	 */
+	private static final byte CR = 0x0d;
+
+	/**
+	 * LF
+	 */
+	private static final byte LF = 0x0a;
+
+	/**
+	 * CR, LF
+	 */
+	private static final byte[] CR_LF = {CR, LF};
 
 	/**
 	 * whether create temporary file
@@ -70,12 +82,10 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 	/**
 	 * parameters
 	 */
-	private Map<String, Param> parameters = null;
+	private Map<String, MultipartParameter> parameters = null;
 
 	/**
-	 * <p>
-	 * The read state
-	 * </p>
+	 * <p>The state for reading request stream </p>
 	 */
 	private enum ReadState {
 
@@ -96,254 +106,20 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 	}
 
 	/**
-	 * CR
-	 */
-	private static final byte CR = 0x0d;
-
-	/**
-	 * LF
-	 */
-	private static final byte LF = 0x0a;
-
-	/**
-	 * CR, LF
-	 */
-	private static final byte[] CR_LF = {CR, LF};
-
-	/**
-	 * <p>
-	 * </p>
-	 */
-	private abstract class Param {
-
-		/**
-		 * the parameter name
-		 */
-		private String name;
-
-		/**
-		 * @param name
-		 *            the parameter name
-		 */
-		public Param(final String name) {
-			this.name = name;
-		}
-
-		/**
-		 * @return the parameter name
-		 */
-		public String getName() {
-			return name;
-		}
-
-		/**
-		 * @param data
-		 *            the data
-		 * @param start
-		 *            the start length
-		 * @param length
-		 *            the length
-		 * @throws IOException
-		 *             if fail to append data
-		 */
-		public abstract void appendData(byte[] data, int start, int length) throws IOException;
-	}
-
-	/**
-	 * <p>
-	 * </p>
-	 */
-	private class ValueParam extends Param {
-
-		/**
-		 * the value
-		 */
-		private Object value = null;
-
-		/**
-		 * the value as output stream
-		 */
-		private ByteArrayOutputStream buf = new ByteArrayOutputStream();
-
-		/**
-		 * @param name
-		 *            the parameter name
-		 */
-		public ValueParam(final String name) {
-			super(name);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 * 
-		 * @see com.corona.servlet.MultipartRequestImpl.Param#appendData(byte[], int, int)
-		 */
-		@Override
-		public void appendData(final byte[] data, final int start, final int length) throws IOException {
-			buf.write(data, start, length);
-		}
-
-		public void complete() throws UnsupportedEncodingException {
-			String val = encoding == null ? new String(buf.toByteArray()) : new String(buf.toByteArray(), encoding);
-			if (value == null) {
-				value = val;
-			} else {
-				if (!(value instanceof List)) {
-					List<String> v = new ArrayList<String>();
-					v.add((String) value);
-					value = v;
-				}
-
-				((List) value).add(val);
-			}
-			buf.reset();
-		}
-
-		public Object getValue() {
-			return value;
-		}
-	}
-
-	private class FileParam extends Param {
-
-		private String filename;
-
-		private String contentType;
-
-		private int fileSize;
-
-		private ByteArrayOutputStream bOut = null;
-
-		private FileOutputStream fOut = null;
-
-		private File tempFile = null;
-
-		public FileParam(String name) {
-			super(name);
-		}
-
-		public String getFilename() {
-			return filename;
-		}
-
-		public void setFilename(String filename) {
-			this.filename = filename;
-		}
-
-		public String getContentType() {
-			return contentType;
-		}
-
-		public void setContentType(String contentType) {
-			this.contentType = contentType;
-		}
-
-		public int getFileSize() {
-			return fileSize;
-		}
-
-		public void createTempFile() {
-			
-			try {
-				tempFile = File.createTempFile(new UID().toString().replace(":", "-"), ".upload");
-				tempFile.deleteOnExit();
-				fOut = new FileOutputStream(tempFile);
-			} catch (IOException ex) {
-				throw new FileUploadException("Could not create temporary file");
-			}
-		}
-
-		@Override
-		public void appendData(final byte[] data, final int start, final int length) throws IOException {
-			
-			if (fOut != null) {
-				fOut.write(data, start, length);
-				fOut.flush();
-			} else {
-				if (bOut == null) {
-					bOut = new ByteArrayOutputStream();
-				}
-				
-				bOut.write(data, start, length);
-			}
-
-			fileSize += length;
-		}
-
-		public byte[] getData() {
-			if (fOut != null) {
-				try {
-					fOut.close();
-				} catch (IOException ex) {
-				}
-				fOut = null;
-			}
-
-			if (bOut != null) {
-				return bOut.toByteArray();
-			} else if (tempFile != null) {
-				if (tempFile.exists()) {
-					try {
-						FileInputStream fIn = new FileInputStream(tempFile);
-						ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-						byte[] buf = new byte[512];
-						int read = fIn.read(buf);
-						while (read != -1) {
-							bOut.write(buf, 0, read);
-							read = fIn.read(buf);
-						}
-						bOut.flush();
-
-						fIn.close();
-						tempFile.delete();
-						return bOut.toByteArray();
-					} catch (IOException ex) { /* too bad? */
-					}
-				}
-			}
-
-			return null;
-		}
-
-		public InputStream getInputStream() {
-			
-			if (fOut != null) {
-				try {
-					fOut.close();
-				} catch (IOException ex) {
-				}
-				fOut = null;
-			}
-
-			if (bOut != null) {
-				return new ByteArrayInputStream(bOut.toByteArray());
-			} else if (tempFile != null) {
-				try {
-					return new FileInputStream(tempFile) {
-
-						@Override
-						public void close() throws IOException {
-							super.close();
-							tempFile.delete();
-						}
-					};
-				} catch (FileNotFoundException ex) {
-				}
-			}
-
-			return null;
-		}
-	}
-
-	/**
 	 * the parent HTTP SERVLET request
 	 */
 	private HttpServletRequest request;
 
-	public MultipartRequestImpl(final HttpServletRequest request, final boolean createTempFiles,
+	/**
+	 * @param request the parent HTTP SERVLET request
+	 * @param createTempFiles whether create temporary files
+	 * @param maxRequestSize the upload file size
+	 */
+	public MultipartRequestImpl(final HttpServletRequest request, final boolean createTempFiles, 
 			final int maxRequestSize) {
 
 		super(request);
+		
 		this.request = request;
 		this.createTempFiles = createTempFiles;
 
@@ -361,7 +137,7 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 		}
 
 		encoding = request.getCharacterEncoding();
-		parameters = new HashMap<String, Param>();
+		parameters = new HashMap<String, MultipartParameter>();
 
 		try {
 
@@ -374,7 +150,7 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 			int read = input.read(buffer);
 			int pos = 0;
 
-			Param p = null;
+			MultipartParameter p = null;
 
 			// This is a fail-safe to prevent infinite loops from occurring in some environments
 			int loopCounter = 20;
@@ -404,7 +180,7 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 									String paramName = headers.get(PARAM_NAME);
 									if (paramName != null) {
 										if (headers.containsKey(PARAM_FILENAME)) {
-											FileParam fp = new FileParam(paramName);
+											MultipartFileParameter fp = new MultipartFileParameter(paramName);
 											if (createTempFiles) {
 												fp.createTempFile();
 											}
@@ -416,7 +192,7 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 											if (parameters.containsKey(paramName)) {
 												p = parameters.get(paramName);
 											} else {
-												p = new ValueParam(paramName);
+												p = new MultipartValueParameter(paramName, this.encoding);
 											}
 										}
 
@@ -441,8 +217,8 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 									p.appendData(buffer, pos, i - pos - boundaryMarker.length - CR_LF.length - 1);
 								}
 
-								if (p instanceof ValueParam) {
-									((ValueParam) p).complete();
+								if (p instanceof MultipartValueParameter) {
+									((MultipartValueParameter) p).complete();
 								}
 
 								if (checkSequence(buffer, i + CR_LF.length, CR_LF)) {
@@ -486,20 +262,23 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 		}
 	}
 
+	/**
+	 * @param contentType the content type
+	 * @return the boundary marker from content type
+	 */
 	private byte[] getBoundaryMarker(final String contentType) {
 
-		Map<String, Object> params = parseParams(contentType, ";");
-		String boundaryStr = (String) params.get("boundary");
+		Map<String, String> params = parseParams(contentType, ";");
+		String boundaryStr = params.get("boundary");
 
-		if (boundaryStr != null) {
-
-			try {
-				return boundaryStr.getBytes("ISO-8859-1");
-			} catch (UnsupportedEncodingException e) {
-				return boundaryStr.getBytes();
-			}
-		} else {
+		if (boundaryStr == null) {
 			return null;
+		}
+
+		try {
+			return boundaryStr.getBytes("ISO-8859-1");
+		} catch (UnsupportedEncodingException e) {
+			return boundaryStr.getBytes();
 		}
 	}
 
@@ -511,7 +290,7 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 	 * @param seq
 	 * @return boolean indicating if the sequence was found at the specified position
 	 */
-	private boolean checkSequence(byte[] data, int pos, byte[] seq) {
+	private boolean checkSequence(final byte[] data, final int pos, final byte[] seq) {
 		if (pos - seq.length < -1 || pos >= data.length)
 			return false;
 
@@ -523,69 +302,82 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 		return true;
 	}
 
-	private static final Pattern PARAM_VALUE_PATTERN = Pattern.compile("^\\s*([^\\s=]+)\\s*[=:]\\s*(.+)\\s*$");
-
-	private Map parseParams(String paramStr, String separator) {
+	private Map<String, String> parseParams(String paramStr, String separator) {
+		
 		Map<String, String> paramMap = new HashMap<String, String>();
 		parseParams(paramStr, separator, paramMap);
 		return paramMap;
 	}
 
-	private void parseParams(String paramStr, String separator, Map paramMap) {
+	private void parseParams(final String paramStr, final String separator, final Map<String, String> paramMap) {
+		
 		String[] parts = paramStr.split("[" + separator + "]");
-
 		for (String part : parts) {
+			
 			java.util.regex.Matcher m = PARAM_VALUE_PATTERN.matcher(part);
 			if (m.matches()) {
 				String key = m.group(1);
 				String value = m.group(2);
 
 				// Strip double quotes
-				if (value.startsWith("\"") && value.endsWith("\""))
+				if (value.startsWith("\"") && value.endsWith("\"")) {
 					value = value.substring(1, value.length() - 1);
+				}
 
 				paramMap.put(key, value);
 			}
 		}
 	}
 
-	private Param getParam(String name) {
-		if (parameters == null)
+	/**
+	 * @param name the parameter name
+	 * @return the multipart parameter
+	 */
+	private MultipartParameter getMultipartParameter(String name) {
+		
+		if (parameters == null) {
 			parseRequest();
+		}
 		return parameters.get(name);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see javax.servlet.ServletRequestWrapper#getParameterNames()
+	 */
 	@Override
 	public Enumeration getParameterNames() {
-		if (parameters == null)
+		
+		if (parameters == null) {
 			parseRequest();
+		}
 
 		return Collections.enumeration(parameters.keySet());
 	}
 
 	public byte[] getFileBytes(String name) {
-		Param p = getParam(name);
-		return (p != null && p instanceof FileParam) ? ((FileParam) p).getData() : null;
+		MultipartParameter p = getMultipartParameter(name);
+		return (p != null && p instanceof MultipartFileParameter) ? ((MultipartFileParameter) p).getData() : null;
 	}
 
 	public InputStream getFileInputStream(String name) {
-		Param p = getParam(name);
-		return (p != null && p instanceof FileParam) ? ((FileParam) p).getInputStream() : null;
+		MultipartParameter p = getMultipartParameter(name);
+		return (p != null && p instanceof MultipartFileParameter) ? ((MultipartFileParameter) p).getInputStream() : null;
 	}
 
 	public String getFileContentType(String name) {
-		Param p = getParam(name);
-		return (p != null && p instanceof FileParam) ? ((FileParam) p).getContentType() : null;
+		MultipartParameter p = getMultipartParameter(name);
+		return (p != null && p instanceof MultipartFileParameter) ? ((MultipartFileParameter) p).getContentType() : null;
 	}
 
 	public String getFileName(String name) {
-		Param p = getParam(name);
-		return (p != null && p instanceof FileParam) ? ((FileParam) p).getFilename() : null;
+		MultipartParameter p = getMultipartParameter(name);
+		return (p != null && p instanceof MultipartFileParameter) ? ((MultipartFileParameter) p).getFilename() : null;
 	}
 
 	public int getFileSize(String name) {
-		Param p = getParam(name);
-		return (p != null && p instanceof FileParam) ? ((FileParam) p).getFileSize() : -1;
+		MultipartParameter p = getMultipartParameter(name);
+		return (p != null && p instanceof MultipartFileParameter) ? ((MultipartFileParameter) p).getFileSize() : -1;
 	}
 
 	/**
@@ -596,13 +388,13 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 	@Override
 	public String getParameter(final String name) {
 
-		Param p = getParam(name);
-		if (p != null && p instanceof ValueParam) {
-			ValueParam vp = (ValueParam) p;
+		MultipartParameter p = this.getMultipartParameter(name);
+		if (p != null && p instanceof MultipartValueParameter) {
+			MultipartValueParameter vp = (MultipartValueParameter) p;
 			if (vp.getValue() instanceof String) {
 				return (String) vp.getValue();
 			}
-		} else if (p != null && p instanceof FileParam) {
+		} else if (p != null && p instanceof MultipartFileParameter) {
 			return "---BINARY DATA---";
 		} else {
 			return super.getParameter(name);
@@ -619,10 +411,10 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 	@Override
 	public String[] getParameterValues(final String name) {
 		
-		Param p = getParam(name);
-		if (p != null && p instanceof ValueParam) {
+		MultipartParameter p = getMultipartParameter(name);
+		if (p != null && p instanceof MultipartValueParameter) {
 			
-			ValueParam vp = (ValueParam) p;
+			MultipartValueParameter vp = (MultipartValueParameter) p;
 			if (vp.getValue() instanceof List) {
 				List vals = (List) vp.getValue();
 				String[] values = new String[vals.size()];
@@ -636,6 +428,11 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see javax.servlet.ServletRequestWrapper#getParameterMap()
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Map getParameterMap() {
 
@@ -644,19 +441,19 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 		}
 
 		Map<String, Object> params = new HashMap<String, Object>(super.getParameterMap());
-
 		for (String name : parameters.keySet()) {
-			Param p = parameters.get(name);
-			if (p instanceof ValueParam) {
-				ValueParam vp = (ValueParam) p;
+			
+			MultipartParameter p = parameters.get(name);
+			if (p instanceof MultipartValueParameter) {
+				
+				MultipartValueParameter vp = (MultipartValueParameter) p;
 				if (vp.getValue() instanceof String) {
 					params.put(name, vp.getValue());
 				} else if (vp.getValue() instanceof List) {
-					params.put(name, getParameterValues(name));
+					params.put(name, this.getParameterValues(name));
 				}
 			}
 		}
-
 		return params;
 	}
 }

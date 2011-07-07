@@ -115,9 +115,11 @@ class MultipartFileParameter extends MultipartParameter {
 	public void appendData(final byte[] data, final int start, final int length) throws IOException {
 		
 		if (fileOutput != null) {
+			
 			fileOutput.write(data, start, length);
 			fileOutput.flush();
 		} else {
+			
 			if (byteOutput == null) {
 				byteOutput = new ByteArrayOutputStream();
 			}
@@ -135,16 +137,20 @@ class MultipartFileParameter extends MultipartParameter {
 		
 		// close file output stream if not closed
 		if (fileOutput != null) {
+			// CHECKSTYLE:OFF
 			try {
 				fileOutput.close();
 			} catch (IOException e) {
+				// do nothing, should not happens
 			}
+			// CHECKSTYLE:ON
 			fileOutput = null;
 		}
 
 		if (byteOutput != null) {
 			return byteOutput.toByteArray();
 		} else if (tempFile != null) {
+			
 			if (tempFile.exists()) {
 				try {
 					FileInputStream fIn = new FileInputStream(tempFile);
