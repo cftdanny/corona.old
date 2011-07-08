@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.servlet;
+package com.corona.servlet.multipart;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import java.util.List;
  * @author $Author$
  * @version $Id$
  */
-class MultipartValueParameter extends MultipartParameter {
+class ValueParameter extends Parameter {
 
 	/**
 	 * how to encode data
@@ -36,14 +36,14 @@ class MultipartValueParameter extends MultipartParameter {
 	 * @param name the parameter name
 	 * @param encoding how to encode data
 	 */
-	public MultipartValueParameter(final String name, final String encoding) {
+	ValueParameter(final String name, final String encoding) {
 		super(name);
 		this.encoding = encoding;
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.MultipartParameter#appendData(byte[], int, int)
+	 * @see com.corona.servlet.Parameter#appendData(byte[], int, int)
 	 */
 	@Override
 	public void appendData(final byte[] data, final int start, final int length) throws IOException {

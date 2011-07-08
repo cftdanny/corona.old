@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.servlet;
+package com.corona.servlet.multipart;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -19,8 +19,8 @@ import java.rmi.server.UID;
  * @author $Author$
  * @version $Id$
  */
-class MultipartFileParameter extends MultipartParameter {
-
+class FileParameter extends Parameter {
+	
 	/**
 	 * the file name
 	 */
@@ -54,7 +54,7 @@ class MultipartFileParameter extends MultipartParameter {
 	/**
 	 * @param name the parameter name
 	 */
-	public MultipartFileParameter(final String name) {
+	FileParameter(final String name) {
 		super(name);
 	}
 
@@ -109,17 +109,19 @@ class MultipartFileParameter extends MultipartParameter {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.MultipartParameter#appendData(byte[], int, int)
+	 * @see com.corona.servlet.multiparParameterer, int, int)
 	 */
 	@Override
 	public void appendData(final byte[] data, final int start, final int length) throws IOException {
 		
 		if (fileOutput != null) {
 			
+			// if create temporary file, write data to temporary file
 			fileOutput.write(data, start, length);
 			fileOutput.flush();
 		} else {
 			
+			// if not create temporary file, just write to bytes buffer
 			if (byteOutput == null) {
 				byteOutput = new ByteArrayOutputStream();
 			}
@@ -131,46 +133,47 @@ class MultipartFileParameter extends MultipartParameter {
 	}
 
 	/**
-	 * @return the data
+	 * @return the file content as bytes
 	 */
 	public byte[] getData() {
 		
-		// close file output stream if not closed
+		// close file output stream if not closed before in order to make sure it is closed
 		if (fileOutput != null) {
-			// CHECKSTYLE:OFF
 			try {
 				fileOutput.close();
 			} catch (IOException e) {
-				// do nothing, should not happens
+				throw new FileStreamException("Fail to close temporary file output stream", e);
 			}
-			// CHECKSTYLE:ON
 			fileOutput = null;
 		}
 
+		// if already get data and read file to byte output, just return
 		if (byteOutput != null) {
 			return byteOutput.toByteArray();
-		} else if (tempFile != null) {
+		} 
+		
+		// if parse multipart to file and file exists, read to byte and return
+		if ((tempFile != null) && tempFile.exists()) {
 			
-			if (tempFile.exists()) {
-				try {
-					FileInputStream fIn = new FileInputStream(tempFile);
-					ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-					byte[] buf = new byte[512];
-					int read = fIn.read(buf);
-					while (read != -1) {
-						bOut.write(buf, 0, read);
-						read = fIn.read(buf);
-					}
-					bOut.flush();
-
-					fIn.close();
-					tempFile.delete();
-					return bOut.toByteArray();
-				} catch (IOException ex) { /* too bad? */
+			try {
+				FileInputStream input = new FileInputStream(tempFile);
+				ByteArrayOutputStream output = new ByteArrayOutputStream();
+				
+				byte[] buffer = new byte[512];
+				for (int read = input.read(buffer); read != -1; read = input.read(buffer)) {
+					output.write(buffer, 0, read);
 				}
-			}
-		}
+				output.flush();
 
+				input.close();
+				tempFile.delete();
+				return output.toByteArray();
+			} catch (IOException e) { 
+				throw new FileStreamException("Fail to close temporary file input stream", e);
+			}
+		} 
+
+		// if no temporary file, no bytes buffer, just return null 
 		return null;
 	}
 
@@ -179,30 +182,37 @@ class MultipartFileParameter extends MultipartParameter {
 	 */
 	public InputStream getInputStream() {
 		
+		// close file output stream if not closed before in order to make sure it is closed
 		if (fileOutput != null) {
 			try {
 				fileOutput.close();
-			} catch (IOException ex) {
+			} catch (IOException e) {
+				throw new FileStreamException("Fail to close temporary file output stream", e);
 			}
 			fileOutput = null;
 		}
 
+		// if already get data and read file to byte output, just return
 		if (byteOutput != null) {
 			return new ByteArrayInputStream(byteOutput.toByteArray());
-		} else if (tempFile != null) {
+		} 
+
+		// if parse multipart to file and file exists, read to byte and return
+		if ((tempFile != null) && tempFile.exists()) {
+			
 			try {
 				return new FileInputStream(tempFile) {
-
-					@Override
 					public void close() throws IOException {
 						super.close();
 						tempFile.delete();
 					}
 				};
-			} catch (FileNotFoundException ex) {
+			} catch (FileNotFoundException e) {
+				throw new FileStreamException("Fail to open temporary file as input stream", e);
 			}
 		}
 
+		// if no temporary file, no bytes buffer, just return null 
 		return null;
 	}
 }

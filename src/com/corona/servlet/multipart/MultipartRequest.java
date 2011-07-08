@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.servlet;
+package com.corona.servlet.multipart;
 
 import java.io.InputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * <p>The request  </p>
+ * <p>The HTTP SERVLET request is used to support multipart request </p>
  *
  * @author $Author$
  * @version $Id$

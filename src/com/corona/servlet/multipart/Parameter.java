@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.servlet;
+package com.corona.servlet.multipart;
 
 import java.io.IOException;
 
@@ -11,7 +11,7 @@ import java.io.IOException;
  * @author $Author$
  * @version $Id$
  */
-abstract class MultipartParameter {
+abstract class Parameter {
 
 	/**
 	 * the parameter name
@@ -21,7 +21,7 @@ abstract class MultipartParameter {
 	/**
 	 * @param name the parameter name
 	 */
-	public MultipartParameter(final String name) {
+	public Parameter(final String name) {
 		this.name = name;
 	}
 
@@ -31,7 +31,7 @@ abstract class MultipartParameter {
 	public String getName() {
 		return name;
 	}
-
+	
 	/**
 	 * @param data the data
 	 * @param start the start position in data for this parameter

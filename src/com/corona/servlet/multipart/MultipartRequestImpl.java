@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.servlet;
+package com.corona.servlet.multipart;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,27 +85,6 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 	private Map<String, Parameter> parameters = null;
 
 	/**
-	 * <p>The state for reading request stream </p>
-	 */
-	private enum ReadState {
-
-		/**
-		 * read to boundary
-		 */
-		BOUNDARY,
-
-		/**
-		 * read to header
-		 */
-		HEADERS,
-
-		/**
-		 * read to data
-		 */
-		DATA
-	}
-
-	/**
 	 * the parent HTTP SERVLET request
 	 */
 	private HttpServletRequest request;
@@ -170,7 +149,7 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 							if (checkSequence(buffer, i, CR_LF)) {
 								String param = (encoding == null) ? new String(buffer, pos, i - pos - 1) : new String(
 										buffer, pos, i - pos - 1, encoding);
-								parseParams(param, ";", headers);
+								parseParameterMap(param, ";", headers);
 
 								if (checkSequence(buffer, i + CR_LF.length, CR_LF)) {
 									readState = ReadState.DATA;
@@ -268,56 +247,71 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 	 */
 	private byte[] getBoundaryMarker(final String contentType) {
 
-		Map<String, String> params = parseParams(contentType, ";");
-		String boundaryStr = params.get("boundary");
+		Map<String, String> parameterMap = parseParameterMap(contentType, ";");
+		String boundary = parameterMap.get("boundary");
 
-		if (boundaryStr == null) {
+		if (boundary == null) {
 			return null;
 		}
 
 		try {
-			return boundaryStr.getBytes("ISO-8859-1");
+			return boundary.getBytes("ISO-8859-1");
 		} catch (UnsupportedEncodingException e) {
-			return boundaryStr.getBytes();
+			return boundary.getBytes();
 		}
 	}
 
 	/**
 	 * Checks if a specified sequence of bytes ends at a specific position within a byte array.
 	 * 
-	 * @param data
-	 * @param pos
-	 * @param seq
+	 * @param data the data
+	 * @param position the position
+	 * @param sequence the sequence
 	 * @return boolean indicating if the sequence was found at the specified position
 	 */
-	private boolean checkSequence(final byte[] data, final int pos, final byte[] seq) {
-		if (pos - seq.length < -1 || pos >= data.length)
+	private boolean checkSequence(final byte[] data, final int position, final byte[] sequence) {
+		
+		if ((position - sequence.length < -1) || (position >= data.length)) {
 			return false;
+		}
 
-		for (int i = 0; i < seq.length; i++) {
-			if (data[(pos - seq.length) + i + 1] != seq[i])
+		for (int i = 0; i < sequence.length; i++) {
+			
+			if (data[(position - sequence.length) + i + 1] != sequence[i]) {
 				return false;
+			}
 		}
 
 		return true;
 	}
 
-	private Map<String, String> parseParams(String paramStr, String separator) {
+	/**
+	 * @param paramStr the parameters as string
+	 * @param separator the separator
+	 * @return the parameter map
+	 */
+	private Map<String, String> parseParameterMap(final String paramStr, final String separator) {
 		
 		Map<String, String> paramMap = new HashMap<String, String>();
-		parseParams(paramStr, separator, paramMap);
+		parseParameterMap(paramStr, separator, paramMap);
 		return paramMap;
 	}
 
-	private void parseParams(final String paramStr, final String separator, final Map<String, String> paramMap) {
+	/**
+	 * @param paramStr the parameters value as string
+	 * @param separator the separator
+	 * @param paramMap the parameter map
+	 */
+	private void parseParameterMap(final String paramStr, final String separator, final Map<String, String> paramMap) {
 		
 		String[] parts = paramStr.split("[" + separator + "]");
 		for (String part : parts) {
 			
-			java.util.regex.Matcher m = PARAM_VALUE_PATTERN.matcher(part);
-			if (m.matches()) {
-				String key = m.group(1);
-				String value = m.group(2);
+			java.util.regex.Matcher matcher = PARAM_VALUE_PATTERN.matcher(part);
+			if (matcher.matches()) {
+				
+				String key = matcher.group(1);
+				String value = matcher.group(2);
 
 				// Strip double quotes
 				if (value.startsWith("\"") && value.endsWith("\"")) {
@@ -333,7 +327,7 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 	 * @param name the parameter name
 	 * @return the multipart parameter
 	 */
-	private Parameter getMultipartParameter(String name) {
+	private Parameter getMultipartParameter(final String name) {
 		
 		if (parameters == null) {
 			parseRequest();
@@ -345,6 +339,7 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 	 * {@inheritDoc}
 	 * @see javax.servlet.ServletRequestWrapper#getParameterNames()
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Enumeration getParameterNames() {
 		
@@ -355,14 +350,32 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 		return Collections.enumeration(parameters.keySet());
 	}
 
-	public byte[] getFileBytes(String name) {
-		Parameter p = getMultipartParameter(name);
-		return (p != null && p instanceof FileParameter) ? ((FileParameter) p).getData() : null;
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.servlet.multipart.MultipartRequest#getFileBytes(java.lang.String)
+	 */
+	public byte[] getFileBytes(final String name) {
+
+		Parameter parameter = getMultipartParameter(name);
+		if ((parameter != null) && (parameter instanceof FileParameter)) {
+			return ((FileParameter) parameter).getData();
+		} else {
+			return null;
+		}
 	}
 
-	public InputStream getFileInputStream(String name) {
-		Parameter p = getMultipartParameter(name);
-		return (p != null && p instanceof FileParameter) ? ((FileParameter) p).getInputStream() : null;
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.servlet.multipart.MultipartRequest#getFileInputStream(java.lang.String)
+	 */
+	public InputStream getFileInputStream(final String name) {
+
+		Parameter parameter = getMultipartParameter(name);
+		if ((parameter != null) && (parameter instanceof FileParameter)) {
+			return ((FileParameter) parameter).getInputStream();
+		} else {
+			return null;
+		}
 	}
 
 	public String getFileContentType(String name) {
@@ -385,45 +398,49 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 	 * 
 	 * @see javax.servlet.ServletRequestWrapper#getParameter(java.lang.String)
 	 */
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public String getParameter(final String name) {
 
-		Parameter p = this.getMultipartParameter(name);
-		if (p != null && p instanceof ValueParameter) {
-			ValueParameter vp = (ValueParameter) p;
-			if (vp.getValue() instanceof String) {
-				return (String) vp.getValue();
+		Parameter parameter = this.getMultipartParameter(name);
+		if ((parameter != null) && (parameter instanceof ValueParameter)) {
+
+			// get value for value parameter that parsed from multipart request
+			ValueParameter valueParameter = (ValueParameter) parameter;
+			if (valueParameter.getValue() instanceof List) {
+				return ((List<String>) valueParameter.getValue()).get(0);
+			} else {
+				return (String) valueParameter.getValue();
 			}
-		} else if (p != null && p instanceof FileParameter) {
-			return "---BINARY DATA---";
 		} else {
+			
+			// get value for parent request, file parameter should be null
 			return super.getParameter(name);
 		}
-
-		return null;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 * @see javax.servlet.ServletRequestWrapper#getParameterValues(java.lang.String)
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public String[] getParameterValues(final String name) {
 		
-		Parameter p = getMultipartParameter(name);
-		if (p != null && p instanceof ValueParameter) {
+		Parameter parameter = getMultipartParameter(name);
+		if ((parameter != null) && (parameter instanceof ValueParameter)) {
 			
-			ValueParameter vp = (ValueParameter) p;
-			if (vp.getValue() instanceof List) {
-				List vals = (List) vp.getValue();
-				String[] values = new String[vals.size()];
-				vals.toArray(values);
-				return values;
+			// get values for value parameter that parsed from multipart request
+			ValueParameter valueParameter = (ValueParameter) parameter;
+			if (valueParameter.getValue() instanceof List) {
+				List<String> values = (List<String>) valueParameter.getValue();
+				return values.toArray(new String[0]);
 			} else {
-				return new String[] {(String) vp.getValue()};
+				return new String[] {(String) valueParameter.getValue()};
 			}
 		} else {
+			
+			// get value for parent request, file parameter should be null
 			return super.getParameterValues(name);
 		}
 	}
@@ -436,11 +453,13 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 	@Override
 	public Map getParameterMap() {
 
+		// if parameters for multipart is not parsed yet, will parse it first
 		if (parameters == null) {
 			parseRequest();
 		}
 
-		Map<String, Object> params = new HashMap<String, Object>(super.getParameterMap());
+		// merge parent request parameters with parsed multipart parameters and return
+		Map<String, Object> parameterMap = new HashMap<String, Object>(super.getParameterMap());
 		for (String name : parameters.keySet()) {
 			
 			Parameter p = parameters.get(name);
@@ -448,12 +467,12 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 				
 				ValueParameter vp = (ValueParameter) p;
 				if (vp.getValue() instanceof String) {
-					params.put(name, vp.getValue());
+					parameterMap.put(name, vp.getValue());
 				} else if (vp.getValue() instanceof List) {
-					params.put(name, this.getParameterValues(name));
+					parameterMap.put(name, this.getParameterValues(name));
 				}
 			}
 		}
-		return params;
+		return parameterMap;
 	}
 }
