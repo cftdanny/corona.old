@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.corona.context.ContextManagerFactory;
+import com.corona.servlet.multipart.MultipartRequestImpl;
 import com.corona.util.ServletUtil;
 
 /**
@@ -32,6 +33,21 @@ public class ApplicationServlet implements Servlet, Serializable {
 	private static final long serialVersionUID = -1259616986665281178L;
 
 	/**
+	 * whether create temporary file to receive multipart request
+	 */
+	private static final String UPLOAD_ENABLE_UPLOAD_FILES = "com.corona.fileUpload.enableUploadFiles";
+
+	/**
+	 * whether create temporary file to receive multipart request
+	 */
+	private static final String UPLOAD_CREATE_TEMP_FILES = "com.corona.fileUpload.createTempFiles";
+	
+	/**
+	 * the max request size for upload file multipart request
+	 */
+	private static final String UPLOAD_MAX_REQUEST_SIZE = "com.corona.fileUpload.maxRequestSize";
+	
+	/**
 	 * The multipart flag
 	 */
 	private static final String MULTIPART = "multipart/";
@@ -40,6 +56,21 @@ public class ApplicationServlet implements Servlet, Serializable {
 	 * the SERVLET configuration
 	 */
 	private transient ServletConfig servletConfig;
+	
+	/**
+	 * whether enable upload files
+	 */
+	private boolean enableUploadFiles;
+	
+	/**
+	 * whether create temporary file to receive multipart request
+	 */
+	private boolean createTempFiles;
+	
+	/**
+	 * the max request size for upload file multipart request
+	 */
+	private int maxRequestSize;
 	
 	/**
 	 * The handlers to create HTTP response
@@ -87,12 +118,32 @@ public class ApplicationServlet implements Servlet, Serializable {
 			throw new ServletException("Context manager factory is not loaded, configure and load it first");
 		}
 		
-		// find handlers from SERVLET context
-		// initialize handler with context manager factory
+		// find handlers from SERVLET context, initialize handler with context manager factory
 		this.handlers = ServletUtil.getHandlers(this.getServletContext()); 
 		if (this.handlers == null) {
 			this.getServletContext().log("Application handlers is not loaded, configure and load it first");
 			throw new ServletException("Application handlers is not loaded, configure and load it first");
+		}
+
+		// read whether enable upload files, default is true
+		try {
+			this.enableUploadFiles = Boolean.parseBoolean(config.getInitParameter(UPLOAD_ENABLE_UPLOAD_FILES));
+		} catch (Exception e) {
+			this.enableUploadFiles = true;
+		}
+
+		// read whether create temporary files in order to receive uploading file, default is true
+		try {
+			this.createTempFiles = Boolean.parseBoolean(config.getInitParameter(UPLOAD_CREATE_TEMP_FILES));
+		} catch (Exception e) {
+			this.createTempFiles = true;
+		}
+		
+		// the max request size for multipart request
+		try {
+			this.maxRequestSize = Integer.parseInt(config.getInitParameter(UPLOAD_MAX_REQUEST_SIZE));
+		} catch (Exception e) {
+			this.maxRequestSize = 2 * 1024 * 1024;
 		}
 	}
 
@@ -100,7 +151,7 @@ public class ApplicationServlet implements Servlet, Serializable {
 	 * @param request the request
 	 * @return whether request is multipart request
 	 */
-	private boolean isMultipartRequest(HttpServletRequest request) {
+	private boolean isMultipartRequest(final HttpServletRequest request) {
 		
 		if (!"post".equals(request.getMethod().toLowerCase())) {
 			return false;
@@ -120,9 +171,16 @@ public class ApplicationServlet implements Servlet, Serializable {
 	@Override
 	public void service(
 			final ServletRequest request, final ServletResponse response) throws ServletException, IOException {
+
+		// check whether request is multipart request, if yes, wrap it to multipart request
+		HttpServletRequest httpRequest = (HttpServletRequest) request;
+		if (this.enableUploadFiles && this.isMultipartRequest(httpRequest)) {
+			httpRequest = new MultipartRequestImpl(httpRequest, this.createTempFiles, this.maxRequestSize);
+			httpRequest.getParameterNames();
+		}
 		
 		try {
-			this.handlers.handle((HttpServletRequest) request, (HttpServletResponse) response);
+			this.handlers.handle(httpRequest, (HttpServletResponse) response);
 		} catch (Exception e) {
 
 			String path = ((HttpServletRequest) request).getPathInfo();

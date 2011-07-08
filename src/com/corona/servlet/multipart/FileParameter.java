@@ -61,7 +61,7 @@ class FileParameter extends Parameter {
 	/**
 	 * @return the file name
 	 */
-	public String getFilename() {
+	public String getFileName() {
 		return filename;
 	}
 

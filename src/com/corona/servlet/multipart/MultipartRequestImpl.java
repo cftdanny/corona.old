@@ -11,6 +11,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
@@ -108,53 +109,62 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 		}
 	}
 
+	/**
+	 * parse multipart request
+	 */
 	private void parseRequest() {
 
-		byte[] boundaryMarker = getBoundaryMarker(request.getContentType());
+		// find boundary by request content type
+		byte[] boundaryMarker = getBoundaryMarker(this.request.getContentType());
 		if (boundaryMarker == null) {
 			throw new FileUploadException("The request was rejected because no multipart boundary was found");
 		}
 
-		encoding = request.getCharacterEncoding();
-		parameters = new HashMap<String, Parameter>();
+		// get character encoding from request 
+		this.encoding = this.request.getCharacterEncoding();
+		this.parameters = new HashMap<String, Parameter>();
 
 		try {
 
 			byte[] buffer = new byte[BUFFER_SIZE];
 			Map<String, String> headers = new HashMap<String, String>();
 
-			ReadState readState = ReadState.BOUNDARY;
+			ReadState state = ReadState.BOUNDARY;
 
 			InputStream input = request.getInputStream();
 			int read = input.read(buffer);
-			int pos = 0;
+			int position = 0;
 
-			Parameter p = null;
+			Parameter parameter = null;
 
 			// This is a fail-safe to prevent infinite loops from occurring in some environments
 			int loopCounter = 20;
 
 			while (read > 0 && loopCounter > 0) {
 				for (int i = 0; i < read; i++) {
-					switch (readState) {
+					switch (state) {
 						case BOUNDARY: 
 							if (checkSequence(buffer, i, boundaryMarker) && checkSequence(buffer, i + 2, CR_LF)) {
-								readState = ReadState.HEADERS;
+								state = ReadState.HEADERS;
 								i += 2;
-								pos = i + 1;
+								position = i + 1;
 							}
 							break;
 						
 						case HEADERS: 
 							if (checkSequence(buffer, i, CR_LF)) {
-								String param = (encoding == null) ? new String(buffer, pos, i - pos - 1) : new String(
-										buffer, pos, i - pos - 1, encoding);
+								String param;
+								if (encoding == null) {
+									param = new String(buffer, position, i - position - 1);
+								} else {
+									param = new String(buffer, position, i - position - 1, encoding);
+								}
 								parseParameterMap(param, ";", headers);
 
 								if (checkSequence(buffer, i + CR_LF.length, CR_LF)) {
-									readState = ReadState.DATA;
+									state = ReadState.DATA;
 									i += CR_LF.length;
-									pos = i + 1;
+									position = i + 1;
 
 									String paramName = headers.get(PARAM_NAME);
 									if (paramName != null) {
@@ -166,23 +176,23 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 											
 											fp.setContentType(headers.get(PARAM_CONTENT_TYPE));
 											fp.setFilename(headers.get(PARAM_FILENAME));
-											p = fp;
+											parameter = fp;
 										} else {
 											if (parameters.containsKey(paramName)) {
-												p = parameters.get(paramName);
+												parameter = parameters.get(paramName);
 											} else {
-												p = new ValueParameter(paramName, this.encoding);
+												parameter = new ValueParameter(paramName, this.encoding);
 											}
 										}
 
 										if (!parameters.containsKey(paramName)) {
-											parameters.put(paramName, p);
+											parameters.put(paramName, parameter);
 										}
 									}
 
 									headers.clear();
 								} else {
-									pos = i + 1;
+									position = i + 1;
 								}
 							}
 							break;
@@ -192,36 +202,38 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 							if (checkSequence(buffer, i - boundaryMarker.length - CR_LF.length, CR_LF)
 									&& checkSequence(buffer, i, boundaryMarker)) {
 								// Write any data before the boundary (that hasn't already been written) to the param
-								if (pos < i - boundaryMarker.length - CR_LF.length - 1) {
-									p.appendData(buffer, pos, i - pos - boundaryMarker.length - CR_LF.length - 1);
+								if (position < i - boundaryMarker.length - CR_LF.length - 1) {
+									parameter.appendData(
+											buffer, position, i - position - boundaryMarker.length - CR_LF.length - 1
+									);
 								}
 
-								if (p instanceof ValueParameter) {
-									((ValueParameter) p).complete();
+								if (parameter instanceof ValueParameter) {
+									((ValueParameter) parameter).complete();
 								}
 
 								if (checkSequence(buffer, i + CR_LF.length, CR_LF)) {
 									i += CR_LF.length;
-									pos = i + 1;
+									position = i + 1;
 								} else {
-									pos = i;
+									position = i;
 								}
 
-								readState = ReadState.HEADERS;
-							} else if (i > (pos + boundaryMarker.length + CHUNK_SIZE + CR_LF.length)) {
+								state = ReadState.HEADERS;
+							} else if (i > (position + boundaryMarker.length + CHUNK_SIZE + CR_LF.length)) {
 								// Otherwise write whatever data we have to the param
-								p.appendData(buffer, pos, CHUNK_SIZE);
-								pos += CHUNK_SIZE;
+								parameter.appendData(buffer, position, CHUNK_SIZE);
+								position += CHUNK_SIZE;
 							}
 							break;
 						
 					}
 				}
 
-				if (pos < read) {
+				if (position < read) {
 					// move the bytes that weren't read to the start of the buffer
-					int bytesNotRead = read - pos;
-					System.arraycopy(buffer, pos, buffer, 0, bytesNotRead);
+					int bytesNotRead = read - position;
+					System.arraycopy(buffer, position, buffer, 0, bytesNotRead);
 					read = input.read(buffer, bytesNotRead, buffer.length - bytesNotRead);
 
 					// Decrement loopCounter if no data was readable
@@ -234,7 +246,7 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 					read = input.read(buffer);
 				}
 
-				pos = 0;
+				position = 0;
 			}
 		} catch (IOException ex) {
 			throw new FileUploadException("IO Error parsing multipart request", ex);
@@ -250,20 +262,18 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 		Map<String, String> parameterMap = parseParameterMap(contentType, ";");
 		String boundary = parameterMap.get("boundary");
 
-		if (boundary == null) {
+		if (boundary != null) {
+			try {
+				return boundary.getBytes("ISO-8859-1");
+			} catch (UnsupportedEncodingException e) {
+				return boundary.getBytes();
+			}
+		} else {
 			return null;
-		}
-
-		try {
-			return boundary.getBytes("ISO-8859-1");
-		} catch (UnsupportedEncodingException e) {
-			return boundary.getBytes();
 		}
 	}
 
 	/**
-	 * Checks if a specified sequence of bytes ends at a specific position within a byte array.
-	 * 
 	 * @param data the data
 	 * @param position the position
 	 * @param sequence the sequence
@@ -286,34 +296,33 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 	}
 
 	/**
-	 * @param paramStr the parameters as string
+	 * @param content the parameter content as string
 	 * @param separator the separator
 	 * @return the parameter map
 	 */
-	private Map<String, String> parseParameterMap(final String paramStr, final String separator) {
+	private Map<String, String> parseParameterMap(final String content, final String separator) {
 		
 		Map<String, String> paramMap = new HashMap<String, String>();
-		parseParameterMap(paramStr, separator, paramMap);
+		parseParameterMap(content, separator, paramMap);
 		return paramMap;
 	}
 
 	/**
-	 * @param paramStr the parameters value as string
+	 * @param content the parameter content as string
 	 * @param separator the separator
 	 * @param paramMap the parameter map
 	 */
-	private void parseParameterMap(final String paramStr, final String separator, final Map<String, String> paramMap) {
+	private void parseParameterMap(final String content, final String separator, final Map<String, String> paramMap) {
 		
-		String[] parts = paramStr.split("[" + separator + "]");
+		String[] parts = content.split("[" + separator + "]");
 		for (String part : parts) {
 			
-			java.util.regex.Matcher matcher = PARAM_VALUE_PATTERN.matcher(part);
+			Matcher matcher = PARAM_VALUE_PATTERN.matcher(part);
 			if (matcher.matches()) {
 				
 				String key = matcher.group(1);
 				String value = matcher.group(2);
 
-				// Strip double quotes
 				if (value.startsWith("\"") && value.endsWith("\"")) {
 					value = value.substring(1, value.length() - 1);
 				}
@@ -378,24 +387,50 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 		}
 	}
 
-	public String getFileContentType(String name) {
-		Parameter p = getMultipartParameter(name);
-		return (p != null && p instanceof FileParameter) ? ((FileParameter) p).getContentType() : null;
-	}
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.servlet.multipart.MultipartRequest#getFileContentType(java.lang.String)
+	 */
+	public String getFileContentType(final String name) {
 
-	public String getFileName(String name) {
-		Parameter p = getMultipartParameter(name);
-		return (p != null && p instanceof FileParameter) ? ((FileParameter) p).getFilename() : null;
-	}
-
-	public int getFileSize(String name) {
-		Parameter p = getMultipartParameter(name);
-		return (p != null && p instanceof FileParameter) ? ((FileParameter) p).getFileSize() : -1;
+		Parameter parameter = getMultipartParameter(name);
+		if ((parameter != null) && (parameter instanceof FileParameter)) {
+			return ((FileParameter) parameter).getContentType();
+		} else {
+			return null;
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 * @see com.corona.servlet.multipart.MultipartRequest#getFileContentType(java.lang.String)
+	 */
+	public String getFileName(final String name) {
+
+		Parameter parameter = getMultipartParameter(name);
+		if ((parameter != null) && (parameter instanceof FileParameter)) {
+			return ((FileParameter) parameter).getFileName();
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.servlet.multipart.MultipartRequest#getFileSize(java.lang.String)
+	 */
+	public int getFileSize(final String name) {
+
+		Parameter parameter = getMultipartParameter(name);
+		if ((parameter != null) && (parameter instanceof FileParameter)) {
+			return ((FileParameter) parameter).getFileSize();
+		} else {
+			return -1;
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
 	 * @see javax.servlet.ServletRequestWrapper#getParameter(java.lang.String)
 	 */
 	@SuppressWarnings({ "unchecked" })
