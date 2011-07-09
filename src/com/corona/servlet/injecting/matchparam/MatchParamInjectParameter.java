@@ -4,6 +4,7 @@
 package com.corona.servlet.injecting.matchparam;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
 
 import com.corona.context.AbstractInjectParameter;
 import com.corona.context.ConfigurationException;
@@ -35,12 +36,15 @@ class MatchParamInjectParameter extends AbstractInjectParameter {
 	private String name = null;
 
 	/**
+	 * @param accessible the constructor or method that parameter exists in
 	 * @param parameterType the class type of annotated parameter
 	 * @param annotations all annotations for parameter
 	 */
-	MatchParamInjectParameter(final Class<?> parameterType, final Annotation[] annotations) {
+	MatchParamInjectParameter(
+			final AccessibleObject accessible, final Class<?> parameterType, final Annotation[] annotations
+	) {
 		
-		super(parameterType, annotations);
+		super(accessible, parameterType, annotations);
 		for (Annotation annotation : annotations) {
 			if (annotation.annotationType().equals(MatchParam.class)) {
 				this.name = ((MatchParam) annotation).value();
@@ -67,10 +71,12 @@ class MatchParamInjectParameter extends AbstractInjectParameter {
 		Object value = result.get(this.name);
 		if ((value == null) && (!this.isOptional())) {
 			this.logger.error(
-					"Matched value for [{0}] is mandatory, but resolved value is NULL", this.getType()
+					"Matched value for [{0}] in constructor or method [{1}] is mandatory, but resolved value is NULL", 
+					this.getType(), this.getAccessible()
 			);
 			throw new ValueException(
-					"Matched value for [{0}] is mandatory, but resolved value is NULL", this.getType()
+					"Matched value for [{0}] in constructor or method [{1}] is mandatory, but resolved value is NULL", 
+					this.getType(), this.getAccessible()
 			);
 		}
 		

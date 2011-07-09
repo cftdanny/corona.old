@@ -5,6 +5,7 @@ package com.corona.servlet.injecting.upload;
 
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,12 +37,15 @@ class UploadInjectParameter extends AbstractInjectParameter {
 	private String name = null;
 
 	/**
+	 * @param accessible the constructor or method that parameter exists in
 	 * @param parameterType the class type of annotated parameter
 	 * @param annotations all annotations for parameter
 	 */
-	UploadInjectParameter(final Class<?> parameterType, final Annotation[] annotations) {
+	UploadInjectParameter(
+			final AccessibleObject accessible, final Class<?> parameterType, final Annotation[] annotations
+	) {
 		
-		super(parameterType, annotations);
+		super(accessible, parameterType, annotations);
 		for (Annotation annotation : annotations) {
 			if (annotation.annotationType().equals(Upload.class)) {
 				this.name = ((Upload) annotation).value();
@@ -72,9 +76,13 @@ class UploadInjectParameter extends AbstractInjectParameter {
 			} else if (this.getType().isArray() && this.getType().equals(byte.class)) {
 				return multipartRequest.getFileBytes(this.name);
 			} else {
-				this.logger.error("Invalid parameter type [{0}], only support InputStream or byte[]", this.getType());
+				this.logger.error(
+						"Invalid parameter type [{0}] in constructor or method [{1}], "
+						+ "only support InputStream or byte[]", this.getType(), this.getAccessible()
+				);
 				throw new ValueException(
-						"Invalid parameter type [{0}], only support InputStream or byte[]", this.getType()
+						"Invalid parameter type [{0}] in constructor or method [{1}], "
+						+ "only support InputStream or byte[]", this.getType(), this.getAccessible()
 				);
 			}
 		} else {

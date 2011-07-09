@@ -4,6 +4,7 @@
 package com.corona.context;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
 
 import com.corona.context.annotation.Optional;
 
@@ -17,6 +18,11 @@ import com.corona.context.annotation.Optional;
 public abstract class AbstractInjectParameter implements InjectParameter {
 
 	/**
+	 * the constructor or method that parameter exists in
+	 */
+	private AccessibleObject accessible;
+
+	/**
 	 * the annotated parameter
 	 */
 	private Class<?> type;
@@ -27,10 +33,13 @@ public abstract class AbstractInjectParameter implements InjectParameter {
 	private boolean optional = false;
 
 	/**
+	 * @param accessible the constructor or method that parameter exists in
 	 * @param parameterType the class type of annotated parameter
 	 * @param annotations all annotations for parameter
 	 */
-	protected AbstractInjectParameter(final Class<?> parameterType, final Annotation[] annotations) {
+	protected AbstractInjectParameter(
+			final AccessibleObject accessible, final Class<?> parameterType, final Annotation[] annotations
+	) {
 		
 		this.type = parameterType;
 		for (Annotation annotation : annotations) {
@@ -39,8 +48,16 @@ public abstract class AbstractInjectParameter implements InjectParameter {
 				break;
 			}
 		}
+		this.accessible = accessible;
 	}
 	
+	/**
+	 * @return the constructor or method that parameter exists in
+	 */
+	public AccessibleObject getAccessible() {
+		return accessible;
+	}
+
 	/**
 	 * @return whether inject value can be null
 	 */

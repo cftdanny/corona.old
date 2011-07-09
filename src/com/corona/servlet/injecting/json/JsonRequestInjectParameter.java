@@ -4,6 +4,7 @@
 package com.corona.servlet.injecting.json;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,11 +37,14 @@ public class JsonRequestInjectParameter extends AbstractInjectParameter {
 	private Unmarshaller unmarshaller;
 	
 	/**
-	 * @param parameterType the parameter type
-	 * @param annotations the annotation for this parameter
+	 * @param accessible the constructor or method that parameter exists in
+	 * @param parameterType the class type of annotated parameter
+	 * @param annotations all annotations for parameter
 	 */
-	protected JsonRequestInjectParameter(final Class<?> parameterType, final Annotation[] annotations) {
-		super(parameterType, annotations);
+	JsonRequestInjectParameter(
+			final AccessibleObject accessible, final Class<?> parameterType, final Annotation[] annotations
+	) {
+		super(accessible, parameterType, annotations);
 		this.unmarshaller = UnmarshallerFactory.get(JacksonUnmarshallerFactory.NAME).create(parameterType);
 	}
 
@@ -56,9 +60,13 @@ public class JsonRequestInjectParameter extends AbstractInjectParameter {
 			return this.unmarshaller.unmarshal(request.getInputStream());
 		} catch (Exception e) {
 			
-			this.logger.error("Fail to unmarshal request URL [{0}] by JSON unmarshaller", e, request.getPathInfo());
+			this.logger.error(
+					"Fail to unmarshal request URL [{0}] in constructor or method [{1}] by JSON unmarshaller", 
+					e, request.getPathInfo(), this.getAccessible()
+			);
 			throw new ValueException(
-					"Fail to unmarshal request URL [{0}] by JSON unmarshaller", e, request.getPathInfo()
+					"Fail to unmarshal request URL [{0}] in constructor or method [{1}] by JSON unmarshaller", 
+					e, request.getPathInfo(), this.getAccessible()
 			);
 		}
 	}

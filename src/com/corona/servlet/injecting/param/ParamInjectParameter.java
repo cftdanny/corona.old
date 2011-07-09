@@ -4,6 +4,7 @@
 package com.corona.servlet.injecting.param;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
 import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,12 +43,15 @@ class ParamInjectParameter extends AbstractInjectParameter {
 	private Param param;
 
 	/**
+	 * @param accessible the constructor or method that parameter exists in
 	 * @param parameterType the class type of annotated parameter
 	 * @param annotations all annotations for parameter
 	 */
-	ParamInjectParameter(final Class<?> parameterType, final Annotation[] annotations) {
+	ParamInjectParameter(
+			final AccessibleObject accessible, final Class<?> parameterType, final Annotation[] annotations
+	) {
 		
-		super(parameterType, annotations);
+		super(accessible, parameterType, annotations);
 		for (Annotation annotation : annotations) {
 			if (annotation.annotationType().equals(Param.class)) {
 				this.param = (Param) annotation;
@@ -76,10 +80,12 @@ class ParamInjectParameter extends AbstractInjectParameter {
 			String[] result = request.getParameterValues(this.name);
 			if ((result == null) && (!this.isOptional())) {
 				this.logger.error(
-						"Value of parameter [{0}] resolved is mandatory, but resolved value is NULL", this.getType()
+						"Value of parameter [{0}] in constructor or method [{1}] resolved is mandatory, "
+						+ "but resolved value is NULL", this.getType(), this.getAccessible()
 				);
 				throw new ValueException(
-						"Value of parameter [{0}] resolved is mandatory, but resolved value is NULL", this.getType()
+						"Value of parameter [{0}] in constructor or method [{1}] resolved is mandatory, "
+						+ "but resolved value is NULL", this.getType(), this.getAccessible()
 				);
 			}
 			return ListUtil.getAsList(result);
@@ -89,10 +95,12 @@ class ParamInjectParameter extends AbstractInjectParameter {
 			String[] result = request.getParameterValues(this.name);
 			if ((result == null) && (!this.isOptional())) {
 				this.logger.error(
-						"Value of parameter [{0}] resolved is mandatory, but resolved value is NULL", this.getType()
+						"Value of parameter [{0}] in constructor or method [{1}] resolved is mandatory, " 
+						+ "but resolved value is NULL", this.getType(), this.getAccessible()
 				);
 				throw new ValueException(
-						"Value of parameter [{0}] resolved is mandatory, but resolved value is NULL", this.getType()
+						"Value of parameter [{0}] in constructor or method [{1}] resolved is mandatory, " 
+						+ "but resolved value is NULL", this.getType(), this.getAccessible()
 				);
 			}
 			return result;
@@ -102,10 +110,12 @@ class ParamInjectParameter extends AbstractInjectParameter {
 			String result = request.getParameter(this.name);
 			if ((result == null) && (!this.isOptional())) {
 				this.logger.error(
-						"Value of parameter [{0}] resolved is mandatory, but resolved value is NULL", this.getType()
+						"Value of parameter [{0}] in constructor or method [{1}] resolved is mandatory, " 
+						+ "but resolved value is NULL", this.getType(), this.getAccessible()
 				);
 				throw new ValueException(
-						"Value of parameter [{0}] is mandatory, but resolved value is NULL", this.getType()
+						"Value of parameter [{0}] in constructor or method [{1}] resolved is mandatory, " 
+						+ "but resolved value is NULL", this.getType(), this.getAccessible()
 				);
 			}
 			return ConvertUtil.getAsType(result, this.getType());

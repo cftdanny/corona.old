@@ -73,7 +73,7 @@ public abstract class AbstractInjectConstructor implements InjectConstructor {
 				);
 			}
 
-			this.parameters.add(factory.create(contextManagerFactory, parameterType, annotations));
+			this.parameters.add(factory.create(contextManagerFactory, this.constructor, parameterType, annotations));
 		}
 	}
 	

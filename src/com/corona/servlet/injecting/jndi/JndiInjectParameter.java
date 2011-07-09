@@ -4,6 +4,7 @@
 package com.corona.servlet.injecting.jndi;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
 
 import javax.naming.InitialContext;
 
@@ -34,12 +35,15 @@ class JndiInjectParameter extends AbstractInjectParameter {
 	private String name = null;
 
 	/**
+	 * @param accessible the constructor or method that parameter exists in
 	 * @param parameterType the class type of annotated parameter
 	 * @param annotations all annotations for parameter
 	 */
-	JndiInjectParameter(final Class<?> parameterType, final Annotation[] annotations) {
+	JndiInjectParameter(
+			final AccessibleObject accessible, final Class<?> parameterType, final Annotation[] annotations
+	) {
 		
-		super(parameterType, annotations);
+		super(accessible, parameterType, annotations);
 		for (Annotation annotation : annotations) {
 			if (annotation.annotationType().equals(Jndi.class)) {
 				this.name = ((Jndi) annotation).value();
@@ -61,10 +65,12 @@ class JndiInjectParameter extends AbstractInjectParameter {
 			return context.lookup(this.name);
 		} catch (Exception e) {
 			this.logger.error(
-					"Fail to lookup value for parameter [{0}] from JNDI context", this.getType()
+					"Fail to lookup value for parameter [{0}] in constructor or method [{1}] from JNDI context", 
+					this.getType(), this.getAccessible()
 			);
 			throw new ValueException(
-					"Fail to lookup value for parameter [{0}] from JNDI context", this.getType()
+					"Fail to lookup value for parameter [{0}] in constructor or method [{1}] from JNDI context", 
+					this.getType(), this.getAccessible()
 			);
 		} finally {
 			

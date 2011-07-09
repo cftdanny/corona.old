@@ -4,6 +4,7 @@
 package com.corona.context;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
 
 /**
  * <p>This factory is used to create {@link InjectParameter} for an annotated parameter of in constructor 
@@ -38,11 +39,13 @@ public interface InjectParameterFactory {
 
 	/**
 	 * @param contextManagerFactory the context manager factory
+	 * @param accessible the constructor or method to inject parameter
 	 * @param parameterType the parameter type
 	 * @param annotations all annotations for parameter
 	 * @return the new {@link InjectParameter}
 	 */
 	InjectParameter create(
-			ContextManagerFactory contextManagerFactory, Class<?> parameterType, Annotation[] annotations
+			ContextManagerFactory contextManagerFactory, 
+			AccessibleObject accessible, Class<?> parameterType, Annotation[] annotations
 	);
 }

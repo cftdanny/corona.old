@@ -72,7 +72,7 @@ public class AbstractInjectMethod implements InjectMethod {
 				);
 			}
 			
-			this.injectPrameters.add(factory.create(contextManagerFactory, parameterType, annotations));
+			this.injectPrameters.add(factory.create(contextManagerFactory, this.method, parameterType, annotations));
 		}
 	}
 	

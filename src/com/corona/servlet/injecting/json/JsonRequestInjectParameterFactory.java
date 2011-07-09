@@ -4,6 +4,7 @@
 package com.corona.servlet.injecting.json;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
 
 import com.corona.context.InjectParameter;
 import com.corona.context.InjectParameterFactory;
@@ -21,14 +22,15 @@ public class JsonRequestInjectParameterFactory implements InjectParameterFactory
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.context.InjectParameterFactory#create(
-	 * com.corona.context.ContextManagerFactory, java.lang.Class, java.lang.annotation.Annotation[]
+	 * 	com.corona.context.ContextManagerFactory, 
+	 * java.lang.reflect.AccessibleObject, java.lang.Class, java.lang.annotation.Annotation[]
 	 * )
 	 */
 	@Override
 	public InjectParameter create(
 			final ContextManagerFactory contextManagerFactory, 
-			final Class<?> parameterType, final Annotation[] annotations
+			final AccessibleObject accessible, final Class<?> parameterType, final Annotation[] annotations
 	) {
-		return new JsonRequestInjectParameter(parameterType, annotations);
+		return new JsonRequestInjectParameter(accessible, parameterType, annotations);
 	}
 }

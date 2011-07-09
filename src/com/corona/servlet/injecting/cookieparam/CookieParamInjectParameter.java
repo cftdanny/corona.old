@@ -4,6 +4,7 @@
 package com.corona.servlet.injecting.cookieparam;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
 
 import com.corona.component.cookie.CookieManager;
 import com.corona.context.AbstractInjectParameter;
@@ -35,12 +36,15 @@ class CookieParamInjectParameter extends AbstractInjectParameter {
 	private String name = null;
 
 	/**
+	 * @param accessible the constructor or method that parameter exists in
 	 * @param parameterType the class type of annotated parameter
 	 * @param annotations all annotations for parameter
 	 */
-	CookieParamInjectParameter(final Class<?> parameterType, final Annotation[] annotations) {
+	CookieParamInjectParameter(
+			final AccessibleObject accessible, final Class<?> parameterType, final Annotation[] annotations
+	) {
 		
-		super(parameterType, annotations);
+		super(accessible, parameterType, annotations);
 		for (Annotation annotation : annotations) {
 			if (annotation.annotationType().equals(CookieParam.class)) {
 				this.name = ((CookieParam) annotation).value();
@@ -69,10 +73,12 @@ class CookieParamInjectParameter extends AbstractInjectParameter {
 		Object value = cookieManager.getValue(this.name);
 		if ((value == null) && (!this.isOptional())) {
 			this.logger.error(
-					"Parameter [{0}] value is mandatory, but cookie does not exist", this.getType()
+					"Parameter [{0}] in constructor or method [{1}] value is mandatory, but cookie does not exist", 
+					this.getType(), this.getAccessible()
 			);
 			throw new ValueException(
-					"Parameter [{0}] value is mandatory, but cookie does not exist", this.getType()
+					"Parameter [{0}] in constructor or method [{1}] value is mandatory, but cookie does not exist", 
+					this.getType(), this.getAccessible()
 			);
 		}
 		
