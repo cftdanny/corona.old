@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.corona.context.ContextManagerFactory;
 import com.corona.servlet.multipart.MultipartRequestImpl;
 import com.corona.util.ServletUtil;
+import com.corona.util.StringUtil;
 
 /**
  * <p>This SERVLET is used to create HTTP response by a group of handlers. </p>
@@ -127,14 +128,24 @@ public class ApplicationServlet implements Servlet, Serializable {
 
 		// read whether enable upload files, default is true
 		try {
-			this.enableUploadFiles = Boolean.parseBoolean(config.getInitParameter(UPLOAD_ENABLE_UPLOAD_FILES));
+			String value = config.getInitParameter(UPLOAD_ENABLE_UPLOAD_FILES);
+			if (StringUtil.isBlank(value)) {
+				this.enableUploadFiles = true;
+			} else {
+				this.enableUploadFiles = Boolean.parseBoolean(value);
+			}
 		} catch (Exception e) {
 			this.enableUploadFiles = true;
 		}
 
 		// read whether create temporary files in order to receive uploading file, default is true
 		try {
-			this.createTempFiles = Boolean.parseBoolean(config.getInitParameter(UPLOAD_CREATE_TEMP_FILES));
+			String value = config.getInitParameter(UPLOAD_CREATE_TEMP_FILES);
+			if (StringUtil.isBlank(value)) {
+				this.createTempFiles = true;
+			} else {
+				this.createTempFiles = Boolean.parseBoolean(value);
+			}
 		} catch (Exception e) {
 			this.createTempFiles = true;
 		}

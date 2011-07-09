@@ -47,7 +47,7 @@
 	<classpathentry kind="lib" path="test/lib/slf4j-api-1.6.1.jar"/>
 	<classpathentry kind="lib" path="test/lib/poi-3.2-FINAL-20081019.jar"/>
 	<classpathentry kind="lib" path="test/lib/slf4j-jdk14-1.6.1.jar"/>
-	<classpathentry kind="lib" path="test/lib/selenium-java-2.0rc3.jar"/>
 	<classpathentry kind="lib" path="test/lib/testng-6.1.1.jar"/>
+	<classpathentry kind="lib" path="test/lib/selenium-java-2.0.0.jar"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>
