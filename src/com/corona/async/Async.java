@@ -24,7 +24,12 @@ import com.corona.context.annotation.InjectType;
 public @interface Async {
 
 	/**
-	 * the scheduler name 
+	 * the component name to be injected 
 	 */
 	String value() default "";
+	
+	/**
+	 * the schedule is used to execute asynchronous method
+	 */
+	String scheduler() default "";
 }

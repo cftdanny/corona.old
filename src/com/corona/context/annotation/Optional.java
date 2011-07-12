@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  * </pre>
  * 
  * <p>When context manager tries to create component, if a field or parameter is annotated with &#064;Optional, their
- * value can be <code>null</code>; otherwise, will throw {@link CreationException}.  
+ * value can be <code>null</code>; otherwise, will throw {@link AsyncException}.  
  * it will resolve values from context manager and inject
  * </p>
  *

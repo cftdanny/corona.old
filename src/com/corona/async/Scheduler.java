@@ -11,5 +11,5 @@ package com.corona.async;
  */
 public interface Scheduler {
 
-	Dispatcher create();
+	void schedule(JobDescriptor descriptor) throws AsyncException;
 }

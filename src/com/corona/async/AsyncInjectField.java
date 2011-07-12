@@ -8,6 +8,7 @@ import java.lang.reflect.Proxy;
 
 import com.corona.context.AbstractInjectField;
 import com.corona.context.ContextManager;
+import com.corona.context.ValueException;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 import com.corona.util.StringUtil;
@@ -27,9 +28,14 @@ class AsyncInjectField extends AbstractInjectField {
 	private Log logger = LogFactory.getLog(AsyncInjectField.class);
 	
 	/**
-	 * the scheduler name
+	 * the component name
 	 */
 	private String name;
+	
+	/**
+	 * the scheduler name
+	 */
+	private String schedulerName;
 	
 	/**
 	 * @param field the field that is annotated with an annotation type
@@ -39,9 +45,17 @@ class AsyncInjectField extends AbstractInjectField {
 		// construct super class and get parameter name
 		super(field);
 		
-		this.name = field.getAnnotation(Async.class).value();
+		// find component and scheduler to execute asynchronous method
+		Async async = field.getAnnotation(Async.class);
+		
+		this.name = async.value();
 		if (StringUtil.isBlank(this.name)) {
 			this.name = field.getName();
+		}
+		
+		this.schedulerName = async.scheduler();
+		if (StringUtil.isBlank(this.schedulerName)) {
+			this.schedulerName = null;
 		}
 	}
 
@@ -52,9 +66,29 @@ class AsyncInjectField extends AbstractInjectField {
 	@Override
 	protected Object get(final ContextManager contextManager) {
 		
+		// find component to be injected, if null, throw error
 		Object component =  contextManager.get(this.getType(), this.name);
+		if (component == null) {
+			this.logger.error("Component [{0}/{1}] does not exist, should register it", this.getType(), this.name);
+			throw new ValueException(
+					"Component [{0}/{1}] does not exist, should register first", this.getType(), this.name
+			);
+		}
 		
-		Dispatcher dispatcher = new Dispatcher(contextManager.getContextManagerFactory(), component);
-		return Proxy.newProxyInstance(null, new Class<?>[] {this.getType()}, dispatcher);
+		// find scheduler that is used to schedule asynchronous method
+		Scheduler scheduler = contextManager.get(Scheduler.class, this.schedulerName);
+		if (scheduler == null) {
+			this.logger.error(
+					"Scheduler [{0}/{1}] does not exist, should register it", Scheduler.class, this.schedulerName
+			);
+			throw new ValueException(
+					"Scheduler [{0}/{1}] does not exist, should register first", Scheduler.class, this.schedulerName
+			);
+		}
+
+		// create proxy instance with injected component, and dispatch asynchronous method to schedule
+		return Proxy.newProxyInstance(null, new Class<?>[] {this.getType()}, new AsyncProxyComponent(
+				scheduler, component, this.getType(), this.name
+		));
 	}
 }
