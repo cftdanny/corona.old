@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -157,7 +158,16 @@ public class ResourceHandler implements Handler {
 		if (path.endsWith("/")) {
 			path = path + this.welcomeFileName;
 		}
-		InputStream in = request.getSession().getServletContext().getResourceAsStream(path);
+		
+		// get content type from SERVLET context by file name
+		ServletContext servletContext = request.getSession().getServletContext();
+		String contextType = servletContext.getMimeType(path);
+		if (contextType != null) {
+			response.setContentType(contextType);
+		}
+		
+		// load resource as input stream from SERVLET context
+		InputStream in = servletContext.getResourceAsStream(path);
 		if (in != null) {
 			try {
 				
