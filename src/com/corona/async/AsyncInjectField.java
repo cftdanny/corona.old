@@ -6,14 +6,10 @@ package com.corona.async;
 import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
 
-import com.corona.component.cookie.CookieManager;
 import com.corona.context.AbstractInjectField;
-import com.corona.context.ConfigurationException;
 import com.corona.context.ContextManager;
-import com.corona.context.ValueException;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
-import com.corona.util.ConvertUtil;
 import com.corona.util.StringUtil;
 
 /**
@@ -58,7 +54,7 @@ class AsyncInjectField extends AbstractInjectField {
 		
 		Object component =  contextManager.get(this.getType(), this.name);
 		
-		AsyncInterceptor interceptor = new AsyncInterceptor(component);
-		return Proxy.newProxyInstance(null, new Class<?>[] {this.getType()}, interceptor);
+		Dispatcher dispatcher = new Dispatcher(contextManager.getContextManagerFactory(), component);
+		return Proxy.newProxyInstance(null, new Class<?>[] {this.getType()}, dispatcher);
 	}
 }

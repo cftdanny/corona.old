@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Corona Web Framework (CWF)</title>
+		<script type="text/javascript" src="corona.js"></script>
+	</head>
+	<body>
+		<h1 id="caption">Welcome to Corona Web Framework (CWF) </h1>
+		<script type="text/javascript">
+			alert(Corona.test);
+			Corona.namespace("test").abc = function() {
+				
+				return {
+					abc : "xxxx"					
+				}
+			}();
+			
+			alert(Corona.test.abc.abc);
+		</script>
+	</body>
+</html>
