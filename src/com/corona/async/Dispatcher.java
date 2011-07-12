@@ -17,14 +17,21 @@ import com.corona.context.ContextManagerFactory;
 class Dispatcher implements InvocationHandler {
 
 	/**
+	 * the current context manager factory
+	 */
+	private ContextManagerFactory contextManagerFactory;
+	
+	/**
 	 * the component that is in proxy state
 	 */
 	private Object component;
 	
 	/**
+	 * @param contextManagerFactory the current context manager factory
 	 * @param component the component that is in a proxy state
 	 */
 	Dispatcher(final ContextManagerFactory contextManagerFactory, final Object component) {
+		this.contextManagerFactory = contextManagerFactory;
 		this.component = component;
 	}
 	
