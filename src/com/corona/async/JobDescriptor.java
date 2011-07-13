@@ -5,6 +5,8 @@ package com.corona.async;
 
 import java.lang.reflect.Method;
 
+import com.corona.context.ContextManagerFactory;
+
 /**
  * <p>The descriptor about asynchronous method </p>
  *
@@ -13,6 +15,11 @@ import java.lang.reflect.Method;
  */
 class JobDescriptor {
 
+	/**
+	 * the context manager factory that is used to execute job
+	 */
+	private ContextManagerFactory contextManagerFactory;
+	
 	/**
 	 * the component type
 	 */
@@ -46,6 +53,20 @@ class JobDescriptor {
 		this.arguments = arguments;
 	}
 	
+	/**
+	 * @return the context manager factory that is used to execute job
+	 */
+	public ContextManagerFactory getContextManagerFactory() {
+		return contextManagerFactory;
+	}
+	
+	/**
+	 * @param contextManagerFactory the context manager factory that is used to execute job
+	 */
+	public void setContextManagerFactory(final ContextManagerFactory contextManagerFactory) {
+		this.contextManagerFactory = contextManagerFactory;
+	}
+
 	/**
 	 * @return the component type
 	 */

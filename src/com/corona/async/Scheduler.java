@@ -4,12 +4,16 @@
 package com.corona.async;
 
 /**
- * <p> </p>
+ * <p>The scheduler that is schedule a job to be in background </p>
  *
  * @author $Author$
  * @version $Id$
  */
 public interface Scheduler {
 
+	/**
+	 * @param descriptor the job descriptor
+	 * @throws AsyncException if fail to schedule job to run asynchronous 
+	 */
 	void schedule(JobDescriptor descriptor) throws AsyncException;
 }

@@ -54,14 +54,17 @@ class AsyncProxyComponent implements InvocationHandler {
 	@Override
 	public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
 
+		// find method in component with interface method
+		Method jobMethod = this.component.getClass().getMethod(method.getName(), method.getParameterTypes());
+		
 		// if method is not annotated with Async, don't need schedule it as asynchronous method
-		Async async = method.getAnnotation(Async.class);
-		if (async == null) {
-			return method.invoke(this.component, args);
+		Job job = jobMethod.getAnnotation(Job.class);
+		if (job == null) {
+			return jobMethod.invoke(this.component, args);
 		}
 		
 		// if annotated with Async, schedule it as asynchronous method, and return null
-		JobDescriptor descriptor = new JobDescriptor(this.type, this.name, method, args);
+		JobDescriptor descriptor = new JobDescriptor(this.type, this.name, jobMethod, args);
 		this.scheduler.schedule(descriptor);
 		
 		return null;

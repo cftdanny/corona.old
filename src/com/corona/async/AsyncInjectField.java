@@ -50,7 +50,7 @@ class AsyncInjectField extends AbstractInjectField {
 		
 		this.name = async.value();
 		if (StringUtil.isBlank(this.name)) {
-			this.name = field.getName();
+			this.name = null;
 		}
 		
 		this.schedulerName = async.scheduler();
@@ -87,8 +87,10 @@ class AsyncInjectField extends AbstractInjectField {
 		}
 
 		// create proxy instance with injected component, and dispatch asynchronous method to schedule
-		return Proxy.newProxyInstance(null, new Class<?>[] {this.getType()}, new AsyncProxyComponent(
-				scheduler, component, this.getType(), this.name
-		));
+		return Proxy.newProxyInstance(
+				this.getClass().getClassLoader(), new Class<?>[] {this.getType()}, new AsyncProxyComponent(
+						scheduler, component, this.getType(), this.name
+				)
+		);
 	}
 }

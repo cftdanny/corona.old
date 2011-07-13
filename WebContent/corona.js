@@ -50,7 +50,7 @@ Corona.namespace = function () {
 		
 		module = arguments[i].split(".");
 		result = Corona;
-		for (var j = ((module[0] == "Corona") ? 1 : 0); j < module.length; j = j + 1) {
+		for (var j = ((module[0] == "Corona") ? 1 : 0), count = module.length; j < count; j = j + 1) {
 			result[module[j]] = result[module[j]] || { };
 			result = result[module[j]];
         }		
