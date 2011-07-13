@@ -3,11 +3,17 @@
  */
 package com.corona.async;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.Properties;
 
+import org.quartz.CronScheduleBuilder;
+import org.quartz.DateBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.quartz.ScheduleBuilder;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
@@ -187,9 +193,56 @@ public class QuartzScheduler implements Scheduler, Closeable {
 	}
 
 	/**
+	 * @param method the method that is defined as asynchronous method
+	 * @param type the annotation type to check
+	 * @return the parameter index of parameter that is annotated with argument type
+	 */
+	private int getParameterIndex(final Method method, final Class<? extends Annotation> type) {
+		
+		for (int i = 0, count = method.getParameterTypes().length; i < count; i++) {
+			
+			Annotation[] annotations = method.getParameterAnnotations()[i];
+			if ((annotations != null) && (annotations.length > 0)) {
+				for (Annotation annotation : annotations) {
+					if (annotation.annotationType().equals(type)) {
+						return i;
+					}
+				}
+			}
+		}
+		
+		return -1;
+	}
+	
+	/**
+	 * @param method the method that is defined as asynchronous method
+	 * @param arguments the arguments of method
+	 * @return the Quartz schedule builder
+	 * @exception Exception if fail to create schedule builder
+	 */
+	@SuppressWarnings("rawtypes")
+	private ScheduleBuilder getScheduleBuilder(final Method method, final Object[] arguments) throws Exception {
+		
+		int index = this.getParameterIndex(method, Interval.class);
+		if (index != -1) {
+			long interval = Long.parseLong(arguments[index].toString());
+			return SimpleScheduleBuilder.simpleSchedule().withIntervalInMilliseconds(interval).repeatForever();
+		}
+		
+		index = this.getParameterIndex(method, Cron.class);
+		if (index != -1) {
+			String cron = arguments[index].toString();
+			return CronScheduleBuilder.cronSchedule(cron);
+		}		
+		
+		return SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(1).repeatForever();
+	}
+	
+	/**
 	 * {@inheritDoc}
 	 * @see com.corona.async.Scheduler#schedule(com.corona.async.JobDescriptor)
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void schedule(final JobDescriptor descriptor) throws AsyncException {
 		
@@ -214,10 +267,43 @@ public class QuartzScheduler implements Scheduler, Closeable {
 		// create job detail
 		JobDetail detail = jobBuilder.usingJobData(jobData).build();
 		
+		// create trigger build and schedule builder in order to trigger job
+		TriggerBuilder triggerBuilder = TriggerBuilder.newTrigger().startNow();
+		try {
+			ScheduleBuilder scheduleBuilder = this.getScheduleBuilder(
+					descriptor.getMethod(), descriptor.getArguments()
+			);
+			triggerBuilder.withSchedule(scheduleBuilder);
+		} catch (Exception e) {
+			this.logger.error("Fail to create schedule for trigger by method [{0}]", e, descriptor.getMethod());
+			throw new AsyncException(
+					"Fail to create schedule for trigger by method [{0}]", e, descriptor.getMethod()
+			);
+		}
 		
+		// find duration from job method
+		int index = this.getParameterIndex(descriptor.getMethod(), Duration.class);
+		if (index != -1) {
+			int interval = Integer.parseInt(descriptor.getArguments()[index].toString());
+			triggerBuilder.startAt(DateBuilder.futureDate(interval, DateBuilder.IntervalUnit.MILLISECOND));
+		}
 		
-		// create trigger in order to trigger job
-		Trigger trigger = TriggerBuilder.newTrigger().withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(1).repeatForever()).forJob(detail).startNow().build();
+		// find expiration from job method
+		index = this.getParameterIndex(descriptor.getMethod(), Expiration.class);
+		if (index != -1) {
+			Date expiration = (Date) descriptor.getArguments()[index];
+			triggerBuilder.startAt(expiration);
+		}
+		
+		// find termination from job method
+		index = this.getParameterIndex(descriptor.getMethod(), Termination.class);
+		if (index != -1) {
+			Date termination = (Date) descriptor.getArguments()[index];
+			triggerBuilder.endAt(termination);
+		}
+		
+		// create trigger
+		Trigger trigger = triggerBuilder.forJob(detail).build();
 		
 		// schedule job by detail and trigger
 		try {

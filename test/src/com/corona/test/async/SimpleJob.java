@@ -13,7 +13,9 @@ public interface SimpleJob {
 
 	/**
 	 * execute job
+	 * @param interval the interval
+	 * @param duration the duration
 	 * @exception Exception if fail
 	 */
-	void execute() throws Exception;
+	void execute(long interval, long duration) throws Exception;
 }

@@ -5,6 +5,8 @@ package com.corona.test.async;
 
 import java.util.Date;
 
+import com.corona.async.Duration;
+import com.corona.async.Interval;
 import com.corona.async.Job;
 
 /**
@@ -36,10 +38,10 @@ public class SimpleJobImpl implements SimpleJob {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.test.async.SimpleJob#execute()
+	 * @see com.corona.test.async.SimpleJob#execute(long, long)
 	 */
 	@Override
-	@Job public void execute() throws Exception {
+	@Job public void execute(@Interval final long interval, @Duration final long duration) throws Exception {
 		
 		count = count + 1;
 		

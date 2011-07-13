@@ -10,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>The duration of wait seconds before an asynchronous method is called </p>
+ * <p>The duration of wait milliseconds before an asynchronous method is called </p>
  *
  * @author $Author$
  * @version $Id$

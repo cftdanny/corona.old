@@ -24,6 +24,6 @@ public class SimpleJobRunner {
 	 * @exception Exception if fail
 	 */
 	@Job void run() throws Exception {
-		this.simpleJob.execute();
+		this.simpleJob.execute(1, 1000);
 	}
 }
