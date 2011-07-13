@@ -10,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>Run job by some seconds again </p>
+ * <p>Run job by some milliseconds repeatedly </p>
  *
  * @author $Author$
  * @version $Id$

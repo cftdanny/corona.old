@@ -39,5 +39,9 @@ public class TestScheduler extends AbstractComponentTest {
 		while (SimpleJobImpl.getCount() < 6) {
 			Thread.sleep(10);
 		}
+		
+		System.out.println("!DONE!");
+		
+		this.getContextManagerFactory().close();
 	}
 }

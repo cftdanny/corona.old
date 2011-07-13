@@ -10,7 +10,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>The stop date of the repeating asynchronous method </p>
+ * <p>The annotation is used to pass cron string to scheduler. It is unix style cron to schedule
+ * job method to execute </p>
  *
  * @author $Author$
  * @version $Id$

@@ -7,7 +7,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 /**
- * <p>This dispatcher is used to schedule asynchronous method to be executed by scheduling </p>
+ * <p>This proxy is used to schedule a job method in component to be executed asynchronous </p>
  *
  * @author $Author$
  * @version $Id$

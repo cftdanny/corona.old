@@ -18,4 +18,10 @@ public interface SimpleJob {
 	 * @exception Exception if fail
 	 */
 	void execute(long interval, long duration) throws Exception;
+	
+	/**
+	 * @param cron the cron
+	 * @throws Exception if fail
+	 */
+	void execute(String cron) throws Exception;
 }

@@ -10,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>The expiration time at which an asynchronous method may first be called </p>
+ * <p>The expiration time (java.util.Date) at which an asynchronous method may finished </p>
  *
  * @author $Author$
  * @version $Id$
@@ -18,6 +18,6 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-public @interface Termination {
+public @interface Finish {
 
 }

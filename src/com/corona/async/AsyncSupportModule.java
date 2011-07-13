@@ -5,6 +5,7 @@ package com.corona.async;
 
 import com.corona.context.AbstractModule;
 import com.corona.context.InjectFieldFactory;
+import com.corona.context.InjectPropertyFactory;
 import com.corona.context.annotation.Application;
 
 /**
@@ -44,6 +45,9 @@ public class AsyncSupportModule extends AbstractModule {
 		// configure @Param injection for field and property 
 		this.bindExtension(InjectFieldFactory.class).as(Async.class).to(
 				new AsyncInjectFieldFactory()
+		);
+		this.bindExtension(InjectPropertyFactory.class).as(Async.class).to(
+				new AsyncInjectPropertyFactory()
 		);
 		
 		// if create default scheduler, will create it by Quartz scheduler and bind to application scope

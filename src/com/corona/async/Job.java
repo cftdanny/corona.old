@@ -31,6 +31,11 @@ public @interface Job {
 	String group() default "";
 
 	/**
+	 * the job thread priority
+	 */
+	int priority() default -1;
+	
+	/**
 	 * the job description
 	 */
 	String description() default "";

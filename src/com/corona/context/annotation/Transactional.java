@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.servlet.annotation;
+package com.corona.context.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

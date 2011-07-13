@@ -50,4 +50,13 @@ public class SimpleJobImpl implements SimpleJob {
 		System.out.print(" - ");
 		System.out.println(new Date());
 	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.test.async.SimpleJob#execute(java.lang.String)
+	 */
+	@Override
+	public void execute(final String cron) throws Exception {
+		System.out.println("CRON");
+	}
 }

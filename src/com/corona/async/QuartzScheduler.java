@@ -281,6 +281,11 @@ public class QuartzScheduler implements Scheduler, Closeable {
 			);
 		}
 		
+		// set trigger priority if set
+		if (jobRemark.priority() != -1) {
+			triggerBuilder.withPriority(jobRemark.priority());
+		}
+		
 		// find duration from job method
 		int index = this.getParameterIndex(descriptor.getMethod(), Duration.class);
 		if (index != -1) {
@@ -296,10 +301,10 @@ public class QuartzScheduler implements Scheduler, Closeable {
 		}
 		
 		// find termination from job method
-		index = this.getParameterIndex(descriptor.getMethod(), Termination.class);
+		index = this.getParameterIndex(descriptor.getMethod(), Finish.class);
 		if (index != -1) {
-			Date termination = (Date) descriptor.getArguments()[index];
-			triggerBuilder.endAt(termination);
+			Date stop = (Date) descriptor.getArguments()[index];
+			triggerBuilder.endAt(stop);
 		}
 		
 		// create trigger

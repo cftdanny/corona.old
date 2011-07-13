@@ -18,6 +18,7 @@ import com.corona.context.ContextManager;
 import com.corona.context.ContextManagerFactory;
 import com.corona.context.InjectMethod;
 import com.corona.context.Key;
+import com.corona.context.annotation.Transactional;
 import com.corona.data.ConnectionManager;
 import com.corona.data.ConnectionManagerFactory;
 import com.corona.data.Transaction;
@@ -32,7 +33,6 @@ import com.corona.servlet.Producer;
 import com.corona.servlet.ProducerHint;
 import com.corona.servlet.annotation.ContentType;
 import com.corona.servlet.annotation.Expiration;
-import com.corona.servlet.annotation.Transactional;
 import com.corona.util.ServletUtil;
 
 /**

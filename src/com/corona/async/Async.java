@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 import com.corona.context.annotation.InjectType;
 
 /**
- * <p>This annotation is used to annotation method or field to run in asynchronous </p>
+ * <p>This annotation is used to annotation component that contains asynchronous job method. </p>
  *
  * @author $Author$
  * @version $Id$
@@ -29,7 +29,7 @@ public @interface Async {
 	String value() default "";
 	
 	/**
-	 * the schedule is used to execute asynchronous method
+	 * the scheduler is used to execute asynchronous method
 	 */
 	String scheduler() default "";
 }
