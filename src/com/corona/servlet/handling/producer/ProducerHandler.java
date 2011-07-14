@@ -5,6 +5,7 @@ package com.corona.servlet.handling.producer;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +34,9 @@ import com.corona.servlet.Producer;
 import com.corona.servlet.ProducerHint;
 import com.corona.servlet.annotation.ContentType;
 import com.corona.servlet.annotation.Expiration;
+import com.corona.servlet.annotation.Track;
+import com.corona.servlet.tracking.Finger;
+import com.corona.servlet.tracking.TrackManager;
 import com.corona.util.ServletUtil;
 
 /**
@@ -64,6 +68,11 @@ public class ProducerHandler extends AbstractHandler {
 	private ContentType contentType;
 	
 	/**
+	 * the track annotation in this method
+	 */
+	private Track track;
+	
+	/**
 	 * @param matcher the matcher
 	 * @param producer the producer to create HTTP response
 	 */
@@ -71,15 +80,11 @@ public class ProducerHandler extends AbstractHandler {
 		super(matcher);
 		
 		this.producer = producer;
-		this.expiration = this.getProducerMethod().getAnnotation(Expiration.class);
-		this.contentType = this.getProducerMethod().getAnnotation(ContentType.class);
-	}
-
-	/**
-	 * @return the producer method in component
-	 */
-	private Method getProducerMethod() {
-		return this.producer.getInjectMethod().getMethod();
+		
+		Method method = this.producer.getInjectMethod().getMethod();
+		this.expiration = method.getAnnotation(Expiration.class);
+		this.contentType = method.getAnnotation(ContentType.class);
+		this.track = method.getAnnotation(Track.class);
 	}
 	
 	/**
@@ -118,6 +123,13 @@ public class ProducerHandler extends AbstractHandler {
 		ProducerHint hint = new ProducerHint();
 		context.put(new Key<ProducerHint>(ProducerHint.class), hint);
 
+		// if need track this request, will store tracked information for track manager later
+		Finger finger = null;
+		if (this.track != null) {
+			finger = new Finger();
+			context.put(new Key<Finger>(Finger.class), finger);
+		}
+		
 		// set HTTP expires by Expires annotation in producer method of component
 		if ((this.expiration == null) || (this.expiration.value() < 0)) {
 			
@@ -160,6 +172,10 @@ public class ProducerHandler extends AbstractHandler {
 			this.producer.produce(contextManager, response, response.getOutputStream(), component, outcome);
 		} catch (Throwable e) {
 			
+			// if need track this request, will store this exception
+			if (finger != null) {
+				finger.setError(e);
+			}
 			this.logger.error("Fail to produce web content by method [{0}]", e, method); 
 			throw new HandleException("Fail to produce web content by method [{0}]", e, method);
 		}
@@ -170,6 +186,27 @@ public class ProducerHandler extends AbstractHandler {
 		} catch (IOException e) {
 			this.logger.error("Fail to flush produced content to HTTP response", e);
 			throw new HandleException("Fail to flush produced content to HTTP response", e);
+		}
+		
+		// if track this request, will store the tracked information to track manager
+		if (finger != null) {
+			
+			TrackManager trackManager = contextManager.get(TrackManager.class);
+			if (trackManager != null) {
+				
+				// store other information for tracked information
+				finger.setCode(this.track.code());
+				finger.setPath(request.getPathInfo());
+				for (String parameterName : this.track.value()) {
+					String parameterValue = request.getParameter(parameterName);
+					if (parameterValue != null) {
+						finger.getParameters().put(parameterName, parameterValue);
+					}
+				}
+				finger.setAfter(new Date());
+				
+				trackManager.track(finger);
+			}
 		}
 		
 		// close context manager in order to release resources that is allocated by it
@@ -229,7 +266,6 @@ public class ProducerHandler extends AbstractHandler {
 				transaction.rollback();
 			}
 			return outcome;
-			
 		} catch (Throwable e) {
 			
 			try {
@@ -238,9 +274,10 @@ public class ProducerHandler extends AbstractHandler {
 				this.logger.warn("Fail to roll back , but do not know how to handle this case, just ignore", e);
 			}
 			
-			this.logger.error("Fail to invoke method [{0}] within transaction, will roll back", e, method);
-			throw new HandleException("Fail to invoke method [{0}] within transaction, will roll back", e, method);
-			
+			this.logger.error("Fail to invoke method [{0}] within transaction, will roll back", e, method.getMethod());
+			throw new HandleException(
+					"Fail to invoke method [{0}] within transaction, will roll back", e, method.getMethod()
+			);
 		} finally {
 			
 			// try to close connection manager, if error, just skip it

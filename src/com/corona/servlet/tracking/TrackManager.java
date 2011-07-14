@@ -3,8 +3,6 @@
  */
 package com.corona.servlet.tracking;
 
-import java.util.List;
-
 /**
  * <p>The track manager is used to store tracks, for example, into database </p>
  *
@@ -14,7 +12,7 @@ import java.util.List;
 public interface TrackManager {
 
 	/**
-	 * @param tracks the tracks to be saved
+	 * @param finger the tracked request information
 	 */
-	void save(List<Track> tracks);
+	void track(Finger finger);
 }

@@ -4,6 +4,8 @@
 package com.corona.servlet.tracking;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>This class is used to track request information </p>
@@ -11,8 +13,13 @@ import java.util.Date;
  * @author $Author$
  * @version $Id$
  */
-public class Track {
+public class Finger {
 
+	/**
+	 * the track code
+	 */
+	private String code;
+	
 	/**
 	 * the request path
 	 */
@@ -21,7 +28,12 @@ public class Track {
 	/**
 	 * when user access this path
 	 */
-	private Date time;
+	private Date before = new Date();
+	
+	/**
+	 * whether request is finished
+	 */
+	private Date after;
 	
 	/**
 	 * who access this path
@@ -33,6 +45,25 @@ public class Track {
 	 */
 	private Throwable error;
 	
+	/**
+	 * the tracked request parameters
+	 */
+	private Map<String, String> parameters = new HashMap<String, String>();
+	
+	/**
+	 * @return the code
+	 */
+	public String getCode() {
+		return code;
+	}
+
+	/**
+	 * @param code the code to set
+	 */
+	public void setCode(final String code) {
+		this.code = code;
+	}
+
 	/**
 	 * @return the request path
 	 */
@@ -50,17 +81,31 @@ public class Track {
 	/**
 	 * @return when user request this path
 	 */
-	public Date getTime() {
-		return time;
+	public Date getBefore() {
+		return before;
 	}
 	
 	/**
-	 * @param time when user request this path
+	 * @param before when user begin to request this path
 	 */
-	public void setTime(final Date time) {
-		this.time = time;
+	public void setBefore(final Date before) {
+		this.before = before;
 	}
 	
+	/**
+	 * @return the after
+	 */
+	public Date getAfter() {
+		return after;
+	}
+	
+	/**
+	 * @param after the after to set
+	 */
+	public void setAfter(final Date after) {
+		this.after = after;
+	}
+
 	/**
 	 * @return the user name who request this path
 	 */
@@ -88,5 +133,12 @@ public class Track {
 	 */
 	public void setError(final Throwable error) {
 		this.error = error;
+	}
+
+	/**
+	 * @return the tracked request parameters
+	 */
+	public Map<String, String> getParameters() {
+		return parameters;
 	}
 }
