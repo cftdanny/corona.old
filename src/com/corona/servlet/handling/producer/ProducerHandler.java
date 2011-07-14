@@ -142,12 +142,16 @@ public class ProducerHandler extends AbstractHandler {
 		Object component = contextManager.get(this.producer.getKey());
 		hint.setComponent(component);
 		
+		// get the method to be executed in order to produce content
+		InjectMethod injectMethod = this.producer.getInjectMethod();
+		Method method = injectMethod.getMethod();
+		
 		// invoke annotated method and produce web content by template and method result 
 		Object outcome = null;
-		if (this.producer.getInjectMethod().getMethod().isAnnotationPresent(Transactional.class)) {
-			outcome = this.execute(contextManager, component, this.producer.getInjectMethod());
+		if (method.isAnnotationPresent(Transactional.class)) {
+			outcome = this.execute(contextManager, component, injectMethod);
 		} else {
-			outcome = this.producer.getInjectMethod().invoke(contextManager, component);
+			outcome = injectMethod.invoke(contextManager, component);
 		}
 		hint.setOutcome(outcome);
 		
@@ -156,7 +160,6 @@ public class ProducerHandler extends AbstractHandler {
 			this.producer.produce(contextManager, response, response.getOutputStream(), component, outcome);
 		} catch (Throwable e) {
 			
-			Method method = this.producer.getInjectMethod().getMethod();
 			this.logger.error("Fail to produce web content by method [{0}]", e, method); 
 			throw new HandleException("Fail to produce web content by method [{0}]", e, method);
 		}
