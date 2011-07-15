@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>The helper class of track manager </p>
+ * <p>The helper class of track manager, it will store track information by batch </p>
  *
  * @author $Author$
  * @version $Id$

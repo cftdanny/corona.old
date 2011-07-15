@@ -77,6 +77,8 @@
 			<class name="com.corona.test.servlet.request.XmlRequestByFieldTest" />
 			<class name="com.corona.test.servlet.request.XmlRequestByPropertyTest" />
 			<class name="com.corona.test.servlet.request.XmlRequestByParamTest" />
+			
+			<class name="com.corona.test.servlet.track.TrackPageTest" />
 		</classes>
 	</test>
 	

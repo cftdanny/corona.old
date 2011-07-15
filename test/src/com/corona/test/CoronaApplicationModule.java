@@ -5,10 +5,12 @@ package com.corona.test;
 
 import com.corona.component.cookie.CookieManager;
 import com.corona.component.cookie.CookieManagerImpl;
+import com.corona.context.annotation.Application;
 import com.corona.remote.Server;
 import com.corona.servlet.Handler;
 import com.corona.servlet.WebStartModule;
 import com.corona.servlet.handling.resource.ResourceHandler;
+import com.corona.servlet.tracking.TrackManager;
 import com.corona.test.remote.DemoServer;
 import com.corona.test.remote.DemoService;
 import com.corona.test.servlet.ComponentHandlerHtml;
@@ -31,6 +33,8 @@ import com.corona.test.servlet.request.JsonRequestByPropertyBean;
 import com.corona.test.servlet.request.XmlRequestByFieldBean;
 import com.corona.test.servlet.request.XmlRequestByParamBean;
 import com.corona.test.servlet.request.XmlRequestByPropertyBean;
+import com.corona.test.servlet.track.DemoTrackManager;
+import com.corona.test.servlet.track.TrackPage;
 import com.corona.test.servlet.upload.UploadBean;
 
 /**
@@ -65,6 +69,9 @@ public class CoronaApplicationModule extends WebStartModule {
 		
 		// REMOTING
 		this.configureRemoting();
+		
+		// TRACKING
+		this.configureTracking();
 	}
 
 	/**
@@ -165,5 +172,13 @@ public class CoronaApplicationModule extends WebStartModule {
 	private void configureRemoting() {
 		this.bind(Server.class).to(DemoServer.class);
 		this.bind(DemoService.class).to(DemoService.class);
+	}
+
+	/**
+	 * configure tracking 
+	 */
+	private void configureTracking() {
+		this.bind(TrackManager.class).to(DemoTrackManager.class).in(Application.class);
+		this.bind(TrackPage.class).to(TrackPage.class);
 	}
 }
