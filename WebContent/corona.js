@@ -7,7 +7,7 @@
 /**
  * the Corona JavaScript Framework
  */
-var Corona = function() {
+var Corona = Corona || function() {
 	
 	/**
 	 * the product name
