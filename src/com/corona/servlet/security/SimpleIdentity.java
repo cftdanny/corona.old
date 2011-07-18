@@ -12,7 +12,10 @@ import javax.servlet.http.HttpServletRequest;
  * @version $Id$
  */
 public class SimpleIdentity implements Identity {
-
+	
+	/**
+	 * the HTTP SERVLET request
+	 */
 	private HttpServletRequest request;
 	
 	/**
@@ -26,7 +29,7 @@ public class SimpleIdentity implements Identity {
 	 */
 	@Override
 	public boolean isLoggedIn() {
-		return false;
+		return null != this.request.getRemoteHost();
 	}
 
 	/**
