@@ -171,9 +171,12 @@ public class LogFactory {
 	 */
 	public void close() {
 		
-		// close 
+		// close gtalk and messenger connection
 		if (gtalk != null) {
 			gtalk.close();
+		}
+		if (messenger != null) {
+			messenger.close();
 		}
 	}
 }

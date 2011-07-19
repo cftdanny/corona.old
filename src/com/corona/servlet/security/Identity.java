@@ -12,6 +12,11 @@ package com.corona.servlet.security;
 public interface Identity {
 
 	/**
+	 * @return logged in user or <code>null</code> if not logged in
+	 */
+	User getUser();
+	
+	/**
 	 * @return whether current user is logged in
 	 */
 	boolean isLoggedIn();

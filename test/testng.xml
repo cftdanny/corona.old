@@ -79,6 +79,8 @@
 			<class name="com.corona.test.servlet.request.XmlRequestByParamTest" />
 			
 			<class name="com.corona.test.servlet.track.TrackPageTest" />
+			
+			<class name="com.corona.test.servlet.security.SimpleIdentityTest" />
 		</classes>
 	</test>
 	

@@ -3,7 +3,17 @@
  */
 package com.corona.servlet.security;
 
+import java.security.Principal;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.corona.context.ContextManager;
+import com.corona.context.ValueException;
+import com.corona.context.annotation.Inject;
+import com.corona.crypto.CypherException;
+import com.corona.logging.Log;
+import com.corona.logging.LogFactory;
 
 /**
  * <p>This identity will store logged user information to cookie </p>
@@ -14,15 +24,46 @@ import javax.servlet.http.HttpServletRequest;
 public class SimpleIdentity implements Identity {
 	
 	/**
-	 * the HTTP SERVLET request
+	 * the logger
 	 */
-	private HttpServletRequest request;
+	private Log logger = LogFactory.getLog(SimpleIdentity.class);
 	
 	/**
-	 * the authenticator for user to log in
+	 * the current context manager
 	 */
-	private Authenticator authenticator;
-	
+	@Inject private ContextManager contextManager;
+
+	/**
+	 * the HTTP SERVLET request
+	 */
+	@Inject private HttpServletRequest request;
+
+	/**
+	 * the HTTP SERVLET response
+	 */
+	@Inject private HttpServletResponse response;
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.servlet.security.Identity#getUser()
+	 */
+	@Override
+	public User getUser() {
+		
+		Principal userPrincipal = this.request.getUserPrincipal();
+		if (userPrincipal instanceof SimpleUserPrincipal) {
+			SimpleUserPrincipal simpleUserPrincipal = (SimpleUserPrincipal) userPrincipal;
+			
+			User user = new User(simpleUserPrincipal.getName());
+			for (String role : simpleUserPrincipal.getRoles()) {
+				user.getRoles().add(new Role(role));
+			}
+			return user;
+		} else {
+			return null;
+		}
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * @see com.corona.servlet.security.Identity#isLoggedIn()
@@ -39,9 +80,23 @@ public class SimpleIdentity implements Identity {
 	@Override
 	public User login() {
 		
-		User user = this.authenticator.authenticate();
+		Authenticator authenticator = this.contextManager.get(Authenticator.class);
+		if (authenticator == null) {
+			this.logger.error("Authenticator is not configured in context, should register it first");
+			throw new ValueException("Authenticator is not configured in context, should register it first");
+		}
 		
-		return null;
+		User user = authenticator.authenticate();
+		if (user != null) {
+			
+			try {
+				SimpleIdentityHelper.save(request, response, user);
+			} catch (CypherException e) {
+				this.logger.error("Fail to encrypt logged in user information", e);
+				user = null;
+			}
+		}
+		return user;
 	}
 
 	/**
@@ -50,5 +105,6 @@ public class SimpleIdentity implements Identity {
 	 */
 	@Override
 	public void logout() {
+		SimpleIdentityHelper.delete(request, response);
 	}
 }

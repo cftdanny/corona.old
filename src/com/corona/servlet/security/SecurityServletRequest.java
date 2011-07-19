@@ -33,6 +33,15 @@ public class SecurityServletRequest extends HttpServletRequestWrapper {
 
 	/**
 	 * {@inheritDoc}
+	 * @see javax.servlet.http.HttpServletRequestWrapper#getRemoteUser()
+	 */
+	@Override
+	public String getRemoteUser() {
+		return this.userPrincipal == null ? super.getRemoteUser() : this.userPrincipal.getName();
+	}
+
+	/**
+	 * {@inheritDoc}
 	 * @see javax.servlet.http.HttpServletRequestWrapper#getUserPrincipal()
 	 */
 	@Override

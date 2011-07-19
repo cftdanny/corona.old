@@ -3,16 +3,16 @@
  */
 package com.corona.servlet.security;
 
-import javax.servlet.ServletContext;
+import javax.servlet.ServletConfig;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-
-import org.dbunit.util.Base64;
+import javax.servlet.http.HttpServletResponse;
 
 import com.corona.crypto.CertifiedKey;
 import com.corona.crypto.Cypher;
 import com.corona.crypto.CypherException;
 import com.corona.crypto.CypherFactory;
+import com.corona.util.Base64;
 import com.corona.util.StringUtil;
 
 /**
@@ -27,7 +27,12 @@ final class SimpleIdentityHelper {
 	 * the cookie name to store user name 
 	 */
 	public static final String SECURITY_CRYPT_KEY = "com.corona.security.key";
-	
+
+	/**
+	 * the cookie name to store user name 
+	 */
+	public static final String SECURITY_DOMAIN_NAME = "com.corona.security.domain";
+
 	/**
 	 * the cookie name to store user name 
 	 */
@@ -49,6 +54,11 @@ final class SimpleIdentityHelper {
 	private static Cypher cypher;
 	
 	/**
+	 * the domain name
+	 */
+	private static String domain;
+	
+	/**
 	 * the key for user cookie
 	 */
 	private static String userKey;
@@ -66,13 +76,13 @@ final class SimpleIdentityHelper {
 	}
 	
 	/**
-	 * @param servletContext the SERVLET context
+	 * @param servletConfig the SERVLET configuration
 	 * @exception Exception if fail to create cypher
 	 */
-	static void init(final ServletContext servletContext) throws Exception {
+	static void init(final ServletConfig servletConfig) throws Exception {
 		
 		// get cookie encrypt and decrypt key from SERVLET context
-		String key = servletContext.getInitParameter(SECURITY_CRYPT_KEY);
+		String key = servletConfig.getInitParameter(SECURITY_CRYPT_KEY);
 		if (key == null) {
 			throw new NullPointerException("Certified key for cookie identity is not set in SERVLET context");
 		}
@@ -82,65 +92,79 @@ final class SimpleIdentityHelper {
 		byte[] bytes = new byte[keys.length];
 		
 		for (int i = 0, count = keys.length; i < count; i++) {
-			bytes[i] = Byte.parseByte(keys[i]);
+			bytes[i] = Byte.parseByte(keys[i].trim());
 		}
 		
 		// create cypher by key
 		CertifiedKey certifiedKey = new CertifiedKey(bytes);
 		cypher = CypherFactory.get(ALGORITHM).create(certifiedKey);
 		
+		// the domain name for cookie
+		domain = servletConfig.getInitParameter(SECURITY_DOMAIN_NAME);
+		
 		// get key for store user name in cookie
-		userKey = servletContext.getInitParameter(SECURITY_USER_NAME);
+		userKey = servletConfig.getInitParameter(SECURITY_USER_NAME);
 		if (StringUtil.isBlank(userKey)) {
 			userKey = "corona.user";
 		}
 
-		bytes = cypher.encrypt(userKey.getBytes());
-		userKey = Base64.encodeBytes(bytes);
-
 		// get key for store role names in cookie
-		roleKey = servletContext.getInitParameter(SECURITY_ROLE_NAME);
+		roleKey = servletConfig.getInitParameter(SECURITY_ROLE_NAME);
 		if (StringUtil.isBlank(roleKey)) {
 			roleKey = "corona.role";
 		}
-		
-		bytes = cypher.encrypt(roleKey.getBytes());
-		roleKey = Base64.encodeBytes(bytes);
 	}
 	
 	/**
 	 * @param request the request
 	 * @param name the cookie name
 	 * @return the value
-	 * @throws CypherException if fail to decrypt cookie name or value
 	 */
-	private static String getCookie(final HttpServletRequest request, final String name) throws CypherException {
+	private static Cookie getCookie(final HttpServletRequest request, final String name) {
 		
 		// find the cookie with specified name
-		for (Cookie cookie : request.getCookies()) {
-			
-			if (name.equals(cookie.getName())) {
-					
-				byte[] source = Base64.decode(cookie.getValue());
-				byte[] target = cypher.decrypt(source);
-				
-				return new String(target);
+		if (request.getCookies() != null) {
+			for (Cookie cookie : request.getCookies()) {
+				if (name.equals(cookie.getName())) {
+					return cookie;
+				}
 			}
 		}
 		
 		// does not find the cookie with specified name
 		return null;
 	}
-	
+
+	/**
+	 * @param request the request
+	 * @param name the cookie name
+	 * @return the value
+	 * @throws Exception if fail to decrypt cookie name or value
+	 */
+	private static String getValue(final HttpServletRequest request, final String name) throws Exception {
+		
+		// find the cookie with specified name
+		Cookie cookie = getCookie(request, name);
+		if (cookie != null) {
+			byte[] source = Base64.decode(cookie.getValue());
+			byte[] target = cypher.decrypt(source);
+				
+			return new String(target);
+		}
+		
+		// does not find the cookie with specified name
+		return null;
+	}
+
 	/**
 	 * @param request the HTTP SERVLET request
 	 * @return the user stored in cookie
-	 * @throws CypherException if fail to decrypt cookie name or value
+	 * @throws Exception if fail to decrypt cookie name or value
 	 */
-	static User load(final HttpServletRequest request) throws CypherException {
+	static User load(final HttpServletRequest request) throws Exception {
 		
 		// find user name in cookie, if not find, just return
-		String name = getCookie(request, userKey);
+		String name = getValue(request, userKey);
 		if (name == null) {
 			return null;
 		}
@@ -148,7 +172,7 @@ final class SimpleIdentityHelper {
 		// if have user, load it with its roles
 		User user = new User(name);
 		
-		String roles = getCookie(request, roleKey);
+		String roles = getValue(request, roleKey);
 		if (!StringUtil.isBlank(roles)) {
 			for (String role : roles.split(",")) {
 				user.getRoles().add(new Role(role));
@@ -156,5 +180,83 @@ final class SimpleIdentityHelper {
 		}
 		
 		return user;
+	}
+	
+	/**
+	 * @param request the HTTP SERVLET request
+	 * @param response the HTTP SERVLET response
+	 */
+	static void delete(final HttpServletRequest request, final HttpServletResponse response) {
+
+		// get cookie path from SERVLET context path
+		String path = request.getSession().getServletContext().getContextPath();
+
+		// delete user name cookie
+		Cookie cookie = new Cookie(userKey, "");
+		cookie.setMaxAge(-1); 
+		cookie.setPath(path); 
+		if (domain != null) {
+			cookie.setDomain(domain);
+		}
+		
+		response.addCookie(cookie); 
+		
+		// delete roles name cookie
+		cookie = new Cookie(roleKey, "");
+		cookie.setMaxAge(-1); 
+		cookie.setPath(path); 
+		if (domain != null) {
+			cookie.setDomain(domain);
+		}
+		
+		response.addCookie(cookie); 
+	}
+	
+	/**
+	 * @param request the HTTP SERVLET request
+	 * @param response the HTTP SERVLET response
+	 * @param user the user
+	 * @throws CypherException if fail to encrypt cookie value
+	 */
+	static void save(
+			final HttpServletRequest request, final HttpServletResponse response, final User user
+	) throws CypherException {
+		
+		// get cookie path from SERVLET context path
+		String path = request.getSession().getServletContext().getContextPath();
+		
+		// save user name
+		byte[] source = cypher.encrypt(user.getName().getBytes());
+		String target = Base64.encodeBytes(source);
+		
+		Cookie cookie = new Cookie(userKey, target); 
+		cookie.setMaxAge(-1); 
+		cookie.setPath(path); 
+		if (domain != null) {
+			cookie.setDomain(domain);
+		}
+		
+		response.addCookie(cookie); 
+		
+		// save role
+		if (user.getRoles().size() > 0) {
+			
+			String roles = user.getRoles().get(0).getName();
+			for (int i = 1, count = user.getRoles().size(); i < count; i++) {
+				roles = roles + "," + user.getRoles().get(i).getName();
+			}
+			
+			source = cypher.encrypt(roles.getBytes());
+			target = Base64.encodeBytes(source);
+
+			cookie = new Cookie(roleKey, target); 
+			cookie.setMaxAge(-1); 
+			cookie.setPath(path); 
+			if (domain != null) {
+				cookie.setDomain(domain);
+			}
+			
+			response.addCookie(cookie); 
+		}
 	}
 }

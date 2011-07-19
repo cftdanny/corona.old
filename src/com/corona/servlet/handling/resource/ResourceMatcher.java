@@ -39,6 +39,14 @@ class ResourceMatcher implements Matcher {
 	}
 
 	/**
+	 * @param extension the resource extension
+	 * @return whether it is excluded resource according to resource extension
+	 */
+	private boolean isExcludedResource(final String extension) {
+		return this.handler.getExcludeFileExtensions().contains(extension);
+	}
+	
+	/**
 	 * @param context the SERVLET context
 	 * @param path the request path
 	 * @return whether resource with same name as path exists or not
@@ -59,12 +67,22 @@ class ResourceMatcher implements Matcher {
 	@Override
 	public MatchResult match(final String path, final HttpServletRequest request) {
 		
-		if ((this.handler.getHead() == null) || (path.startsWith(this.handler.getHead()))) {
-			if (this.exists(request.getSession().getServletContext(), path)) {
-				return new MatchResult(path);
-			}
+		// test whether request path will be handled by this handler according to head
+		if ((this.handler.getResourceHead() != null) && (!path.startsWith(this.handler.getResourceHead()))) {
+			return null; 
 		}
 		
-		return null;
+		// test whether file extension will be excluded from resource handler 
+		int index = path.lastIndexOf('.');
+		if ((index != -1) && (this.isExcludedResource(path.substring(index)))) {
+			return null;
+		}
+
+		// test whether resource exist or not, if yes, will mark it as matched
+		if (this.exists(request.getSession().getServletContext(), path)) {
+			return new MatchResult(path);
+		} else {
+			return null;
+		}
 	}
 }

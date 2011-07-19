@@ -38,7 +38,12 @@ public class Finger {
 	/**
 	 * who access this path
 	 */
-	private String username;
+	private String remoteUser;
+	
+	/**
+	 * the remote host
+	 */
+	private String remoteHost;
 	
 	/**
 	 * the error if fail to process this request
@@ -109,16 +114,29 @@ public class Finger {
 	/**
 	 * @return the user name who request this path
 	 */
-	public String getUsername() {
-		return username;
+	public String getRemoteUser() {
+		return remoteUser;
 	}
-
 	
 	/**
-	 * @param username the user name who request this path 
+	 * @param remoteUser the user name who request this path 
 	 */
-	public void setUsername(final String username) {
-		this.username = username;
+	public void setRemoteUser(final String remoteUser) {
+		this.remoteUser = remoteUser;
+	}
+	
+	/**
+	 * @return the remote host of client browser
+	 */
+	public String getRemoteHost() {
+		return remoteHost;
+	}
+	
+	/**
+	 * @param remoteHost the remote host of client browser to set
+	 */
+	public void setRemoteHost(final String remoteHost) {
+		this.remoteHost = remoteHost;
 	}
 
 	/**

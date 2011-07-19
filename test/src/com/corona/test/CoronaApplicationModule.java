@@ -10,6 +10,9 @@ import com.corona.remote.Server;
 import com.corona.servlet.Handler;
 import com.corona.servlet.WebStartModule;
 import com.corona.servlet.handling.resource.ResourceHandler;
+import com.corona.servlet.security.Authenticator;
+import com.corona.servlet.security.Identity;
+import com.corona.servlet.security.SimpleIdentity;
 import com.corona.servlet.tracking.TrackManager;
 import com.corona.test.remote.DemoServer;
 import com.corona.test.remote.DemoService;
@@ -33,6 +36,8 @@ import com.corona.test.servlet.request.JsonRequestByPropertyBean;
 import com.corona.test.servlet.request.XmlRequestByFieldBean;
 import com.corona.test.servlet.request.XmlRequestByParamBean;
 import com.corona.test.servlet.request.XmlRequestByPropertyBean;
+import com.corona.test.servlet.security.Credential;
+import com.corona.test.servlet.security.Login;
 import com.corona.test.servlet.track.DemoTrackManager;
 import com.corona.test.servlet.track.TrackPage;
 import com.corona.test.servlet.upload.UploadBean;
@@ -72,6 +77,9 @@ public class CoronaApplicationModule extends WebStartModule {
 		
 		// TRACKING
 		this.configureTracking();
+		
+		// SECURITY
+		this.configureSecurity();
 	}
 
 	/**
@@ -180,5 +188,14 @@ public class CoronaApplicationModule extends WebStartModule {
 	private void configureTracking() {
 		this.bind(TrackManager.class).to(DemoTrackManager.class).in(Application.class);
 		this.bind(TrackPage.class).to(TrackPage.class);
+	}
+	
+	/**
+	 * configure security
+	 */
+	private void configureSecurity() {
+		this.bind(Identity.class).to(SimpleIdentity.class);
+		this.bind(Authenticator.class).to(Credential.class);
+		this.bind(Login.class).to(Login.class);
 	}
 }

@@ -42,7 +42,7 @@ public class SecurityApplicationServlet extends ApplicationServlet {
 		
 		super.init(config);
 		try {
-			SimpleIdentityHelper.init(config.getServletContext());
+			SimpleIdentityHelper.init(config);
 		} catch (Exception e) {
 			throw new ServletException("Fail to create encryptor and decryptor from SERVLET context", e);
 		}

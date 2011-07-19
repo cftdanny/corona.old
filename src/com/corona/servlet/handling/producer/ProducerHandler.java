@@ -196,6 +196,8 @@ public class ProducerHandler extends AbstractHandler {
 				
 				// store other information for tracked information
 				finger.setCode(this.track.code());
+				finger.setRemoteUser(request.getRemoteUser());
+				finger.setRemoteHost(request.getRemoteAddr());
 				finger.setPath(request.getPathInfo());
 				for (String parameterName : this.track.value()) {
 					String parameterValue = request.getParameter(parameterName);

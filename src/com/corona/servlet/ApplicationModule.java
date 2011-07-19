@@ -22,6 +22,7 @@ import com.corona.servlet.annotation.MatchParam;
 import com.corona.servlet.annotation.Param;
 import com.corona.servlet.annotation.Path;
 import com.corona.servlet.annotation.Pdf;
+import com.corona.servlet.annotation.Redirect;
 import com.corona.servlet.annotation.Regex;
 import com.corona.servlet.annotation.Remote;
 import com.corona.servlet.annotation.Resource;
@@ -65,6 +66,7 @@ import com.corona.servlet.producing.freemaker.FreeMakerEngineImpl;
 import com.corona.servlet.producing.freemaker.FreeMakerProducerFactory;
 import com.corona.servlet.producing.json.JsonProducerFactory;
 import com.corona.servlet.producing.pdf.PdfProducerFactory;
+import com.corona.servlet.producing.redirect.RedirectProducerFactory;
 import com.corona.servlet.producing.remote.RemoteInjectMethodFactory;
 import com.corona.servlet.producing.remote.RemoteProducerFactory;
 import com.corona.servlet.producing.resource.ResourceProducerFactory;
@@ -196,8 +198,11 @@ public class ApplicationModule extends WebKernelModule {
 		// configure Microsoft EXCEL producer
 		this.bindExtension(ProducerFactory.class).as(Excel.class).to(new ExcelProducerFactory());
 
-		// configure Microsoft CHART producer
+		// configure JFreeChart CHART producer
 		this.bindExtension(ProducerFactory.class).as(Chart.class).to(new ChartProducerFactory());
+
+		// configure Redirect producer
+		this.bindExtension(ProducerFactory.class).as(Redirect.class).to(new RedirectProducerFactory());
 
 		// configure Resource producer
 		this.bindExtension(ProducerFactory.class).as(Resource.class).to(new ResourceProducerFactory());

@@ -6,6 +6,8 @@ package com.corona.servlet.handling.resource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -43,7 +45,7 @@ public class ResourceHandler implements Handler {
 	/**
 	 * the request URI head to match
 	 */
-	private String head = null;
+	private String resourceHead = null;
 	
 	/**
 	 * the expiration for content (< 0, don't care; 0, no cache, > 0, cache)
@@ -56,9 +58,21 @@ public class ResourceHandler implements Handler {
 	private String welcomeFileName = "";
 	
 	/**
+	 * all the extensions that should not be treated as resource
+	 */
+	private Set<String> excludeFileExtensions = new HashSet<String>();
+	
+	/**
 	 * the matcher
 	 */
 	private ResourceMatcher matcher = new ResourceMatcher(this);
+	
+	/**
+	 * default constructor
+	 */
+	public ResourceHandler() {
+		this.excludeFileExtensions.add(".ftl");
+	}
 	
 	/**
 	 * {@inheritDoc}
@@ -86,15 +100,15 @@ public class ResourceHandler implements Handler {
 	/**
 	 * @return the request URI head to match
 	 */
-	public String getHead() {
-		return head;
+	public String getResourceHead() {
+		return resourceHead;
 	}
 	
 	/**
-	 * @param head the request URI head to match
+	 * @param resourceHead the request URI head to match
 	 */
-	public void setHead(final String head) {
-		this.head = head;
+	public void setResourceHead(final String resourceHead) {
+		this.resourceHead = resourceHead;
 	}
 	
 	/**
@@ -127,6 +141,20 @@ public class ResourceHandler implements Handler {
 		if (StringUtil.isBlank(this.welcomeFileName)) {
 			this.welcomeFileName = "";
 		}
+	}
+	
+	/**
+	 * @return all the extensions that should not be treated as resource
+	 */
+	public Set<String> getExcludeFileExtensions() {
+		return excludeFileExtensions;
+	}
+
+	/**
+	 * @param excludeFileExtensions all the extensions that should not be treated as resource to set
+	 */
+	public void setExcludeFileExtensions(final Set<String> excludeFileExtensions) {
+		this.excludeFileExtensions = excludeFileExtensions;
 	}
 
 	/**
