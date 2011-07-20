@@ -36,7 +36,7 @@ public class DefaultFreeMakerConfigurator implements FreeMakerConfigurator {
 
 		// Configure FreeMaker template settings
 		configuration.setObjectWrapper(new DefaultObjectWrapper());
-		configuration.setTemplateLoader(new WebappTemplateLoader(servletContext, "/WEB-INF/template"));
+		configuration.setTemplateLoader(new WebappTemplateLoader(servletContext, ""));
 		configuration.setCacheStorage(new MruCacheStorage(8, 80));
 		
 		// set default encoding and locale to FreeMaker engine
