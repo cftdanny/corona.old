@@ -5,7 +5,7 @@ package com.corona.mock;
 
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.datatype.DataTypeException;
-import org.dbunit.dataset.datatype.DefaultDataTypeFactory;
+import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.hsqldb.types.Types;
 
 /**
@@ -14,7 +14,7 @@ import org.hsqldb.types.Types;
  * @author $Author$
  * @version $Id$
  */
-class SQLDataTypeFactory extends DefaultDataTypeFactory {
+class SQLDataTypeFactory extends HsqldbDataTypeFactory {
 
 	/**
 	 * {@inheritDoc}

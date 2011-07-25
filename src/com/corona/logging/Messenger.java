@@ -226,7 +226,8 @@ public class Messenger extends Handler {
 		// do nothing
 	}
 
-	/**
+	/**danny	wwq543j0
+	 * 
 	 * {@inheritDoc}
 	 * @see java.util.logging.Handler#close()
 	 */

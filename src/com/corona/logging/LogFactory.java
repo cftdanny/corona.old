@@ -3,8 +3,10 @@
  */
 package com.corona.logging;
 
-import java.util.logging.LogManager;
+import java.util.Properties;
 import java.util.logging.Logger;
+
+import com.corona.util.StringUtil;
 
 /**
  * <p>This logger factory is used to create logger in application. It will create a logger by, 
@@ -38,6 +40,16 @@ public class LogFactory {
 	private static final String RUNTIME = "/logging.properties";
 	
 	/**
+	 * the class name of log manager
+	 */
+	private static final String LOG_MANAGER_CLASS = "com.corona.logging.LogManager";
+	
+	/**
+	 * the logger
+	 */
+	private static Log log = LogFactory.getLog(LogFactory.class);
+	
+	/**
 	 * the XMPP (Messenger) handler
 	 */
 	private static GTalk gtalk = null;
@@ -52,20 +64,9 @@ public class LogFactory {
 	 */
 	static { 
 		
-		config(LogManager.getLogManager()); 
-		try {
-			if (isHandlerEnabled(GTalk.class)) {
-				gtalk = new GTalk();
-			}
-		} catch (Exception e) {
-			gtalk = null;
-		}
-		try {
-			if (isHandlerEnabled(Messenger.class)) {
-				messenger = new Messenger();
-			}
-		} catch (Exception e) {
-			messenger = null;
+		Properties properties = config(TESTING);
+		if (properties != null) {
+			properties = config(RUNTIME);
 		}
 	}
 
@@ -75,46 +76,32 @@ public class LogFactory {
 	protected LogFactory() {
 		// do nothing
 	}
-
-	/**
-	 * @param handlerClass the handler class
-	 * @return whether this handler is enabled
-	 */
-	private static boolean isHandlerEnabled(final Class<?> handlerClass) {
-		return "enable".equals(LogManager.getLogManager().getProperty(handlerClass.getName()));
-	}
 	
 	/**
-	 * configure Java Logging by properties file 
-	 * @param logManager the current log manager
+	 * @param resource logging configuration properties file
+	 * @return the loaded configuration properties file
 	 */
-	private static void config(final LogManager logManager) {
+	private static Properties config(final String resource) {
 		
-		// try to load logging configuration by testing and runtime in sequence
-		if (!(config(logManager, TESTING) || config(logManager, RUNTIME))) {
-			logManager.reset();
-		}
-	}
-	
-	/**
-	 * @param logManager the log manager
-	 * @param resource the Java Logging configuration file
-	 * @return whether Java Logging has been configured
-	 */
-	private static boolean config(final LogManager logManager, final String resource) {
-		
-		boolean configured = true;
+		// load logging configuration properties by resource name
+		Properties properties = new Properties();
 		try {
-			logManager.readConfiguration(
-					LogFactory.class.getResourceAsStream(resource)
-			);
-			Logger.getLogger(LogFactory.class.getName()).info(
-					"Configure Java Logging by class path properties file: " + resource
-			);
-		} catch (Throwable e) {
-			configured = false;
+			properties.load(LogFactory.class.getResourceAsStream(resource));
+		} catch (Exception e) {
+			return null;
 		}
-		return configured;
+		
+		// find log manager from configuration properties files
+		String className = properties.getProperty(LOG_MANAGER_CLASS);
+		if (!StringUtil.isBlank(className)) {
+			try {
+				Class<?> logManagerClass = LogFactory.class.getClassLoader().loadClass(className);
+				((LogManager) logManagerClass.newInstance()).configure(resource);
+			} catch (Exception e) {
+				log.error("Fail to configure logging with [{0}]", e, className);
+			}
+		}
+		return properties;
 	}
 	
 	/**

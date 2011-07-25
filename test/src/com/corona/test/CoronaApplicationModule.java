@@ -89,17 +89,17 @@ public class CoronaApplicationModule extends WebStartModule {
 		
 		// Install JavaScript handler to match all requests for /script/* with first (1) priority
 		this.bind(Handler.class).to(ResourceHandler.class).as("script");
-		this.bindConfiguration(Handler.class).as("script").property("head").value("/script");
+		this.bindConfiguration(Handler.class).as("script").property("resourceHead").value("/script");
 		this.bindConfiguration(Handler.class).as("script").property("priority").value(1);
 
 		// Install CSS handler to match all requests for /style/* with first (1) priority
 		this.bind(Handler.class).to(ResourceHandler.class).as("style");
-		this.bindConfiguration(Handler.class).as("style").property("head").value("/style");
+		this.bindConfiguration(Handler.class).as("style").property("resourceHead").value("/style");
 		this.bindConfiguration(Handler.class).as("style").property("priority").value(1);
 
 		// Install image handler to match all requests for /image/* with first (1) priority
 		this.bind(Handler.class).to(ResourceHandler.class).as("image");
-		this.bindConfiguration(Handler.class).as("image").property("head").value("/image");
+		this.bindConfiguration(Handler.class).as("image").property("resourceHead").value("/image");
 		this.bindConfiguration(Handler.class).as("image").property("priority").value(1);
 
 		// Install other static resources to match other handler can't match with last priority
