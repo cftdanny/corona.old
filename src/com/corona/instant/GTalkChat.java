@@ -3,6 +3,8 @@
  */
 package com.corona.instant;
 
+import java.util.Properties;
+
 import org.jivesoftware.smack.XMPPException;
 
 /**
@@ -37,6 +39,11 @@ public class GTalkChat implements Chat {
 	 * the chat listener support
 	 */
 	private ChatListenerSupport chatListenerSupport = new ChatListenerSupport();
+	
+	/**
+	 * the properties
+	 */
+	private Properties properties = new Properties();
 
 	/**
 	 * @param messenger the GTalk messenger
@@ -114,6 +121,25 @@ public class GTalkChat implements Chat {
 		this.chatListenerSupport.clear();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.instant.Chat#setValue(java.lang.String, java.lang.Object)
+	 */
+	@Override
+	public <T> void setValue(final String key, final T value) {
+		this.properties.put(key, value);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.instant.Chat#getValue(java.lang.String, java.lang.Object)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getValue(final String key, final T defaultValue) {
+		return this.properties.containsKey(key) ? (T) this.properties.get(key) : defaultValue;
+	}
+
 	/**
 	 * @return the chat listener support
 	 */

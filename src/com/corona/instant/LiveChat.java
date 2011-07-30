@@ -3,6 +3,8 @@
  */
 package com.corona.instant;
 
+import java.util.Properties;
+
 import com.corona.instant.Messenger.State;
 
 import net.sf.jml.Email;
@@ -41,6 +43,11 @@ class LiveChat implements Chat {
 	 * all chat listeners
 	 */
 	private LiveChatListener chatListener;
+	
+	/**
+	 * the properties
+	 */
+	private Properties properties = new Properties();
 	
 	/**
 	 * @param messenger the Windows Live Messenger
@@ -130,6 +137,25 @@ class LiveChat implements Chat {
 		
 		this.chatListenerSupport.clear();
 		this.messenger.getChats().remove(this);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.instant.Chat#setValue(java.lang.String, java.lang.Object)
+	 */
+	@Override
+	public <T> void setValue(final String key, final T value) {
+		this.properties.put(key, value);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.instant.Chat#getValue(java.lang.String, java.lang.Object)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getValue(final String key, final T defaultValue) {
+		return this.properties.contains(key) ? (T) this.properties.get(key) : defaultValue;
 	}
 
 	/**

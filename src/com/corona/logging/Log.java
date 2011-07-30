@@ -3,9 +3,7 @@
  */
 package com.corona.logging;
 
-import java.text.MessageFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
 
 /**
  * <p>This logger logs system runtime information by message, values of arguments and thrown exceptions. 
@@ -50,7 +48,7 @@ public class Log {
 	 * @return whether trace level logging is enabled
 	 */
 	public boolean isTraceEnabled() {
-		return this.logger.isLoggable(Level.FINEST);
+		return this.logger.isTraceEnabled();
 	}
 	
 	/**
@@ -69,8 +67,8 @@ public class Log {
 	 */
 	public void trace(final String pattern, final Object... args) {
 		
-		if (this.logger.isLoggable(Level.FINEST)) {
-			this.logger.finest(args.length == 0 ? pattern : MessageFormat.format(pattern, args));
+		if (this.logger.isTraceEnabled()) {
+			this.logger.trace(LogListeners.log(pattern, args));
 		}
 	}
 
@@ -94,8 +92,8 @@ public class Log {
 	 */
 	public void trace(final String pattern, final Throwable e, final Object... args) {
 		
-		if (this.logger.isLoggable(Level.FINEST)) {
-			this.logger.log(Level.FINEST, args.length == 0 ? pattern : MessageFormat.format(pattern, args), e);
+		if (this.logger.isTraceEnabled()) {
+			this.logger.trace(LogListeners.log(pattern, e, args), e);
 		}
 	}
 
@@ -103,7 +101,7 @@ public class Log {
 	 * @return whether debug level logging is enabled
 	 */
 	public boolean isDebugEnabled() {
-		return this.logger.isLoggable(Level.FINE);
+		return this.logger.isDebugEnabled();
 	}
 
 	/**
@@ -122,8 +120,8 @@ public class Log {
 	 */
 	public void debug(final String pattern, final Object... args) {
 		
-		if (this.logger.isLoggable(Level.FINE)) {
-			this.logger.fine(args.length == 0 ? pattern : MessageFormat.format(pattern, args));
+		if (this.logger.isDebugEnabled()) {
+			this.logger.debug(LogListeners.log(pattern, args));
 		}
 	}
 
@@ -147,8 +145,8 @@ public class Log {
 	 */
 	public void debug(final String pattern, final Throwable e, final Object... args) {
 		
-		if (this.logger.isLoggable(Level.FINE)) {
-			this.logger.log(Level.FINE, args.length == 0 ? pattern : MessageFormat.format(pattern, args), e);
+		if (this.logger.isDebugEnabled()) {
+			this.logger.debug(LogListeners.log(pattern, e, args), e);
 		}
 	}
 
@@ -156,7 +154,7 @@ public class Log {
 	 * @return whether debug level logging is enabled
 	 */
 	public boolean isInfoEnabled() {
-		return this.logger.isLoggable(Level.INFO);
+		return this.logger.isInfoEnabled();
 	}
 
 	/**
@@ -175,8 +173,8 @@ public class Log {
 	 */
 	public void info(final String pattern, final Object... args) {
 		
-		if (this.logger.isLoggable(Level.INFO)) {
-			this.logger.info(args.length == 0 ? pattern : MessageFormat.format(pattern, args));
+		if (this.logger.isInfoEnabled()) {
+			this.logger.info(LogListeners.log(pattern, args));
 		}
 	}
 
@@ -200,8 +198,8 @@ public class Log {
 	 */
 	public void info(final String pattern, final Throwable e, final Object... args) {
 		
-		if (this.logger.isLoggable(Level.INFO)) {
-			this.logger.log(Level.INFO, args.length == 0 ? pattern : MessageFormat.format(pattern, args), e);
+		if (this.logger.isInfoEnabled()) {
+			this.logger.info(LogListeners.log(pattern, e, args), e);
 		}
 	}
 	
@@ -209,7 +207,7 @@ public class Log {
 	 * @return whether debug level logging is enabled
 	 */
 	public boolean isWarnEnabled() {
-		return this.logger.isLoggable(Level.WARNING);
+		return this.logger.isWarnEnabled();
 	}
 
 	/**
@@ -228,8 +226,8 @@ public class Log {
 	 */
 	public void warn(final String pattern, final Object... args) {
 		
-		if (this.logger.isLoggable(Level.WARNING)) {
-			this.logger.warning(args.length == 0 ? pattern : MessageFormat.format(pattern, args));
+		if (this.logger.isWarnEnabled()) {
+			this.logger.warn(LogListeners.log(pattern, args));
 		}
 	}
 
@@ -253,8 +251,8 @@ public class Log {
 	 */
 	public void warn(final String pattern, final Throwable e, final Object... args) {
 		
-		if (this.logger.isLoggable(Level.WARNING)) {
-			this.logger.log(Level.WARNING, args.length == 0 ? pattern : MessageFormat.format(pattern, args), e);
+		if (this.logger.isWarnEnabled()) {
+			this.logger.warn(LogListeners.log(pattern, e, args), e);
 		}
 	}
 
@@ -262,7 +260,7 @@ public class Log {
 	 * @return whether debug level logging is enabled
 	 */
 	public boolean isErrorEnabled() {
-		return this.logger.isLoggable(Level.SEVERE);
+		return this.logger.isErrorEnabled();
 	}
 
 	/**
@@ -282,8 +280,8 @@ public class Log {
 	 */
 	public void error(final String pattern, final Object... args) {
 		
-		if (this.logger.isLoggable(Level.SEVERE)) {
-			this.logger.severe(args.length == 0 ? pattern : MessageFormat.format(pattern, args));
+		if (this.logger.isErrorEnabled()) {
+			this.logger.error(LogListeners.log(pattern, args));
 		}
 	}
 
@@ -308,8 +306,8 @@ public class Log {
 	 */
 	public void error(final String pattern, final Throwable e, final Object... args) {
 		
-		if (this.logger.isLoggable(Level.SEVERE)) {
-			this.logger.log(Level.SEVERE, args.length == 0 ? pattern : MessageFormat.format(pattern, args), e);
+		if (this.logger.isErrorEnabled()) {
+			this.logger.error(LogListeners.log(pattern, e, args), e);
 		}
 	}
 }

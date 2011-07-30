@@ -4,7 +4,9 @@
 package com.corona.logging;
 
 import java.util.Properties;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.corona.util.StringUtil;
 
@@ -50,23 +52,15 @@ public class LogFactory {
 	private static Log log = LogFactory.getLog(LogFactory.class);
 	
 	/**
-	 * the XMPP (Messenger) handler
-	 */
-	private static GTalk gtalk = null;
-	
-	/**
-	 * the MSN Messenger handler
-	 */
-	private static Messenger messenger = null;
-	
-	/**
 	 * load Java Logging Configuration from properties file
 	 */
 	static { 
 		
-		Properties properties = config(TESTING);
-		if (properties != null) {
-			properties = config(RUNTIME);
+		// configure log factory and log listeners
+		if (config(TESTING)) {
+			LogListeners.configure(TESTING);
+		} else if (config(RUNTIME)) {
+			LogListeners.configure(RUNTIME);
 		}
 	}
 
@@ -79,16 +73,16 @@ public class LogFactory {
 	
 	/**
 	 * @param resource logging configuration properties file
-	 * @return the loaded configuration properties file
+	 * @return whether log factory has been configured by resource
 	 */
-	private static Properties config(final String resource) {
+	private static boolean config(final String resource) {
 		
 		// load logging configuration properties by resource name
 		Properties properties = new Properties();
 		try {
 			properties.load(LogFactory.class.getResourceAsStream(resource));
 		} catch (Exception e) {
-			return null;
+			return false;
 		}
 		
 		// find log manager from configuration properties files
@@ -101,7 +95,7 @@ public class LogFactory {
 				log.error("Fail to configure logging with [{0}]", e, className);
 			}
 		}
-		return properties;
+		return true;
 	}
 	
 	/**
@@ -118,7 +112,7 @@ public class LogFactory {
 	 * @return the new logger
 	 */
 	public static Log getLog(final Class<?> clazz) {
-		return getLog(Logger.getLogger(clazz.getName()));
+		return getLog(LoggerFactory.getLogger(clazz.getName()));
 	}
 	
 	/**
@@ -135,7 +129,7 @@ public class LogFactory {
 	 * @return the new logger
 	 */
 	public static Log getLog(final String name) {
-		return getLog(Logger.getLogger(name));
+		return getLog(LoggerFactory.getLogger(name));
 	}
 	
 	/**
@@ -143,13 +137,6 @@ public class LogFactory {
 	 * @return the log
 	 */
 	private static Log getLog(final Logger logger) {
-		
-		if (gtalk != null) {
-			logger.addHandler(gtalk);
-		}
-		if (messenger != null) {
-			logger.addHandler(messenger);
-		}
 		return new Log(logger);
 	}
 	
@@ -157,13 +144,6 @@ public class LogFactory {
 	 * close all opened handlers if required. Usually, it logs out from IM server
 	 */
 	public void close() {
-		
-		// close gtalk and messenger connection
-		if (gtalk != null) {
-			gtalk.close();
-		}
-		if (messenger != null) {
-			messenger.close();
-		}
+		LogListeners.close();
 	}
 }
