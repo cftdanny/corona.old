@@ -6,17 +6,17 @@ package com.corona.servlet;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * <p>This interface is used to test whether web resource can be accessed or not </p>
+ * <p>This interface is used to test whether web resource can be matched or not for URL </p>
  *
  * @author $Author$
  * @version $Id$
  */
-public interface Restrictor {
+public interface Selector {
 
 	/**
 	 * @param path the request path
 	 * @param request the HTTP SERVLET request
 	 * @return whether can access resource for request path
 	 */
-	boolean restrict(String path, HttpServletRequest request);
+	boolean select(String path, HttpServletRequest request);
 }

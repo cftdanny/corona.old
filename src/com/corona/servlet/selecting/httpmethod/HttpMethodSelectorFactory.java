@@ -1,33 +1,33 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.servlet.restricting.httpmethod;
+package com.corona.servlet.selecting.httpmethod;
 
 import java.lang.reflect.Method;
 
 import com.corona.context.ContextManagerFactory;
-import com.corona.servlet.Restrictor;
-import com.corona.servlet.RestrictorFactory;
+import com.corona.servlet.Selector;
+import com.corona.servlet.SelectorFactory;
 import com.corona.servlet.annotation.HttpMethod;
 
 /**
- * <p>this factory is used to create {@link HttpMethodRestrictor} </p>
+ * <p>this factory is used to create {@link HttpMethodSelector} </p>
  *
  * @author $Author$
  * @version $Id$
  */
-public class HttpMethodRestrictorFactory implements RestrictorFactory<HttpMethod> {
+public class HttpMethodSelectorFactory implements SelectorFactory<HttpMethod> {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.RestrictorFactory#create(
+	 * @see com.corona.servlet.SelectorFactory#create(
 	 * 	com.corona.context.ContextManagerFactory, java.lang.reflect.Method, java.lang.annotation.Annotation
 	 * )
 	 */
 	@Override
-	public Restrictor create(
+	public Selector create(
 			final ContextManagerFactory contextManagerFactory, final Method method, final HttpMethod httpMethod
 	) {
-		return new HttpMethodRestrictor(httpMethod);
+		return new HttpMethodSelector(httpMethod);
 	}
 }

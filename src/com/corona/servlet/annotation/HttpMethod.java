@@ -10,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>To restrict which type of HTTP request method is allowed to access content. </p>
+ * <p>To check which type of HTTP request method will be matched for URL to be matched. </p>
  *
  * @author $Author$
  * @version $Id$
@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-@Restrict
+@Selector
 public @interface HttpMethod {
 
 	/**

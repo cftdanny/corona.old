@@ -72,8 +72,8 @@ import com.corona.servlet.producing.remote.RemoteProducerFactory;
 import com.corona.servlet.producing.resource.ResourceProducerFactory;
 import com.corona.servlet.producing.service.ServiceProducerFactory;
 import com.corona.servlet.producing.xml.XmlProducerFactory;
-import com.corona.servlet.restricting.hasparam.HasParamRestrictorFactory;
-import com.corona.servlet.restricting.httpmethod.HttpMethodRestrictorFactory;
+import com.corona.servlet.selecting.hasparam.HasParamSelectorFactory;
+import com.corona.servlet.selecting.httpmethod.HttpMethodSelectorFactory;
 
 /**
  * <p>This module is used to configure context manager factory for SERVLET environment. </p>
@@ -171,8 +171,8 @@ public class ApplicationModule extends WebKernelModule {
 		);
 
 		// configure built-in restrict factory for SERVLET
-		this.bindExtension(RestrictorFactory.class).as(HttpMethod.class).to(new HttpMethodRestrictorFactory());
-		this.bindExtension(RestrictorFactory.class).as(HasParam.class).to(new HasParamRestrictorFactory());
+		this.bindExtension(SelectorFactory.class).as(HttpMethod.class).to(new HttpMethodSelectorFactory());
+		this.bindExtension(SelectorFactory.class).as(HasParam.class).to(new HasParamSelectorFactory());
 		
 		// configure built-in matcher factory for SERVLET
 		this.bindExtension(MatcherFactory.class).as(Head.class).to(new HeadMatcherFactory());

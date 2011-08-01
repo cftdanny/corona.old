@@ -12,7 +12,7 @@ import com.corona.context.ConfigurationException;
 import com.corona.context.ContextManagerFactory;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
-import com.corona.servlet.annotation.Restrict;
+import com.corona.servlet.annotation.Selector;
 
 /**
  * <p>The helper {@link Matcher} that checks GET, POST, PUT and DELETE for HTTP request. </p>
@@ -30,7 +30,7 @@ public abstract class AbstractMatcher implements Matcher {
 	/**
 	 * whether restrict to access content
 	 */
-	private Restrictors restrictors = new Restrictors();
+	private Selectors selectors = new Selectors();
 	
 	/**
 	 * @param contextManagerFactory the current context manager factory
@@ -41,9 +41,9 @@ public abstract class AbstractMatcher implements Matcher {
 		
 		for (Annotation annotation : method.getAnnotations()) {
 			
-			if (annotation.annotationType().isAnnotationPresent(Restrict.class)) {
-				RestrictorFactory factory = contextManagerFactory.getExtension(
-						RestrictorFactory.class, annotation.annotationType()
+			if (annotation.annotationType().isAnnotationPresent(Selector.class)) {
+				SelectorFactory factory = contextManagerFactory.getExtension(
+						SelectorFactory.class, annotation.annotationType()
 				);
 				if (factory == null) {
 					this.logger.error("Restrict factory for [{0}] in method [{0}] does not exist",
@@ -54,7 +54,7 @@ public abstract class AbstractMatcher implements Matcher {
 					);
 				}
 				
-				this.restrictors.add(factory.create(contextManagerFactory, method, annotation));
+				this.selectors.add(factory.create(contextManagerFactory, method, annotation));
 			}
 		}
 	}
@@ -65,7 +65,7 @@ public abstract class AbstractMatcher implements Matcher {
 	 */
 	@Override
 	public MatchResult match(final String path, final HttpServletRequest request) {
-		return this.restrictors.restrict(path, request) ? null : this.match(path);
+		return this.selectors.select(path, request) ? null : this.match(path);
 	}
 	
 	/**

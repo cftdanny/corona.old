@@ -1,23 +1,23 @@
 /**
  * Copyright (c) 2009 Aurora Software Technology Studio. All rights reserved.
  */
-package com.corona.servlet.restricting.httpmethod;
+package com.corona.servlet.selecting.httpmethod;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.corona.servlet.Restrictor;
+import com.corona.servlet.Selector;
 import com.corona.servlet.annotation.HttpMethod;
 
 /**
- * <p>The restrictor to test whether allow to access content according to HTTP request method. </p>
+ * <p>The Selector to test whether allow to access content according to HTTP request method. </p>
  *
  * @author $Author$
  * @version $Id$
  */
-public class HttpMethodRestrictor implements Restrictor {
+public class HttpMethodSelector implements Selector {
 
 	/**
 	 * the supported HTTP methods
@@ -27,7 +27,7 @@ public class HttpMethodRestrictor implements Restrictor {
 	/**
 	 * @param method the annotation of HTTP method
 	 */
-	HttpMethodRestrictor(final HttpMethod method) {
+	HttpMethodSelector(final HttpMethod method) {
 		
 		for (HttpMethod.Action httpmethod : method.value()) {
 			
@@ -57,10 +57,10 @@ public class HttpMethodRestrictor implements Restrictor {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see com.corona.servlet.Restrictor#restrict(java.lang.String, javax.servlet.http.HttpServletRequest)
+	 * @see com.corona.servlet.Selector#select(java.lang.String, javax.servlet.http.HttpServletRequest)
 	 */
 	@Override
-	public boolean restrict(final String path, final HttpServletRequest request) {
+	public boolean select(final String path, final HttpServletRequest request) {
 		return !this.methods.contains(request.getMethod());
 	}
 }
