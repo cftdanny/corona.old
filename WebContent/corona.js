@@ -57,4 +57,3 @@ Corona.namespace = function () {
 	}
 	return result;
 };
-
