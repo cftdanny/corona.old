@@ -10,14 +10,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>This annotation is used to register producer to produce web content </p>
+ * <p>The annotation to indicate only logged in user can access web resource </p>
  *
  * @author $Author$
  * @version $Id$
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Produce {
+@Target(ElementType.METHOD)
+@Restrict
+public @interface LoggedIn {
 
 }

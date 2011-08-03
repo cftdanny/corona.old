@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author $Author$
  * @version $Id$
  */
-public class Selectors implements Selector {
+class Selectors {
 
 	/**
 	 * all selectors
@@ -22,10 +22,10 @@ public class Selectors implements Selector {
 	private List<Selector> selectors;
 
 	/**
-	 * {@inheritDoc}
-	 * @see com.corona.servlet.Selector#select(java.lang.String, javax.servlet.http.HttpServletRequest)
+	 * @param path the request path
+	 * @param request the HTTP SERVLET request
+	 * @return whether can access resource for request path
 	 */
-	@Override
 	public boolean select(final String path, final HttpServletRequest request) {
 		
 		if (this.selectors != null) {

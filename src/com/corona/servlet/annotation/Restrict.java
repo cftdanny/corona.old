@@ -10,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>This annotation is used to register producer to produce web content </p>
+ * <p>This annotation is used to verify whether resource can be accessed after matched request URL </p>
  *
  * @author $Author$
  * @version $Id$
@@ -18,6 +18,6 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Produce {
+public @interface Restrict {
 
 }

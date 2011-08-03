@@ -4,6 +4,7 @@
 package com.corona.servlet.handling.producer;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.corona.context.ConfigurationException;
 import com.corona.context.ContextManager;
 import com.corona.context.ContextManagerFactory;
 import com.corona.context.InjectMethod;
@@ -32,8 +34,10 @@ import com.corona.servlet.MatchResult;
 import com.corona.servlet.Matcher;
 import com.corona.servlet.Producer;
 import com.corona.servlet.ProducerHint;
+import com.corona.servlet.RestrictorFactory;
 import com.corona.servlet.annotation.ContentType;
 import com.corona.servlet.annotation.Expiration;
+import com.corona.servlet.annotation.Restrict;
 import com.corona.servlet.annotation.Track;
 import com.corona.servlet.tracking.Finger;
 import com.corona.servlet.tracking.TrackManager;
@@ -73,10 +77,20 @@ public class ProducerHandler extends AbstractHandler {
 	private Track track;
 	
 	/**
+	 * all restrictors to verify whether resource can be accessed
+	 */
+	private Restrictors restrictors;
+	
+	/**
+	 * @param contextManagerFactory the current context manager factory
 	 * @param matcher the matcher
 	 * @param producer the producer to create HTTP response
 	 */
-	public ProducerHandler(final Matcher matcher, final Producer producer) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public ProducerHandler(
+			final ContextManagerFactory contextManagerFactory, final Matcher matcher, final Producer producer
+	) {
+		
 		super(matcher);
 		
 		this.producer = producer;
@@ -85,6 +99,29 @@ public class ProducerHandler extends AbstractHandler {
 		this.expiration = method.getAnnotation(Expiration.class);
 		this.contentType = method.getAnnotation(ContentType.class);
 		this.track = method.getAnnotation(Track.class);
+		
+		// find all restrictors defined by restrict annotation
+		for (Annotation annotation : method.getAnnotations()) {
+			
+			if (annotation.annotationType().isAnnotationPresent(Restrict.class)) {
+				RestrictorFactory factory = contextManagerFactory.getExtension(
+						RestrictorFactory.class, annotation.annotationType()
+				);
+				if (factory == null) {
+					this.logger.error("Restrictor factory for [{0}] in method [{0}] does not exist",
+							annotation, method
+					);
+					throw new ConfigurationException("Restrictor factory for [{0}] in method [{0}] does not exist",
+							annotation, method
+					);
+				}
+				
+				if (this.restrictors == null) {
+					this.restrictors = new Restrictors();
+				}
+				this.restrictors.add(factory.create(contextManagerFactory, method, annotation));
+			}
+		}
 	}
 	
 	/**
@@ -106,6 +143,11 @@ public class ProducerHandler extends AbstractHandler {
 	public void handle(
 			final MatchResult result, final HttpServletRequest request, final HttpServletResponse response
 	) throws HandleException {
+		
+		// if request resources is restricted, just return
+		if ((this.restrictors != null) && this.restrictors.restrict(result.getPath(), request, response)) {
+			return;	
+		}
 		
 		Map<Key, Object> context = new HashMap<Key, Object>();
 		

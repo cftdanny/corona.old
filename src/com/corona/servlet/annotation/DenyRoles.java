@@ -10,14 +10,19 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>This annotation is used to register producer to produce web content </p>
+ * <p>Don't allow user with specified roles can access resources </p>
  *
  * @author $Author$
  * @version $Id$
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Produce {
+@Target(ElementType.METHOD)
+@Restrict
+public @interface DenyRoles {
 
+	/**
+	 * the roles 
+	 */
+	String[] value();
 }

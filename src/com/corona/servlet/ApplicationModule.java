@@ -8,8 +8,10 @@ import com.corona.context.InjectMethodFactory;
 import com.corona.context.InjectParameterFactory;
 import com.corona.context.InjectPropertyFactory;
 import com.corona.context.annotation.Application;
+import com.corona.servlet.annotation.AllowRoles;
 import com.corona.servlet.annotation.Chart;
 import com.corona.servlet.annotation.CookieParam;
+import com.corona.servlet.annotation.DenyRoles;
 import com.corona.servlet.annotation.Excel;
 import com.corona.servlet.annotation.FreeMaker;
 import com.corona.servlet.annotation.HasParam;
@@ -18,6 +20,7 @@ import com.corona.servlet.annotation.HttpMethod;
 import com.corona.servlet.annotation.Jndi;
 import com.corona.servlet.annotation.Json;
 import com.corona.servlet.annotation.JsonRequest;
+import com.corona.servlet.annotation.LoggedIn;
 import com.corona.servlet.annotation.MatchParam;
 import com.corona.servlet.annotation.Param;
 import com.corona.servlet.annotation.Path;
@@ -27,6 +30,7 @@ import com.corona.servlet.annotation.Regex;
 import com.corona.servlet.annotation.Remote;
 import com.corona.servlet.annotation.Resource;
 import com.corona.servlet.annotation.Same;
+import com.corona.servlet.annotation.SecuredRequest;
 import com.corona.servlet.annotation.Service;
 import com.corona.servlet.annotation.Session;
 import com.corona.servlet.annotation.Tail;
@@ -72,6 +76,10 @@ import com.corona.servlet.producing.remote.RemoteProducerFactory;
 import com.corona.servlet.producing.resource.ResourceProducerFactory;
 import com.corona.servlet.producing.service.ServiceProducerFactory;
 import com.corona.servlet.producing.xml.XmlProducerFactory;
+import com.corona.servlet.restricting.allowroles.AllowRolesRestrictorFactory;
+import com.corona.servlet.restricting.deniedroles.DenyRolesRestrictorFactory;
+import com.corona.servlet.restricting.loggedin.LoggedInRestrictorFactory;
+import com.corona.servlet.restricting.securedrequest.SecuredRequestRestrictorFactory;
 import com.corona.servlet.selecting.hasparam.HasParamSelectorFactory;
 import com.corona.servlet.selecting.httpmethod.HttpMethodSelectorFactory;
 
@@ -170,9 +178,15 @@ public class ApplicationModule extends WebKernelModule {
 				new UploadInjectPropertyFactory()
 		);
 
-		// configure built-in restrict factory for SERVLET
+		// configure built-in selector factory for SERVLET
 		this.bindExtension(SelectorFactory.class).as(HttpMethod.class).to(new HttpMethodSelectorFactory());
 		this.bindExtension(SelectorFactory.class).as(HasParam.class).to(new HasParamSelectorFactory());
+		
+		// configure built-in restrictor factory for SERVLET
+		this.bindExtension(RestrictorFactory.class).as(LoggedIn.class).to(new LoggedInRestrictorFactory());
+		this.bindExtension(RestrictorFactory.class).as(AllowRoles.class).to(new AllowRolesRestrictorFactory());
+		this.bindExtension(RestrictorFactory.class).as(DenyRoles.class).to(new DenyRolesRestrictorFactory());
+		this.bindExtension(RestrictorFactory.class).as(SecuredRequest.class).to(new SecuredRequestRestrictorFactory());
 		
 		// configure built-in matcher factory for SERVLET
 		this.bindExtension(MatcherFactory.class).as(Head.class).to(new HeadMatcherFactory());

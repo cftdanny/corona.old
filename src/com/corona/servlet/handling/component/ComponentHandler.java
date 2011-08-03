@@ -51,7 +51,7 @@ public class ComponentHandler implements Handler {
 	public Matcher getMatcher() {
 		return this.matcher;
 	}
-	
+
 	/**
 	 * @return the children handlers
 	 */

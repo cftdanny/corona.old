@@ -145,7 +145,7 @@ class Investigator implements Visitor {
 				
 				this.logger.info("Create HTTP request handler with method [{0}]", method);
 				try {
-					this.handlers.add(new ProducerHandler(
+					this.handlers.add(new ProducerHandler(this.contextManagerFactory, 
 							this.getMatcher(method, annotation), this.getProducer(key, method)
 					));
 				} catch (Throwable e) {
@@ -172,7 +172,7 @@ class Investigator implements Visitor {
 				
 				this.logger.info("Create HTTP request handler with method [{0}]", method);
 				try {
-					parent.add(new ProducerHandler(
+					parent.add(new ProducerHandler(this.contextManagerFactory, 
 							this.getMatcher(method, annotation), this.getProducer(key, method)
 					));
 				} catch (Throwable e) {

@@ -12,7 +12,7 @@ import com.corona.context.ConfigurationException;
 import com.corona.context.ContextManagerFactory;
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
-import com.corona.servlet.annotation.Selector;
+import com.corona.servlet.annotation.Select;
 
 /**
  * <p>The helper {@link Matcher} that checks GET, POST, PUT and DELETE for HTTP request. </p>
@@ -41,15 +41,15 @@ public abstract class AbstractMatcher implements Matcher {
 		
 		for (Annotation annotation : method.getAnnotations()) {
 			
-			if (annotation.annotationType().isAnnotationPresent(Selector.class)) {
+			if (annotation.annotationType().isAnnotationPresent(Select.class)) {
 				SelectorFactory factory = contextManagerFactory.getExtension(
 						SelectorFactory.class, annotation.annotationType()
 				);
 				if (factory == null) {
-					this.logger.error("Restrict factory for [{0}] in method [{0}] does not exist",
+					this.logger.error("Select factory for [{0}] in method [{0}] does not exist",
 							annotation, method
 					);
-					throw new ConfigurationException("Restrict factory for [{0}] in method [{0}] does not exist",
+					throw new ConfigurationException("Select factory for [{0}] in method [{0}] does not exist",
 							annotation, method
 					);
 				}

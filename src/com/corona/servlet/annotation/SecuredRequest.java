@@ -10,14 +10,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>This annotation is used to determine whether web resource can be accessed or not for URL to be matched. </p>
+ * <p>Only allow request by HTTPS </p>
  *
  * @author $Author$
  * @version $Id$
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Selector {
+@Target(ElementType.METHOD)
+@Restrict
+public @interface SecuredRequest {
 
 }
