@@ -3,6 +3,10 @@
  */
 package com.corona.logging;
 
+import java.lang.reflect.Field;
+
+import org.slf4j.impl.JDK14LoggerAdapter;
+
 /**
  * <p>This log manager will configure JDK logging </p>
  *
@@ -24,6 +28,16 @@ public class JdkLogManager implements LogManager {
 		} catch (Exception e) {
 			logManager.getLogger(JdkLogManager.class.getName()).warning(
 					"Fail to configure jdk logging because error: " + e.getMessage()
+			);
+		}
+		
+		try {
+			Field field = JDK14LoggerAdapter.class.getDeclaredField("SELF");
+			field.setAccessible(true);
+			field.set(null, Log.class.getName());
+		} catch (Exception e) {
+			logManager.getLogger(JdkLogManager.class.getName()).warning(
+					"Fail to set JDK14LoggerAdapter SELF field because error: " + e.getMessage()
 			);
 		}
 	}

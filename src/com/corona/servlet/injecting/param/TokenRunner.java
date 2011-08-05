@@ -102,7 +102,6 @@ class TokenRunner extends DeserializationProblemHandler {
 	 * @return the translated value
 	 * @exception TokenParserException if fail to translate request parameters to value
 	 */
-	@SuppressWarnings("unchecked")
 	Object getValue(final Class<?> type, final String head) throws TokenParserException {
 		
 		// find all request parameter names

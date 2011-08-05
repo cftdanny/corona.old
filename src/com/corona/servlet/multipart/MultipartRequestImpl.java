@@ -348,7 +348,7 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 	 * {@inheritDoc}
 	 * @see javax.servlet.ServletRequestWrapper#getParameterNames()
 	 */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Enumeration getParameterNames() {
 		

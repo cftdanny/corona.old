@@ -33,6 +33,11 @@ import com.corona.logging.LogFactory;
 public class ContextManagerFactoryImpl implements ContextManagerFactory {
 
 	/**
+	 * the version
+	 */
+	public static final String VERSION = "1.0";
+	
+	/**
 	 * the logger
 	 */
 	private final Log logger = LogFactory.getLog(ContextManagerFactoryImpl.class);
