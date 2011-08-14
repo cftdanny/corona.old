@@ -3,7 +3,7 @@
  */
 package com.corona.io;
 
-import java.text.MessageFormat;
+import com.corona.util.StringUtil;
 
 /**
  * <p>This exception will be raised if fail to unmarshal output stream to Java object. </p>
@@ -24,7 +24,7 @@ public class UnmarshalException extends Exception {
 	 * @param arguments the argument value in pattern
 	 */
 	public UnmarshalException(final String pattern, final Object... arguments) {
-		super(MessageFormat.format(pattern, arguments));
+		super(StringUtil.format(pattern, arguments));
 	}
 	
 	/**
@@ -33,6 +33,6 @@ public class UnmarshalException extends Exception {
 	 * @param arguments the argument value in pattern
 	 */
 	public UnmarshalException(final String pattern, final Throwable cause, final Object... arguments) {
-		super(MessageFormat.format(pattern, arguments), cause);
+		super(StringUtil.format(pattern, arguments), cause);
 	}
 }

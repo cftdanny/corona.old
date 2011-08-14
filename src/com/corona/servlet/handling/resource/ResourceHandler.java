@@ -43,9 +43,9 @@ public class ResourceHandler implements Handler {
 	private int priority = Integer.MAX_VALUE;
 	
 	/**
-	 * the request URI head to match
+	 * the request URI pattern to match
 	 */
-	private String resourceHead = null;
+	private String pattern = null;
 	
 	/**
 	 * the expiration for content (< 0, don't care; 0, no cache, > 0, cache)
@@ -98,17 +98,17 @@ public class ResourceHandler implements Handler {
 	}
 	
 	/**
-	 * @return the request URI head to match
+	 * @return the request URI pattern to match
 	 */
-	public String getResourceHead() {
-		return resourceHead;
+	public String getPattern() {
+		return pattern;
 	}
 	
 	/**
-	 * @param resourceHead the request URI head to match
+	 * @param pattern the request URI pattern to match
 	 */
-	public void setResourceHead(final String resourceHead) {
-		this.resourceHead = resourceHead;
+	public void setPattern(final String pattern) {
+		this.pattern = pattern;
 	}
 	
 	/**

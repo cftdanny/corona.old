@@ -63,7 +63,6 @@ public class Log {
 	 *  
 	 * @param pattern the pattern that is used to formatted to logging message with arguments.
 	 * @param args the values of arguments for parameter pattern.
-	 * @see java.text.MessageFormat
 	 */
 	public void trace(final String pattern, final Object... args) {
 		
@@ -88,7 +87,6 @@ public class Log {
 	 * @param pattern the pattern that is used to formatted to logging message with arguments 
 	 * @param e the thrown exception
 	 * @param args the values of arguments for parameter pattern.
-	 * @see java.text.MessageFormat
 	 */
 	public void trace(final String pattern, final Throwable e, final Object... args) {
 		
@@ -116,7 +114,6 @@ public class Log {
 	 *  
 	 * @param pattern the pattern that is used to formatted to logging message with arguments.
 	 * @param args the values of arguments for parameter pattern.
-	 * @see java.text.MessageFormat
 	 */
 	public void debug(final String pattern, final Object... args) {
 		
@@ -141,7 +138,6 @@ public class Log {
 	 * @param pattern the pattern that is used to formatted to logging message with arguments 
 	 * @param e the thrown exception
 	 * @param args the values of arguments for parameter pattern.
-	 * @see java.text.MessageFormat
 	 */
 	public void debug(final String pattern, final Throwable e, final Object... args) {
 		
@@ -169,7 +165,6 @@ public class Log {
 	 * 
 	 * @param pattern the pattern that is used to formatted to logging message with arguments 
 	 * @param args the values of arguments for parameter pattern.
-	 * @see java.text.MessageFormat
 	 */
 	public void info(final String pattern, final Object... args) {
 		
@@ -194,7 +189,6 @@ public class Log {
 	 * @param pattern the pattern that is used to formatted to logging message with arguments 
 	 * @param e the thrown exception
 	 * @param args the values of arguments for parameter pattern.
-	 * @see java.text.MessageFormat
 	 */
 	public void info(final String pattern, final Throwable e, final Object... args) {
 		
@@ -222,7 +216,6 @@ public class Log {
 	 * 
 	 * @param pattern the pattern that is used to formatted to logging message with arguments 
 	 * @param args the values of arguments for parameter pattern.
-	 * @see java.text.MessageFormat
 	 */
 	public void warn(final String pattern, final Object... args) {
 		
@@ -247,7 +240,6 @@ public class Log {
 	 * @param pattern the pattern that is used to formatted to logging message with arguments 
 	 * @param e the thrown exception
 	 * @param args the values of arguments for parameter pattern.
-	 * @see java.text.MessageFormat
 	 */
 	public void warn(final String pattern, final Throwable e, final Object... args) {
 		
@@ -276,7 +268,6 @@ public class Log {
 	 * 
 	 * @param pattern the pattern that is used to formatted to logging message with arguments 
 	 * @param args the values of arguments for parameter pattern.
-	 * @see java.text.MessageFormat
 	 */
 	public void error(final String pattern, final Object... args) {
 		
@@ -302,7 +293,6 @@ public class Log {
 	 * @param pattern the pattern that is used to formatted to logging message with arguments 
 	 * @param e the thrown exception
 	 * @param args the values of arguments for parameter pattern.
-	 * @see java.text.MessageFormat
 	 */
 	public void error(final String pattern, final Throwable e, final Object... args) {
 		

@@ -3,10 +3,11 @@
  */
 package com.corona.logging;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import com.corona.util.StringUtil;
 
 /**
  * <p>The log listeners </p>
@@ -90,7 +91,7 @@ public final class LogListeners {
 	 */
 	public static String log(final String pattern, final Object[] args) {
 		
-		String message = (args.length == 0 ? pattern : MessageFormat.format(pattern, args));
+		String message = StringUtil.format(pattern, args);
 		for (LogListener listener : listeners) {
 			listener.log(message);
 		}
@@ -105,7 +106,7 @@ public final class LogListeners {
 	 */
 	public static String log(final String pattern, final Throwable cause, final Object[] args) {
 		
-		String message = (args.length == 0 ? pattern : MessageFormat.format(pattern, args));
+		String message = StringUtil.format(pattern, args);
 		for (LogListener listener : listeners) {
 			listener.log(message, cause);
 		}

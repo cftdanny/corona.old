@@ -198,7 +198,7 @@ public class ApplicationServlet implements Servlet, Serializable {
 			this.getServletContext().log(
 					"Fail to create create response with request path [" + path + "]", e
 			); 
-			throw new ServletException(new Messages(request).get(Messages.HANDLER_PRODUCE_ERROR, path), e);
+			throw new ServletException("Internal Server Error: " + path, e);
 		}
 	}
 

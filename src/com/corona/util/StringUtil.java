@@ -35,6 +35,50 @@ public final class StringUtil {
 	public static boolean isEmpty(final String str) {
 		return (str == null) || (str.length() == 0);
 	}
+
+	/**
+	 * @param pattern the message pattern with {n} to be formated
+	 * @param arguments the arguments
+	 * @return the formated message
+	 */
+	public static String format(final String pattern, final Object... arguments) {
+		
+		if (arguments.length == 0) {
+			return pattern;
+		}
+		
+		int status = 0;
+		StringBuilder result = new StringBuilder(), index = new StringBuilder();
+		for (char c : pattern.toCharArray()) {
+			
+			if (status == 0) {
+				
+				if (c == '{') {
+					index.setLength(0);
+					status = 1;
+				} else if (c == '\\') {
+						status = 2;
+				} else {
+					result.append(c);
+				}
+			} else if (status == 1) {
+
+				if (c == '}') {
+					Object argument = arguments[Integer.parseInt(index.toString())];
+					result.append(argument == null ? "[null]" : argument.toString());
+					status = 0;
+				} else {
+					index.append(c);
+				}
+			} else {
+				
+				result.append(c);
+				status = 0;
+			}
+		}
+		
+		return result.toString();
+	}
 	
 	/**
 	 * @param separator the separator to join array of string

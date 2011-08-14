@@ -3,7 +3,7 @@
  */
 package com.corona.servlet;
 
-import java.text.MessageFormat;
+import com.corona.util.StringUtil;
 
 /**
  * <p>This exception will be thrown if fail to produce HTTP response content. </p>
@@ -23,7 +23,7 @@ public class ProduceException extends Exception {
 	 * @param arguments the argument value in the message pattern
 	 */
 	public ProduceException(final String pattern, final Object... arguments) {
-		super(MessageFormat.format(pattern, arguments));
+		super(StringUtil.format(pattern, arguments));
 	}
 	
 	/**
@@ -32,6 +32,6 @@ public class ProduceException extends Exception {
 	 * @param arguments the argument value in the message pattern
 	 */
 	public ProduceException(final String pattern, final Throwable cause, final Object... arguments) {
-		super(MessageFormat.format(pattern, arguments), cause);
+		super(StringUtil.format(pattern, arguments), cause);
 	}
 }

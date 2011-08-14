@@ -3,7 +3,7 @@
  */
 package com.corona.context;
 
-import java.text.MessageFormat;
+import com.corona.util.StringUtil;
 
 /**
  * <p>This exception will be thrown when there is a configuration error when initialize context manager
@@ -24,7 +24,7 @@ public class ConfigurationException extends RuntimeException {
 	 * @param arguments the argument value in the message pattern
 	 */
 	public ConfigurationException(final String pattern, final Object... arguments) {
-		super(MessageFormat.format(pattern, arguments));
+		super(StringUtil.format(pattern, arguments));
 	}
 	
 	/**
@@ -33,6 +33,6 @@ public class ConfigurationException extends RuntimeException {
 	 * @param arguments the argument value in the message pattern
 	 */
 	public ConfigurationException(final String pattern, final Throwable cause, final Object... arguments) {
-		super(MessageFormat.format(pattern, arguments), cause);
+		super(StringUtil.format(pattern, arguments), cause);
 	}
 }

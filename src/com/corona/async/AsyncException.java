@@ -3,7 +3,7 @@
  */
 package com.corona.async;
 
-import java.text.MessageFormat;
+import com.corona.util.StringUtil;
 
 /**
  * <p>This exception will be thrown if fail to create component instance in context manager. 
@@ -25,7 +25,7 @@ public class AsyncException extends Exception {
 	 * @param arguments the arguments for pattern
 	 */
 	public AsyncException(final String pattern, final Throwable cause, final Object... arguments) {
-		super(MessageFormat.format(pattern, arguments), cause);
+		super(StringUtil.format(pattern, arguments), cause);
 	}
 
 	/**
@@ -33,6 +33,6 @@ public class AsyncException extends Exception {
 	 * @param arguments the arguments for pattern
 	 */
 	public AsyncException(final String pattern, final Object... arguments) {
-		super(MessageFormat.format(pattern, arguments));
+		super(StringUtil.format(pattern, arguments));
 	}
 }

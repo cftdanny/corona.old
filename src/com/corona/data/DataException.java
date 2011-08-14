@@ -3,7 +3,7 @@
  */
 package com.corona.data;
 
-import java.text.MessageFormat;
+import com.corona.util.StringUtil;
 
 /**
  * <p>This exception will be thrown if there is catchable exception in database module. </p>
@@ -24,7 +24,7 @@ public class DataException extends Exception {
 	 * @param arguments the arguments for pattern
 	 */
 	public DataException(final String pattern, final Throwable cause, final Object... arguments) {
-		super(MessageFormat.format(pattern, arguments), cause);
+		super(StringUtil.format(pattern, arguments), cause);
 	}
 
 	/**
@@ -32,6 +32,6 @@ public class DataException extends Exception {
 	 * @param arguments the arguments for pattern
 	 */
 	public DataException(final String pattern, final Object... arguments) {
-		super(MessageFormat.format(pattern, arguments));
+		super(StringUtil.format(pattern, arguments));
 	}
 }

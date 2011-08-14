@@ -68,7 +68,7 @@ class ResourceMatcher implements Matcher {
 	public MatchResult match(final String path, final HttpServletRequest request) {
 		
 		// test whether request path will be handled by this handler according to head
-		if ((this.handler.getResourceHead() != null) && (!path.startsWith(this.handler.getResourceHead()))) {
+		if ((this.handler.getPattern() != null) && (!path.startsWith(this.handler.getPattern()))) {
 			return null; 
 		}
 		

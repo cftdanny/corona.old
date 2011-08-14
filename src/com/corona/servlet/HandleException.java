@@ -3,7 +3,7 @@
  */
 package com.corona.servlet;
 
-import java.text.MessageFormat;
+import com.corona.util.StringUtil;
 
 /**
  * <p>The exception that will be thrown if fail to handle HTTP request </p>
@@ -23,7 +23,7 @@ public class HandleException extends Exception {
 	 * @param arguments the argument value in the message pattern
 	 */
 	public HandleException(final String pattern, final Object... arguments) {
-		super(MessageFormat.format(pattern, arguments));
+		super(StringUtil.format(pattern, arguments));
 	}
 	
 	/**
@@ -32,6 +32,6 @@ public class HandleException extends Exception {
 	 * @param arguments the argument value in the message pattern
 	 */
 	public HandleException(final String pattern, final Throwable cause, final Object... arguments) {
-		super(MessageFormat.format(pattern, arguments), cause);
+		super(StringUtil.format(pattern, arguments), cause);
 	}
 }
