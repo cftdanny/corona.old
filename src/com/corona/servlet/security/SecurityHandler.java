@@ -52,11 +52,20 @@ public class SecurityHandler implements Handler {
 	public void handle(
 			final MatchResult result, final HttpServletRequest request, final HttpServletResponse response
 	) throws HandleException {
-		
-		try {
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-		} catch (Exception e) {
-			throw new HandleException("Fail to send unauthorized error to client");
+
+		String redirect = (String) result.get(ResourcePatterns.REDIRECT_PAGE);
+		if (redirect != null) {
+			try {
+				response.sendRedirect(request.getContextPath() + redirect);
+			} catch (Exception e) {
+				throw new HandleException("Fail to send redirect page to remote client");
+			}
+		} else {
+			try {
+				response.sendError((Integer) result.get(ResourcePatterns.STATUS_CODE));
+			} catch (Exception e) {
+				throw new HandleException("Fail to send unauthorized error to remote client");
+			}
 		}
 	}
 }
