@@ -19,7 +19,7 @@
 			
 		});
 	};
-
+	
 	// set default settings for plugin
 	$.fn.plugin.defaults = {
 			
