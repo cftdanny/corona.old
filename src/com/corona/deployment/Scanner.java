@@ -8,22 +8,29 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Enumeration;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import com.corona.logging.Log;
 import com.corona.logging.LogFactory;
 
 /**
- * <p>This scanner is used to scan java resources in class path </p>
+ * <p>This scanner is used to scan java resources in class path. Most often, it can be used to find
+ * all classes that are annotated by some specified annotation when application starts. </p>
  *
  * @author $Author$
  * @version $Id$
  */
 public class Scanner {
 
+	/**
+	 * the file indicator to scan resource if file exits  
+	 */
+	private static final String DEPLOYMENT_FLAG = "META-INF/corona/INSTALL";
+	
 	/**
 	 * the logger
 	 */
@@ -35,19 +42,14 @@ public class Scanner {
 	private ClassLoader classLoader;
 
 	/**
-	 * all handlers for this scanner
+	 * all inspectors for this scanner
 	 */
-	private List<Inspector> handlers = new ArrayList<Inspector>();
+	private List<Inspector> inspectors = new ArrayList<Inspector>();
 	
 	/**
-	 * The REGEX pattern to scan jar file
+	 * The package pattern to scan resource in it
 	 */
-	private Pattern libraryPattern = null;
-	
-	/**
-	 * The REGEX pattern to scan resource
-	 */
-	private Pattern resourcePattern = null;
+	private Pattern pattern = null;
 	
 	/**
 	 * create default scanner
@@ -63,22 +65,18 @@ public class Scanner {
 		this.classLoader = classLoader;
 	}
 
+	/**
+	 * @return the class loader
+	 */
 	public ClassLoader getClassLoader() {
 		return this.classLoader;
 	}
 	
 	/**
-	 * @param pattern the REGEX pattern for resource name
+	 * @param pattern the package pattern to scan resource name in it
 	 */
-	public void setResourcePattern(final String pattern) {
-		this.resourcePattern = (pattern == null) ? null : Pattern.compile(pattern);
-	}
-	
-	/**
-	 * @param pattern the REGEX pattern for jar library
-	 */
-	public void setLibraryPattern(final String pattern) {
-		this.libraryPattern = (pattern == null) ? null : Pattern.compile(pattern);
+	public void setPattern(final String pattern) {
+		this.pattern = (pattern == null) ? null : Pattern.compile(pattern);
 	}
 	
 	/**
@@ -89,24 +87,43 @@ public class Scanner {
 	}
 	
 	/**
+	 * @param inspector the inspector to add
+	 */
+	public void add(final Inspector inspector) {
+		this.inspectors.add(inspector);
+	}
+	
+	/**
+	 * @param inspector the inspector to remove
+	 */
+	public void remove(final Inspector inspector) {
+		this.inspectors.remove(inspector);
+	}
+
+	/**
+	 * @param name the resource to be inspected
+	 */
+	private void inspect(final String name) {
+		
+		for (Inspector inspector : this.inspectors) {
+			inspector.inspect(name);
+		}
+	}
+	
+	/**
 	 * @param root The root directory to scan resources
+	 * @param current the current path
 	 */
 	private void scanDirectory(final File root, final String current) {
 
-		this.logger.debug("Scan resources under directory [{0}]", file.getAbsolutePath());
+		boolean scanning = (this.pattern == null) || this.pattern.matcher(current).matches();
+		this.logger.debug("Start to scan resources from class directory [{0}]", root);
 		for (File child : root.listFiles()) {
 			
-			String newPath = (path == null ? child.getName() : path + '/' + child.getName());
-			if (!child.isDirectory()) {
-				if ((this.scanResourcePattern == null) || (this.scanResourcePattern.matcher(newPath).matches())) {
-					if (this.logger.isDebugEnabled()) {
-						this.logger.debug(Constants.LOG_ASN_SCNA_DIR_FOUND, newPath, file);
-					}
-					
-					this.handle(file.getAbsolutePath(), newPath);
-				}
-			} else {
-				handleDirectory(child, newPath);
+			if (child.isDirectory()) {
+				this.scanDirectory(child, current + (current.length() == 0 ? "" : "/") + child.getName());
+			} else if (scanning) {
+				this.inspect(current + "/" + child.getName());
 			}
 		}
 	}
@@ -115,22 +132,20 @@ public class Scanner {
 	 * @param file The jar file
 	 * @throws IOException Fail to open or operate jar file
 	 */
-	private void scanLibrary(File file) throws IOException {
-		if (this.logger.isDebugEnabled()) {
-			this.logger.debug(Constants.LOG_ASN_SCAN_JAR, file.getAbsolutePath());
-		}
-		
-		Enumeration< ? extends ZipEntry> entries = new ZipFile(file).entries();
+	private void scanLibrary(final File file) throws IOException {
 
-		while (entries.hasMoreElements()) {
-			String name = entries.nextElement().getName();
-			
-			if ((this.scanResourcePattern == null) || (this.scanResourcePattern.matcher(name).matches())) {
-				if (this.logger.isDebugEnabled()) {
-					this.logger.debug(Constants.LOG_ASN_SCNA_JAR_FOUND, name, file);
-				}
+		// test whether library is defined for scanning. if yes, scan it
+		ZipFile library = new ZipFile(file);
+		if (library.getEntry(DEPLOYMENT_FLAG) != null) {
+
+			Enumeration<? extends ZipEntry> entries = library.entries();
+			this.logger.debug("Start to scan resources from class library [{0}]", file);
+			while (entries.hasMoreElements()) {
 				
-				this.handle(file.getAbsolutePath(), name);
+				ZipEntry entry = entries.nextElement();
+				if (!entry.isDirectory()) {
+					this.inspect(entry.getName());
+				}
 			}
 		}
 	}
@@ -142,16 +157,18 @@ public class Scanner {
 	 */
 	public void scan() throws ScanningException {
 		
-		Set<String> resources = new HashSet<String>();
 		for (URL url : getURLsFromClassLoader()) {
-			
-			String resource = url.getFile();
-			if (resource.endsWith("/")) {
-				resource = resource.substring(0, resource.length() - 1);
+
+			File root = new File(url.getFile());
+			try {
+				if (root.isDirectory()) {
+					this.scanDirectory(root, "");
+				} else {
+					this.scanLibrary(root);
+				}
+			} catch (Exception e) {
+				this.logger.error("Fail to scan resources from URL [{0}], just skip it", e, url);
 			}
-			this.logger.info("Load resource [{0}]", resource);
-			resources.add(resource);
 		}
-		
 	}
 }

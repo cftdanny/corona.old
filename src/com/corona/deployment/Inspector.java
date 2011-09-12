@@ -3,13 +3,16 @@
  */
 package com.corona.deployment;
 
-
 /**
- * <p> </p>
+ * <p>this interface is used to inspect the scanned resource in scanner </p>
  *
  * @author $Author$
  * @version $Id$
  */
 public interface Inspector {
 
+	/**
+	 * @param name the class or resource to be inspected
+	 */
+	void inspect(String name);
 }
