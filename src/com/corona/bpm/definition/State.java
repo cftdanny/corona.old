@@ -3,8 +3,7 @@
  */
 package com.corona.bpm.definition;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.w3c.dom.Element;
 
 /**
  * <p> </p>
@@ -12,9 +11,9 @@ import java.util.Map;
  * @author $Author$
  * @version $Id$
  */
-public class ProcessDefinition {
+class State extends Node {
 
-	private StartNode startNode;
-	
-	private Map<String, Node> nodes = new HashMap<String, Node>();
+	State(final Element descriptor) {
+		super(descriptor);
+	}
 }

@@ -3,6 +3,7 @@
  */
 package com.corona.bpm.definition;
 
+import org.w3c.dom.Element;
 
 /**
  * <p> </p>
@@ -10,6 +11,9 @@ package com.corona.bpm.definition;
  * @author $Author$
  * @version $Id$
  */
-public class ConcurrencyNode {
+class Task extends Node {
 
+	Task(final Element descriptor) {
+		super(descriptor);
+	}
 }

@@ -3,6 +3,8 @@
  */
 package com.corona.bpm.definition;
 
+import org.w3c.dom.Element;
+
 
 /**
  * <p> </p>
@@ -10,6 +12,9 @@ package com.corona.bpm.definition;
  * @author $Author$
  * @version $Id$
  */
-public class EndNode {
+class Start extends Node {
 
+	Start(final Element descriptor) {
+		super(descriptor);
+	}
 }

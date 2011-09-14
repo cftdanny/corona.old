@@ -6,6 +6,8 @@ package com.corona.bpm.definition;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.w3c.dom.Element;
+
 /**
  * <p> </p>
  *
@@ -30,10 +32,10 @@ public class Node {
 	private Map<String, Node> parents = new HashMap<String, Node>();
 	
 	/**
-	 * @param name the name
+	 * @param descriptor the descriptor
 	 */
-	public Node(final String name) {
-		this.name = name;
+	public Node(final Element descriptor) {
+		this.name = descriptor.getAttribute("name");
 	}
 	
 	/**
