@@ -99,6 +99,8 @@ public class FreeMakerContext extends BeanModel {
 			return this.wrap(this.getResponse());
 		} else if ("session".equals(name)) {
 			return this.wrap(this.getSession());
+		} else if ("servletContext".equals(name)) {
+			return this.wrap(this.session.getServletContext());
 		} else if (name.equals(this.freeMakerEngineManager.getVariableNameForChildTemplate())) {
 			return this.wrap(this.childTemplate);
 		} else {
