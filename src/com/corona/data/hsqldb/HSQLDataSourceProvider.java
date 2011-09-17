@@ -43,10 +43,12 @@ public class HSQLDataSourceProvider implements DataSourceProvider {
 	@Override
 	public ConnectionManagerFactory create(final Properties properties) throws DataException {
 		
-		try {
-			Class.forName(DRIVER);
-		} catch (ClassNotFoundException e) {
-			throw new DataException("Fail to load HSQLDB JDBC driver [{0}]", DRIVER);
+		if (!properties.containsKey(DataSourceProvider.JNDI)) {
+			try {
+				Class.forName(DRIVER);
+			} catch (ClassNotFoundException e) {
+				throw new DataException("Fail to load HSQLDB JDBC driver [{0}]", DRIVER);
+			}
 		}
 		return new HSQLConnectionManagerFactory(this, properties);
 	}

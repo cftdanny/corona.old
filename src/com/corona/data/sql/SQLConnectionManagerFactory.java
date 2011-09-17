@@ -100,11 +100,10 @@ public abstract class SQLConnectionManagerFactory implements ConnectionManagerFa
 		
 		// get how many connection manager can be idle
 		try {
-			this.maxIdleConnectionManagers = Integer.parseInt(
-					(String) this.properties.get(DataSourceProvider.SQL_MAX_IDLES)
-			);
+			String maxIdles = (String) this.properties.get(DataSourceProvider.SQL_MAX_IDLES);
+			this.maxIdleConnectionManagers = Integer.parseInt(maxIdles);
 		} catch (Exception e) {
-			this.logger.error("Error configuration for idled connection managers, skip this error", e);
+			this.maxIdleConnectionManagers = 2;
 		}
 	}
 	
