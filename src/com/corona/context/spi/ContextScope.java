@@ -42,7 +42,7 @@ public class ContextScope extends AbstractScope {
 	@Override
 	public <T> T get(final ContextManager contextManager, final Key<T> key) {
 		
-		this.logger.info("Try to resolve component from cached context repository with key [{0}]", key);
+		this.logger.debug("Try to resolve component from cached context repository with key [{0}]", key);
 		T component = (T) this.getContextManager(contextManager).getComponents().get(key);
 		if (component != null) {
 			return component;
@@ -60,7 +60,7 @@ public class ContextScope extends AbstractScope {
 		this.logger.debug("Try to create component with key [{0}], descriptor [{1}]", key, descriptor);
 		component = descriptor.getValue(contextManager);
 		this.getContextManager(contextManager).getComponents().put(key, component);
-		this.logger.info("Component with key [{0}] has been create and cached to context repository", key);
+		this.logger.debug("Component with key [{0}] has been create and cached to context repository", key);
 		
 		return component;
 	}

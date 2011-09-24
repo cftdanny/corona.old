@@ -26,7 +26,7 @@ class SameMatcher extends AbstractMatcher {
 	/**
 	 * the matching pattern
 	 */
-	private String pattern;
+	private String[] patterns;
 	
 	/**
 	 * @param contextManagerFactory the current context manager factory
@@ -37,7 +37,7 @@ class SameMatcher extends AbstractMatcher {
 		super(contextManagerFactory, method);
 
 		this.priority = same.priority();
-		this.pattern = same.value();
+		this.patterns = same.value();
 	}
 
 	/**
@@ -55,6 +55,13 @@ class SameMatcher extends AbstractMatcher {
 	 */
 	@Override
 	public MatchResult match(final String path) {
-		return (this.pattern.equals(path)) ? new MatchResult(path) : null;
+		
+		for (String pattern : this.patterns) {
+			
+			if (pattern.equals(path)) {
+				return new MatchResult(path);
+			}
+		}
+		return null;
 	}
 }

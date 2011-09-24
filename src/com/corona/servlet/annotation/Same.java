@@ -29,5 +29,5 @@ public @interface Same {
 	/**
 	 * the request HTTP URI 
 	 */
-	String value();
+	String[] value();
 }
