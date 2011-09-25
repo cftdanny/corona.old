@@ -3,6 +3,7 @@
  */
 package com.corona.bpm;
 
+import java.util.Map;
 
 /**
  * <p> </p>
@@ -10,9 +11,10 @@ package com.corona.bpm;
  * @author $Author$
  * @version $Id$
  */
-public interface StateManager {
+public interface Context extends Map<String, Object> {
 
-	
-	
-	Context getCurrentContext();
+	/**
+	 * @param names the parameter names to be persisted
+	 */
+	void persist(String... names);
 }

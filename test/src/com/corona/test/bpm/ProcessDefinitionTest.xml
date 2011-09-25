@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<process id="test" name="testing" version="1.0">
+
+	<start name="start">
+		<transition to="a" />
+	</start>
+	
+	<state name="a">
+		<transition name="accept" to="submit document" />
+		<transition name="reject" to="try again" />
+	</state>
+	
+	<task name="">
+	</task>
+	
+	<decision name="evaluate document">
+		<transition to="submit document">
+			<condition expr="#{content=='good'}" />
+		</transition>
+		
+		<transition to="try again">
+			<condition expr="#{content=='not so good'}" />
+		</transition>
+		
+		<transition to="give up" />
+	</decision>
+	
+	<decision name="evaluate document" expr="#{content}" >
+		<transition name="good" to="submit document"  />
+		<transition name="bad"  to="try again"  />
+		<transition name="ugly" to="give up"  />
+	</decision>
+	
+	<fork name="">
+	</fork>
+	
+	<join name="">
+	</join>
+	
+	<sub-process>
+	</sub-process>
+	
+	<end name="">
+	</end>
+</process>

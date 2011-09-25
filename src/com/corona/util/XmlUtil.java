@@ -3,6 +3,9 @@
  */
 package com.corona.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -36,6 +39,26 @@ public final class XmlUtil {
 			}
 		}
 		return child;
+	}
+	
+	/**
+	 * @param parent the parent XML element
+	 * @param childName the child node name
+	 * @return the list of child XML elements with specified node name
+	 */
+	public static List<Element> getChildElements(final Element parent, final String childName) {
+		
+		if (parent != null) {
+			
+			List<Element> result = new ArrayList<Element>();
+			NodeList nodes = parent.getElementsByTagName(childName);
+			for (int i = 0, count = nodes.getLength(); i < count; i++) {
+				result.add((Element) nodes.item(i));
+			}
+			return result;
+		} else {
+			return null;
+		}
 	}
 	
 	/**
