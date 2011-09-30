@@ -33,4 +33,16 @@ public interface Activity {
 	 * @param activity the parent activity
 	 */
 	void addParent(Activity activity);
+	
+	/**
+	 * @param context the context
+	 * @throws ProcessException if fail to enter activity
+	 */
+	void enter(Context context) throws ProcessException;
+	
+	/**
+	 * @param context the context
+	 * @throws ProcessException if fail to exit activity
+	 */
+	void exit(Context context) throws ProcessException;
 }

@@ -9,6 +9,8 @@ import java.util.Map;
 import org.w3c.dom.Element;
 
 import com.corona.bpm.Activity;
+import com.corona.bpm.Context;
+import com.corona.bpm.ProcessException;
 
 /**
  * <p> </p>
@@ -89,5 +91,21 @@ abstract class AbstractActivity implements Activity {
 	 */
 	protected void addChild(final Activity child) {
 		this.children.put(child.getName(), child);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.bpm.Activity#enter(com.corona.bpm.Context)
+	 */
+	@Override
+	public void enter(final Context context) throws ProcessException {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.corona.bpm.Activity#exit(com.corona.bpm.Context)
+	 */
+	@Override
+	public void exit(final Context context) throws ProcessException {
 	}
 }

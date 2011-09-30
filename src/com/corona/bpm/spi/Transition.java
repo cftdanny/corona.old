@@ -3,11 +3,10 @@
  */
 package com.corona.bpm.spi;
 
-import java.util.Map;
-
 import org.w3c.dom.Element;
 
 import com.corona.bpm.Activity;
+import com.corona.bpm.Context;
 import com.corona.expression.Expression;
 import com.corona.util.StringUtil;
 
@@ -103,7 +102,7 @@ class Transition {
 	 * @param context the context
 	 * @return whether match this transition
 	 */
-	public boolean match(final Map<String, Object> context) {
+	public boolean match(final Context context) {
 		return (this.expr == null) ? true : (Boolean) this.expr.get(context);
 	}
 }
