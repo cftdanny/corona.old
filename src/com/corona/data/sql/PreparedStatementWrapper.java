@@ -948,4 +948,14 @@ public class PreparedStatementWrapper implements PreparedStatement {
 	public void setNClob(final int parameterIndex, final Reader reader) throws SQLException {
 		this.statement.setNClob(parameterIndex, reader);
 	}
+
+	@Override
+	public void closeOnCompletion() throws SQLException {
+		this.statement.closeOnCompletion();
+	}
+
+	@Override
+	public boolean isCloseOnCompletion() throws SQLException {
+		return this.statement.isCloseOnCompletion();
+	}
 }
